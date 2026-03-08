@@ -1,0 +1,24 @@
+/* These three @tailwind directives inject Tailwind's base reset,
+   component classes, and utility classes into this file.
+   Vite processes this through PostCSS → Tailwind when you import it. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Global base styles ───────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans;
+    margin: 0;
+  }
+}
+
+/* ── Leaflet map fix ──────────────────────────────────────── */
+/* Leaflet loads its own CSS that conflicts with Tailwind's reset.
+   These two lines stop the map tiles from disappearing. */
+.leaflet-container {
+  @apply w-full h-full;
+}
