@@ -1,11 +1,4 @@
 // src/hooks/useListings.js
-// ------------------------------------------------------------------
-// A custom hook that fetches listings from Supabase and supports
-// filtering by state, city, price range, and bedroom count.
-//
-// Custom hooks are just functions that start with "use" and call
-// other hooks inside them — they let you reuse stateful logic.
-// ------------------------------------------------------------------
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
@@ -15,25 +8,43 @@ export function useListings(filters = {}) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let cancelled = false; // prevents state updates if the component unmounts
+    // skip allows callers to defer fetching until required data is ready
+    if (filters.skip) {
+      setListings([]);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
 
     async function fetchListings() {
       setLoading(true);
       setError(null);
 
-      // Start building the query
-      let query = supabase
-        .from("listings")
-        .select("*")
-        .order("created_at", { ascending: false });
+      let query = supabase.from("listings").select("*");
 
-      // Apply optional filters (only if a value was provided)
+      // Sorting
+      if (filters.sort === "price_asc") {
+        query = query.order("price", { ascending: true });
+      } else if (filters.sort === "price_desc") {
+        query = query.order("price", { ascending: false });
+      } else {
+        query = query.order("created_at", { ascending: false });
+      }
+
+      // Filters
       if (filters.state)    query = query.eq("state", filters.state);
       if (filters.city)     query = query.ilike("city", `%${filters.city}%`);
-      if (filters.minPrice) query = query.gte("price", filters.minPrice);
-      if (filters.maxPrice) query = query.lte("price", filters.maxPrice);
-      if (filters.bedrooms) query = query.eq("bedrooms", filters.bedrooms);
-      if (filters.limit)    query = query.limit(filters.limit);
+      if (filters.minPrice) query = query.gte("price", Number(filters.minPrice));
+      if (filters.maxPrice) query = query.lte("price", Number(filters.maxPrice));
+      // bedrooms: "0" = studio (exact), "1"/"2"/"3" = 1+/2+/3+ (gte)
+      if (filters.bedrooms === "0") {
+        query = query.eq("bedrooms", 0);
+      } else if (filters.bedrooms) {
+        query = query.gte("bedrooms", Number(filters.bedrooms));
+      }
+      if (filters.bathrooms) query = query.gte("bathrooms", Number(filters.bathrooms));
+      if (filters.limit)     query = query.limit(filters.limit);
 
       const { data, error: err } = await query;
 
@@ -46,14 +57,16 @@ export function useListings(filters = {}) {
 
     fetchListings();
     return () => { cancelled = true; };
-  // Re-run whenever any filter value changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    filters.skip,
     filters.state,
     filters.city,
     filters.minPrice,
     filters.maxPrice,
     filters.bedrooms,
+    filters.bathrooms,
+    filters.sort,
     filters.limit,
   ]);
 
