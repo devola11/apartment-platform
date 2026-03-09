@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import ListingsMap from "../components/maps/ListingsMap";
 import ListingCard from "../components/listings/ListingCard";
 import SEO from "../components/common/SEO";
+import SendMessageModal from "../components/common/SendMessageModal";
 
 function fakePhone(id) {
   const n = parseInt((id || "0").replace(/-/g, "").slice(0, 8), 16);
@@ -30,7 +31,6 @@ function HeartIcon({ filled }) {
     : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F6368" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
 }
 
-const inputCls = "w-full border border-[#E0E0E0] rounded-lg px-3 py-2 text-sm text-[#202124] focus:outline-none focus:ring-2 focus:ring-[#1A73E8] placeholder-[#5F6368]";
 
 export default function ListingDetail() {
   const { id } = useParams();
@@ -46,17 +46,9 @@ export default function ListingDetail() {
   });
   const similarListings = similar.filter(l => l.id !== id).slice(0, 3);
 
-  // Contact form state
-  const [form, setForm] = useState({ name: "", email: "", phone: "", moveIn: "", message: "" });
-  const [sent, setSent] = useState(false);
-
-  function handleFormChange(e) {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  }
-  function handleSubmit(e) {
-    e.preventDefault();
-    setSent(true);
-  }
+  // Send Message modal state — the modal manages its own form fields internally.
+  // The contact card here just needs to know whether the modal is open.
+  const [showModal, setShowModal] = useState(false);
 
   // ── Loading skeleton ─────────────────────────────────────
   if (loading) {
@@ -302,88 +294,38 @@ export default function ListingDetail() {
           </div>
 
           {/* ── RIGHT column — sticky contact card (37%) ── */}
+          {/* sticky top-20 = 80px from top (64px navbar + 16px breathing room).
+              The card stays visible as the user scrolls through long descriptions. */}
           <div style={{ flex: "0 0 37%" }} className="sticky top-20">
             <div className="bg-white rounded-xl border border-[#E0E0E0] shadow-lg p-6">
-              {/* Property title + price */}
+
+              {/* Property title + price summary */}
               <h3 className="font-bold text-[#202124] text-base leading-snug mb-1 line-clamp-2">
                 {listing.title}
               </h3>
-              <p className="text-2xl font-extrabold text-[#1A73E8] mb-5">
+              <p className="text-2xl font-extrabold text-[#1A73E8] mb-6">
                 ${listing.price?.toLocaleString()}
                 <span className="text-sm font-normal text-[#5F6368]">/mo</span>
               </p>
 
-              {/* CTA buttons */}
-              <button className="w-full bg-[#1A73E8] hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg mb-3 transition-colors">
+              {/* Both CTA buttons open the Send Message modal.
+                  "Request Info" and "Schedule Tour" are common ApartmentGuide
+                  patterns — they both funnel to the same inquiry form.
+                  The pre-filled message text makes the context clear. */}
+              <button
+                onClick={() => setShowModal(true)}
+                className="w-full bg-[#1A73E8] hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg mb-3 transition-colors"
+              >
                 Request Info
               </button>
-              <button className="w-full border-2 border-[#1A73E8] text-[#1A73E8] hover:bg-blue-50 font-semibold py-2.5 rounded-lg mb-6 transition-colors">
+              <button
+                onClick={() => setShowModal(true)}
+                className="w-full border-2 border-[#1A73E8] text-[#1A73E8] hover:bg-blue-50 font-semibold py-2.5 rounded-lg mb-2 transition-colors"
+              >
                 Schedule Tour
               </button>
 
-              {/* Contact form */}
-              {sent ? (
-                <div className="text-center py-6">
-                  <div className="text-green-500 text-3xl mb-2">✓</div>
-                  <p className="font-semibold text-[#202124]">Message sent!</p>
-                  <p className="text-sm text-[#5F6368] mt-1">We&apos;ll be in touch soon.</p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <input
-                    type="text"
-                    name="name"
-                    value={form.name}
-                    onChange={handleFormChange}
-                    placeholder="Your Name"
-                    required
-                    className={inputCls}
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleFormChange}
-                    placeholder="Email Address"
-                    required
-                    className={inputCls}
-                  />
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleFormChange}
-                    placeholder="Phone Number"
-                    className={inputCls}
-                  />
-                  <div>
-                    <label className="text-xs text-[#5F6368] mb-1 block">Move-in Date</label>
-                    <input
-                      type="date"
-                      name="moveIn"
-                      value={form.moveIn}
-                      onChange={handleFormChange}
-                      className={inputCls}
-                    />
-                  </div>
-                  <textarea
-                    name="message"
-                    value={form.message}
-                    onChange={handleFormChange}
-                    placeholder="I'm interested in this property…"
-                    rows={3}
-                    className={`${inputCls} resize-none`}
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-[#1A73E8] hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
-                  >
-                    Send Message
-                  </button>
-                </form>
-              )}
-
-              {/* Phone */}
+              {/* Divider + phone for direct call option */}
               <div className="mt-5 pt-4 border-t border-[#E0E0E0] flex items-center gap-2 text-[#1A73E8] font-semibold text-sm">
                 <PhoneIcon />
                 <span>{phone}</span>
@@ -392,6 +334,15 @@ export default function ListingDetail() {
           </div>
         </div>
       </div>
+
+      {/* Send Message modal — triggered by contact card buttons.
+          Rendered at the bottom of the page component so it sits outside all
+          positioned ancestors, ensuring the fixed overlay covers correctly. */}
+      <SendMessageModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        listing={listing}
+      />
     </div>
   );
 }
