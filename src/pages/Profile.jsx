@@ -1,11 +1,13 @@
 // src/pages/Profile.jsx — Protected page (requires login)
 import { useAuth } from "../context/AuthContext";
+import SEO from "../components/common/SEO";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
 
   return (
     <div className="max-w-lg mx-auto px-4 py-16">
+      <SEO title="Your Profile" noindex />
       <div className="bg-white rounded-2xl shadow-lg p-8">
         <h1 className="text-2xl font-extrabold text-gray-900 mb-6">Your Profile</h1>
 

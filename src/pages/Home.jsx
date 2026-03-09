@@ -4,6 +4,23 @@ import { Link, useNavigate } from "react-router-dom";
 import { useListings } from "../hooks/useListings";
 import ListingGrid from "../components/listings/ListingGrid";
 import ListingsMap from "../components/maps/ListingsMap";
+import SEO from "../components/common/SEO";
+
+const HOME_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "AptGuide",
+  url: "https://aptguide.com",
+  description: "Browse verified apartments for rent across California and Florida.",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: "https://aptguide.com/listings?q={search_term_string}",
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
 
 const PRICE_RANGES = [
   { label: "Any Price", value: "" },
@@ -42,6 +59,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F8F9FA" }}>
+      <SEO
+        title="Apartments for Rent in California &amp; Florida"
+        description="Browse 50+ verified apartments for rent across California and Florida. Filter by city, price, and bedrooms. Find your perfect home with AptGuide."
+        canonical="/"
+        jsonLd={HOME_JSON_LD}
+      />
 
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Home -->
+  <url>
+    <loc>https://aptguide.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- All listings -->
+  <url>
+    <loc>https://aptguide.com/listings</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- State pages -->
+  <url>
+    <loc>https://aptguide.com/listings/california</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aptguide.com/listings/florida</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Individual listing pages are dynamic (UUIDs from Supabase).          -->
+  <!-- For production, generate this file at build time or via a script     -->
+  <!-- that queries Supabase and writes one <url> entry per listing.        -->
+
+</urlset>

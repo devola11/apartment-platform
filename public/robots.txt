@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /profile
+Disallow: /favorites
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://aptguide.com/sitemap.xml

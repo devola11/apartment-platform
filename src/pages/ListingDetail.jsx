@@ -6,6 +6,7 @@ import { useListing } from "../hooks/useListing";
 import { useFavorites } from "../context/FavoritesContext";
 import { useAuth } from "../context/AuthContext";
 import ListingsMap from "../components/maps/ListingsMap";
+import SEO from "../components/common/SEO";
 
 export default function ListingDetail() {
   // useParams reads dynamic segments from the URL path — here :id
@@ -38,8 +39,79 @@ export default function ListingDetail() {
   const saved = isFavorite(listing.id);
   const imageUrl = listing.image_url || "https://placehold.co/800x450?text=No+Image";
 
+  const seoDescription = [
+    listing.bedrooms != null && `${listing.bedrooms}-bedroom`,
+    listing.bathrooms != null && `${listing.bathrooms}-bathroom`,
+    "apartment",
+    listing.city && `in ${listing.city}`,
+    listing.state && listing.state,
+    listing.price != null && `for $${listing.price.toLocaleString()}/mo`,
+    listing.sqft != null && `• ${listing.sqft.toLocaleString()} sq ft`,
+    listing.amenities?.length > 0 && `• ${listing.amenities.slice(0, 3).join(", ")}`,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: listing.title,
+    description: listing.description || seoDescription,
+    url: `https://aptguide.com/listings/${listing.id}`,
+    image: imageUrl,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: listing.address,
+      addressLocality: listing.city,
+      addressRegion: listing.state,
+      postalCode: listing.zip,
+      addressCountry: "US",
+    },
+    ...(listing.price != null && {
+      offers: {
+        "@type": "Offer",
+        price: listing.price,
+        priceCurrency: "USD",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: listing.price,
+          priceCurrency: "USD",
+          referenceQuantity: {
+            "@type": "QuantitativeValue",
+            value: 1,
+            unitCode: "MON",
+          },
+        },
+      },
+    }),
+    ...(listing.latitude && listing.longitude && {
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: listing.latitude,
+        longitude: listing.longitude,
+      },
+    }),
+    numberOfRooms: listing.bedrooms,
+    numberOfBathroomsTotal: listing.bathrooms,
+    floorSize: listing.sqft
+      ? { "@type": "QuantitativeValue", value: listing.sqft, unitCode: "FTK" }
+      : undefined,
+    amenityFeature: listing.amenities?.map((a) => ({
+      "@type": "LocationFeatureSpecification",
+      name: a,
+      value: true,
+    })),
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
+      <SEO
+        title={`${listing.title} — ${listing.city}, ${listing.state}`}
+        description={seoDescription}
+        canonical={`/listings/${listing.id}`}
+        image={listing.image_url || undefined}
+        jsonLd={jsonLd}
+      />
       {/* Back link */}
       <Link to="/listings" className="text-brand-600 hover:underline text-sm mb-6 inline-block">
         ← Back to listings
