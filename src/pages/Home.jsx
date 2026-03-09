@@ -60,7 +60,7 @@ export default function Home() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F8F9FA" }}>
       <SEO
-        title="Apartments for Rent in California &amp; Florida"
+        title="Apartments for Rent in California & Florida"
         description="Browse 50+ verified apartments for rent across California and Florida. Filter by city, price, and bedrooms. Find your perfect home with AptGuide."
         canonical="/"
         jsonLd={HOME_JSON_LD}

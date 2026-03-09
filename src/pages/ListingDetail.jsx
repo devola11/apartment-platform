@@ -39,18 +39,24 @@ export default function ListingDetail() {
   const saved = isFavorite(listing.id);
   const imageUrl = listing.image_url || "https://placehold.co/800x450?text=No+Image";
 
-  const seoDescription = [
+  const parts = [
     listing.bedrooms != null && `${listing.bedrooms}-bedroom`,
-    listing.bathrooms != null && `${listing.bathrooms}-bathroom`,
+    listing.bathrooms != null && `${listing.bathrooms}-bath`,
     "apartment",
     listing.city && `in ${listing.city}`,
     listing.state && listing.state,
-    listing.price != null && `for $${listing.price.toLocaleString()}/mo`,
-    listing.sqft != null && `• ${listing.sqft.toLocaleString()} sq ft`,
-    listing.amenities?.length > 0 && `• ${listing.amenities.slice(0, 3).join(", ")}`,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  ].filter(Boolean);
+
+  const pricePart = listing.price != null ? `$${listing.price.toLocaleString()}/mo` : null;
+  const sqftPart = listing.sqft != null ? `${listing.sqft.toLocaleString()} sq ft` : null;
+  const amenityPart = listing.amenities?.length > 0 ? listing.amenities.slice(0, 3).join(", ") : null;
+
+  const seoDescription = (
+    parts.join(" ") +
+    (pricePart ? ` — ${pricePart}` : "") +
+    (sqftPart ? `, ${sqftPart}` : "") +
+    (amenityPart ? `. ${amenityPart}.` : ".")
+  ) || listing.title;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -110,6 +116,8 @@ export default function ListingDetail() {
         description={seoDescription}
         canonical={`/listings/${listing.id}`}
         image={listing.image_url || undefined}
+        imageAlt={`${listing.title} in ${listing.city}, ${listing.state}`}
+        ogType="article"
         jsonLd={jsonLd}
       />
       {/* Back link */}
