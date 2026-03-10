@@ -37,8 +37,21 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Helper functions so components don't import supabase directly
-  const signUp = (email, password) =>
-    supabase.auth.signUp({ email, password });
+  //
+  // signUp now accepts fullName and role so they're stored in user_metadata —
+  // a JSON object attached to every Supabase auth user. We read it later via
+  // user.user_metadata.full_name and user.user_metadata.role
+  const signUp = (email, password, fullName, role) =>
+    supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          role: role,           // 'renter' or 'landlord'
+        },
+      },
+    });
 
   const signIn = (email, password) =>
     supabase.auth.signInWithPassword({ email, password });

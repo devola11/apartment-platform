@@ -50,6 +50,14 @@ export default function Navbar() {
               <NavLink to="/profile" className={linkClass + " hidden sm:block text-sm font-medium"}>
                 Profile
               </NavLink>
+
+              {/* Show the user's name from user_metadata (set at signup).
+                  Falls back to the part of their email before the @ sign.
+                  truncate + max-w prevents long names from breaking the layout. */}
+              <span className="hidden sm:block text-sm text-[#202124] font-medium truncate max-w-[120px]">
+                {user.user_metadata?.full_name || user.email?.split("@")[0]}
+              </span>
+
               <button
                 onClick={handleSignOut}
                 className="text-sm font-medium text-[#5F6368] border border-gray-300 px-4 py-1.5 rounded-full hover:border-brand-600 hover:text-brand-600 transition-colors duration-150"

@@ -16,7 +16,7 @@
 // their clicks do NOT bubble up to the Link and trigger navigation.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import SendMessageModal from "../common/SendMessageModal";
@@ -49,6 +49,7 @@ function HeartIcon({ filled }) {
 export default function ListingCard({ listing }) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { user }                        = useAuth();
+  const navigate                        = useNavigate();
   const saved                           = isFavorite(listing.id);
 
   // Controls the Send Message modal visibility
@@ -74,7 +75,13 @@ export default function ListingCard({ listing }) {
 
   function handleFavorite(e) {
     e.stopPropagation();
-    if (!user) return;
+    // If not logged in, send the user to /login instead of silently doing nothing.
+    // We pass the current page as `state.from` so ProtectedRoute and AuthForm
+    // can redirect them back here after they authenticate.
+    if (!user) {
+      navigate("/login");
+      return;
+    }
     toggleFavorite(listing.id);
   }
 
