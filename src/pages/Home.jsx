@@ -47,7 +47,7 @@ export default function Home() {
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section
         className="relative flex items-center justify-center text-white overflow-hidden"
-        style={{ minHeight: "520px" }}
+        style={{ minHeight: "580px" }}
       >
         {/* Background image — bright, modern apartment building */}
         <div
@@ -62,7 +62,7 @@ export default function Home() {
 
         {/* Hero content */}
         <div className="relative z-10 max-w-2xl mx-auto text-center px-4 py-20">
-          <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-10 drop-shadow-md">
+          <h1 className="text-6xl sm:text-7xl font-black leading-tight mb-10 drop-shadow-lg">
             Find the Perfect Apartment.
           </h1>
 
@@ -76,11 +76,11 @@ export default function Home() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="City, Neighborhood, or ZIP"
-              className="flex-1 w-3/4 text-[#202124] text-sm placeholder-[#5F6368] focus:outline-none px-6 py-4 bg-transparent"
+              className="flex-1 w-3/4 text-[#202124] text-lg placeholder-[#5F6368] focus:outline-none px-7 py-5 bg-transparent"
             />
             <button
               type="submit"
-              className="rounded-full text-white font-semibold px-7 py-3 mr-1 text-sm whitespace-nowrap transition-colors duration-150"
+              className="rounded-full text-white font-bold px-10 py-4 mr-1 text-lg whitespace-nowrap transition-colors duration-150"
               style={{ backgroundColor: "#1A73E8" }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#1669D3")}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1A73E8")}
