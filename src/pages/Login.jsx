@@ -22,8 +22,11 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4 py-12">
       <SEO title="Log In" noindex />
 
-      {/* White card — subtle border + shadow + rounded corners */}
-      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8 w-full max-w-sm">
+      {/* White card
+          w-full:    fills the screen on mobile (outer px-4 gives 16px side padding).
+          max-w-md:  caps the width at 448px on desktop so it doesn't stretch too wide.
+          p-6 sm:p-8: slightly less padding on small phones, full padding on larger screens. */}
+      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 sm:p-8 w-full max-w-md">
 
         {/* Heading + subtext */}
         <div className="mb-6 text-center">

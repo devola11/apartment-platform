@@ -201,11 +201,12 @@ export default function ListingCard({ listing }) {
           {/* mt-auto pushes the button to the bottom of the card so all
               cards in a grid row have the button at the same vertical position
               regardless of how much content is above it. */}
+          {/* min-h-[44px] ensures the button meets the 44px touch-target spec on mobile */}
           <button
             onClick={handleSendMessage}
             className="mt-auto w-full bg-[#1A73E8] hover:bg-blue-700
-                       text-white font-semibold py-2.5 rounded-xl
-                       transition-colors duration-150 text-sm"
+                       text-white font-semibold py-3 rounded-xl
+                       transition-colors duration-150 text-sm min-h-[44px]"
           >
             Send Message
           </button>

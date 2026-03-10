@@ -6,7 +6,7 @@ import ListingCard from "./ListingCard";
 export default function ListingGrid({ listings, loading, error }) {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Skeleton cards while loading */}
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="bg-white rounded-2xl shadow overflow-hidden animate-pulse">
@@ -41,7 +41,7 @@ export default function ListingGrid({ listings, loading, error }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {listings.map((listing) => (
         <ListingCard key={listing.id} listing={listing} />
       ))}

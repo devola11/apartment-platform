@@ -131,14 +131,15 @@ export default function AuthForm({ mode = "login" }) {
             placeholder="Jane Smith"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base
                        focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                       placeholder:text-gray-400"
+                       placeholder:text-gray-400 min-h-[44px]"
           />
         </div>
       )}
 
       {/* ── Email ────────────────────────────────────────────────── */}
+      {/* text-base (16px) prevents iOS Safari from auto-zooming on input focus */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Email
@@ -150,9 +151,9 @@ export default function AuthForm({ mode = "login" }) {
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm
+          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base
                      focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                     placeholder:text-gray-400"
+                     placeholder:text-gray-400 min-h-[44px]"
         />
       </div>
 
@@ -173,9 +174,9 @@ export default function AuthForm({ mode = "login" }) {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 pr-10 text-sm
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 pr-10 text-base
                        focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                       placeholder:text-gray-400"
+                       placeholder:text-gray-400 min-h-[44px]"
           />
           {/* type="button" prevents it from accidentally submitting the form */}
           <button
@@ -201,9 +202,9 @@ export default function AuthForm({ mode = "login" }) {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base
                        focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                       bg-white text-gray-800"
+                       bg-white text-gray-800 min-h-[44px]"
           >
             <option value="renter">Renter — looking for a place</option>
             <option value="landlord">Landlord — listing a property</option>
@@ -215,9 +216,9 @@ export default function AuthForm({ mode = "login" }) {
       <button
         type="submit"
         disabled={loading || !!success}
-        className="w-full bg-[#1A73E8] text-white py-2.5 rounded-lg font-semibold
+        className="w-full bg-[#1A73E8] text-white py-3 rounded-lg font-semibold
                    hover:bg-[#1557b0] transition-colors duration-150
-                   disabled:opacity-50 disabled:cursor-not-allowed text-sm mt-2"
+                   disabled:opacity-50 disabled:cursor-not-allowed text-sm mt-2 min-h-[44px]"
       >
         {loading
           ? "Please wait…"

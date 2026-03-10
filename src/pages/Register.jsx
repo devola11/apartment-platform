@@ -15,7 +15,9 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4 py-12">
       <SEO title="Create Account" noindex />
 
-      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8 w-full max-w-sm">
+      {/* w-full + max-w-md: full width on mobile (px-4 outer padding gives gutters),
+          capped at 448px on desktop. p-6 sm:p-8 reduces padding on small phones. */}
+      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 sm:p-8 w-full max-w-md">
 
         {/* Heading + subtext (spec: "Create Your Account" / "Find and save…") */}
         <div className="mb-6 text-center">

@@ -1,14 +1,19 @@
 // src/components/listings/ListingRow.jsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Horizontal listing card — used on the search results page (/listings).
+// Horizontal listing card on tablet/desktop, vertical card on mobile.
 //
-// LAYOUT (left → right):
-//  Image (fixed width 192px) | Content column (flex-1)
-//   Content: title + price header, address, beds/baths/sqft, phone,
-//            amenity tags, then "Send Message" button at the bottom.
+// RESPONSIVE LAYOUT:
+//   Mobile (< sm / 640px):
+//     flex-col — image on top (full width, fixed 180px height),
+//     content below. Same visual as ListingCard for visual consistency.
 //
-// isActive: true when the user hovers this card — the parent (Listings.jsx)
-//   sets hoveredId, which the map uses to highlight the matching price marker.
+//   Tablet / Desktop (sm+ / 640px+):
+//     flex-row — image fixed 192px wide on the left, content on the right.
+//     This is the original desktop layout.
+//
+// WHY sm (640px)?
+//  At 640px the card is wide enough for the side-by-side layout to look good.
+//  Below that (phones) the image would be too narrow and text would feel cramped.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -16,8 +21,6 @@ import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import SendMessageModal from "../common/SendMessageModal";
 
-// Generates a deterministic fake phone from the listing UUID so each listing
-// always shows the same number across sessions.
 function fakePhone(id) {
   const n = parseInt((id || "0").replace(/-/g, "").slice(0, 8), 16);
   const a = (n % 900) + 100;
@@ -42,7 +45,6 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
   const saved                           = isFavorite(listing.id);
   const [showModal, setShowModal]       = useState(false);
 
-  // stopPropagation() prevents the click from reaching the <Link> parent
   function handleFav(e) {
     e.stopPropagation();
     if (!user) return;
@@ -54,9 +56,9 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
     setShowModal(true);
   }
 
-  const imageUrl = listing.image_url || "https://placehold.co/320x200?text=No+Image";
+  const imageUrl  = listing.image_url || "https://placehold.co/320x200?text=No+Image";
   const amenities = listing.amenities?.slice(0, 3) ?? [];
-  const phone = fakePhone(listing.id);
+  const phone     = fakePhone(listing.id);
 
   return (
     <>
@@ -64,33 +66,43 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
         to={`/listings/${listing.id}`}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        className={`flex bg-white rounded-xl border overflow-hidden shadow-sm
+        className={`flex flex-col sm:flex-row bg-white rounded-xl border overflow-hidden shadow-sm
                     hover:shadow-md transition-all duration-150 group
                     ${isActive ? "border-[#1A73E8] shadow-md" : "border-[#E0E0E0]"}`}
+        {/*
+          flex-col:    mobile — image on top, content below (vertical card)
+          sm:flex-row: tablet+ — image on the left, content on the right (horizontal card)
+        */}
       >
-        {/* ── Image — fixed width, full card height ───────────────────── */}
-        <div className="relative w-48 shrink-0 overflow-hidden">
+
+        {/* ── Image ─────────────────────────────────────────────────────── */}
+        {/*
+          Mobile:  w-full + h-48 = full-width image with fixed 192px height on top.
+          sm+:     w-48 + h-auto = 192px-wide column, fills the card height.
+          shrink-0 prevents the image from compressing on desktop.
+        */}
+        <div className="relative w-full h-48 sm:w-48 sm:h-auto shrink-0 overflow-hidden">
           <img
             src={imageUrl}
             alt={listing.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          {/* State abbreviation badge */}
+          {/* State badge */}
           <span className="absolute top-2 left-2 bg-[#1A73E8] text-white text-xs font-semibold px-2 py-0.5 rounded-full">
             {listing.state === "California" ? "CA" : listing.state === "Florida" ? "FL" : listing.state}
           </span>
-          {/* Favorite heart — stopPropagation prevents Link navigation */}
+          {/* Favorite button — min 44px tap target */}
           <button
             onClick={handleFav}
             aria-label={saved ? "Remove from favorites" : "Save to favorites"}
-            className={`absolute top-2 right-2 p-1.5 rounded-full shadow transition-colors
+            className={`absolute top-2 right-2 p-2 rounded-full shadow transition-colors
               ${saved ? "bg-red-500 text-white" : "bg-white/90 text-[#5F6368] hover:text-red-500"}`}
           >
             <HeartIcon filled={saved} />
           </button>
         </div>
 
-        {/* ── Content column ───────────────────────────────────────────── */}
+        {/* ── Content column ─────────────────────────────────────────────── */}
         <div className="flex flex-col flex-1 p-4 min-w-0">
 
           {/* Title + price header */}
@@ -109,7 +121,7 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
             {listing.address}, {listing.city}, {listing.state} {listing.zip}
           </p>
 
-          {/* Beds / Baths / Sqft row */}
+          {/* Beds / Baths / Sqft */}
           <div className="flex items-center gap-2 text-xs text-[#5F6368] mb-2">
             <span className="flex items-center gap-1"><BedIcon />{listing.bedrooms ?? "—"} bd</span>
             <span className="text-[#E0E0E0]">|</span>
@@ -118,12 +130,12 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
             <span className="flex items-center gap-1"><SqftIcon />{listing.sqft?.toLocaleString() ?? "—"} sqft</span>
           </div>
 
-          {/* Phone number */}
+          {/* Phone */}
           <p className="flex items-center gap-1.5 text-xs text-[#1A73E8] font-medium mb-2">
             <PhoneIcon />{phone}
           </p>
 
-          {/* Top 3 amenity tags */}
+          {/* Amenity tags */}
           {amenities.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
               {amenities.map(tag => (
@@ -134,19 +146,18 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
             </div>
           )}
 
-          {/* Send Message button — mt-auto pushes it to the bottom of the card */}
+          {/* Send Message — min-h-[44px] for touch target */}
           <button
             onClick={handleSendMessage}
             className="mt-auto w-full bg-[#1A73E8] hover:bg-blue-700
-                       text-white font-semibold py-2 rounded-lg
-                       transition-colors text-sm"
+                       text-white font-semibold py-2.5 rounded-lg
+                       transition-colors text-sm min-h-[44px]"
           >
             Send Message
           </button>
         </div>
       </Link>
 
-      {/* Modal lives outside the Link so its fixed positioning works correctly */}
       <SendMessageModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
