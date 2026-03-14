@@ -245,9 +245,16 @@ export default function Listings({ stateFilter }) {
                 </div>
               ))
             ) : pagedListings.length === 0 ? (
-              <div className="text-center py-20 text-[#5F6368]">
-                <p className="text-xl font-semibold">No listings found</p>
-                <p className="text-sm mt-2">Try adjusting your filters.</p>
+              <div className="text-center py-20">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"
+                  className="text-gray-300 mx-auto mb-4">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <p className="text-lg font-semibold text-[#202124]">No apartments found</p>
+                <p className="text-sm text-[#5F6368] mt-2">
+                  Try adjusting your filters or searching in a different city.
+                </p>
               </div>
             ) : (
               pagedListings.map(l => (

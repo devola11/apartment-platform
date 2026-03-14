@@ -13,7 +13,7 @@
 //  Using `md:` means: "apply this style at 768px and above".
 //  Everything without a prefix is the mobile-first (375px) default.
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
@@ -41,6 +41,13 @@ export default function Navbar() {
   const { user, signOut } = useAuth();
   const navigate           = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() { setScrolled(window.scrollY > 4); }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   async function handleSignOut() {
     await signOut();
@@ -63,7 +70,7 @@ export default function Navbar() {
     }`;
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav className={`bg-white border-b border-gray-200 sticky top-0 z-50 transition-shadow duration-200 ${scrolled ? "shadow-md" : ""}`}>
       {/* ── Main bar ─────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
 
@@ -151,7 +158,7 @@ export default function Navbar() {
           somehow stays true (e.g. window resize).
           Shadow gives depth so it feels like an overlay above the content. */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-xl">
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-xl animate-slideDown">
 
           {/* Navigation links — full-width rows with 44px+ tap targets */}
           <NavLink to="/listings"            className={mobileLinkClass} onClick={() => setMenuOpen(false)}>Search</NavLink>

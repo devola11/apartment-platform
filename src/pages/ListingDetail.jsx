@@ -51,13 +51,40 @@ function PinIcon()   { return <svg width="14" height="14" viewBox="0 0 24 24" fi
 function BedIcon()   { return <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>; }
 function BathIcon()  { return <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22 9V7h-2V5a3 3 0 0 0-3-3H4a3 3 0 0 0-3 3v11a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-2h-4V9h4zm-4 7H4V5h11v4h3v7z"/></svg>; }
 function SqftIcon()  { return <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>; }
-function CheckIcon() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A73E8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>; }
 function PhoneIcon() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>; }
 function ChevronIcon() { return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>; }
 function HeartIcon({ filled }) {
   return filled
     ? <svg width="18" height="18" viewBox="0 0 24 24" fill="#EF4444"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
     : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F6368" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
+}
+
+// Amenity icons — matched by keyword in amenity name
+const AMENITY_ICONS = {
+  pool:        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 12c1.1 0 1.5-.5 2.5-.5S6.4 12 7.5 12s1.5-.5 2.5-.5 1.5.5 2.5.5 1.5-.5 2.5-.5 1.5.5 2.5.5v2c-1.1 0-1.5-.5-2.5-.5s-1.5.5-2.5.5-1.5-.5-2.5-.5-1.5.5-2.5.5-1.5-.5-2.5-.5S3.1 14 2 14v-2zm0 4c1.1 0 1.5-.5 2.5-.5s1.5.5 2.5.5 1.5-.5 2.5-.5 1.5.5 2.5.5 1.5-.5 2.5-.5 1.5.5 2.5.5v2c-1.1 0-1.5-.5-2.5-.5s-1.5.5-2.5.5-1.5-.5-2.5-.5-1.5.5-2.5.5-1.5-.5-2.5-.5S3.1 20 2 20v-4zM15.5 4.5c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm5.5 7h-4V8.5c0-1.1-.9-2-2-2s-2 .9-2 2V14H11V8c0-2.2 1.8-4 4-4 .7 0 1.3.2 1.9.5L21 8v3.5z"/></svg>,
+  gym:         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>,
+  parking:     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3H6v18h4v-6h3c3.31 0 6-2.69 6-6s-2.69-6-6-6zm.2 8H10V7h3.2c1.1 0 2 .9 2 2s-.9 2-2 2z"/></svg>,
+  pet:         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 11c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1-5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm3 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.5 1.5c-2.33 0-7 1.17-7 3.5V18h14v-2c0-2.33-4.67-3.5-7-3.5z"/></svg>,
+  ac:          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22z"/></svg>,
+  laundry:     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.17 16.83a4 4 0 0 0 5.66 0 4 4 0 0 0 0-5.66l-5.66 5.66zM18 2.01L6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-1.99-2-1.99zM10 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM7 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>,
+  wifi:        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>,
+  balcony:     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z"/></svg>,
+  doorman:     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5h2c0 1.66 1.34 3 3 3s3-1.34 3-3h2zm-5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>,
+  elevator:    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l-4 4h3v3h2V8h3L7 4zm10 12h-3v-3h-2v3H9l4 4 4-4zM3 20h18v2H3zM3 2h18v2H3z"/></svg>,
+  concierge:   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>,
+  rooftop:     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>,
+  storage:     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.35C18 2.53 15.47 1 12 1S6 2.53 6 4.65c0 .47.1.91.18 1.35H4c-1.11 0-2 .89-2 2v13c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-8-3c1.96 0 4 .56 4 1.65 0 1.08-2.04 1.95-4 1.95S8 5.73 8 4.65C8 3.56 10.04 3 12 3z"/></svg>,
+  security:    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>,
+  dishwasher:  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2.01L6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-1.99-2-1.99zM10 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM7 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>,
+  default:     <svg viewBox="0 0 24 24" fill="none" stroke="#1A73E8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>,
+};
+
+function getAmenityIcon(amenity) {
+  const lower = amenity.toLowerCase();
+  for (const [key, icon] of Object.entries(AMENITY_ICONS)) {
+    if (key !== "default" && lower.includes(key)) return icon;
+  }
+  return AMENITY_ICONS.default;
 }
 
 export default function ListingDetail() {
@@ -198,12 +225,13 @@ export default function ListingDetail() {
         </div>
 
         {/* Full breadcrumb — tablet/desktop only */}
-        <nav className="hidden md:flex items-center gap-1.5 text-xs text-[#5F6368] py-4 flex-wrap">
-          <Link to="/" className="hover:text-[#1A73E8]">Home</Link>
+        <nav aria-label="Breadcrumb"
+          className="hidden md:flex items-center gap-1.5 text-xs text-[#5F6368] py-4 flex-wrap">
+          <Link to="/" className="hover:text-[#1A73E8] transition-colors">Home</Link>
           <ChevronIcon />
-          <Link to={`/listings/${stateSlug}`} className="hover:text-[#1A73E8]">{listing.state}</Link>
+          <Link to="/listings" className="hover:text-[#1A73E8] transition-colors">Rentals</Link>
           <ChevronIcon />
-          <span className="text-[#5F6368]">{listing.city}</span>
+          <Link to={`/listings/${stateSlug}`} className="hover:text-[#1A73E8] transition-colors">{listing.state}</Link>
           <ChevronIcon />
           <span className="text-[#202124] font-medium truncate max-w-[200px]">{listing.title}</span>
         </nav>
@@ -234,7 +262,8 @@ export default function ListingDetail() {
             */}
             <img
               src={imageUrl}
-              alt={listing.title}
+              alt={`${listing.title} — main photo`}
+              loading="eager"
               className="w-full aspect-[4/3] md:aspect-auto md:h-[420px] object-cover"
             />
 
@@ -263,11 +292,12 @@ export default function ListingDetail() {
           {/* 2×2 Thumbnail grid — hidden on mobile, visible on md+; takes the remaining 35% */}
           <div className="hidden md:grid grid-cols-2 grid-rows-2 gap-2 md:flex-1">
             {[0, 1, 2, 3].map(i => (
-              <div key={i} className="relative overflow-hidden">
+              <div key={i} className="relative overflow-hidden group/thumb">
                 <img
                   src={imageUrl}
-                  alt={`${listing.title} photo ${i + 1}`}
-                  className="w-full h-[205px] object-cover"
+                  alt={`${listing.title} — photo ${i + 1}`}
+                  loading="lazy"
+                  className="w-full h-[205px] object-cover group-hover/thumb:scale-105 transition-transform duration-300"
                 />
                 {i === 3 && (
                   <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
@@ -370,11 +400,14 @@ export default function ListingDetail() {
             {listing.amenities?.length > 0 && (
               <section className="mb-8">
                 <h2 className="text-lg font-bold text-[#202124] mb-4">Amenities &amp; Features</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-3 gap-x-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {listing.amenities.map(a => (
-                    <div key={a} className="flex items-center gap-2 text-sm text-[#202124]">
-                      <CheckIcon />
-                      <span>{a}</span>
+                    <div key={a} className="flex items-center gap-2.5 bg-white border border-[#E0E0E0]
+                                             rounded-xl px-3 py-2.5 text-sm text-[#202124]">
+                      <span className="w-5 h-5 text-[#1A73E8] shrink-0 [&>svg]:w-full [&>svg]:h-full">
+                        {getAmenityIcon(a)}
+                      </span>
+                      <span className="leading-tight">{a}</span>
                     </div>
                   ))}
                 </div>
@@ -419,7 +452,7 @@ export default function ListingDetail() {
             This keeps the contact card visible as the user reads long descriptions.
             On mobile, sticky is removed (the card just sits at the bottom of content).
           */}
-          <div className="w-full lg:w-[37%] lg:sticky lg:top-20 shrink-0">
+          <div className="w-full lg:w-[37%] lg:sticky lg:top-24 lg:self-start shrink-0">
             <div className="bg-white rounded-xl border border-[#E0E0E0] shadow-lg p-5 sm:p-6">
 
               <h3 className="font-bold text-[#202124] text-base leading-snug mb-1 line-clamp-2">

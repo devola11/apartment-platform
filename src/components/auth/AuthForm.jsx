@@ -1,24 +1,8 @@
 // src/components/auth/AuthForm.jsx
-// ------------------------------------------------------------------
-// Shared form used by both /login and /register.
-// The `mode` prop ("login" | "register") switches which fields appear
-// and what happens on submit.
-//
-// KEY CONCEPTS:
-//  - Controlled inputs: `value` + `onChange` keep React state in sync
-//    with what the user types. React is always the "source of truth".
-//  - show/hide password: we toggle `type="password"` ↔ `type="text"`.
-//  - user_metadata: Supabase lets you attach arbitrary JSON to each user
-//    at signup via `options.data`. We store full_name + role there so we
-//    can display the name in the Navbar and gate landlord features.
-//  - setTimeout redirect: after signup we show a success message for 2s
-//    then push the user to /login automatically.
-// ------------------------------------------------------------------
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
-// ── Inline eye icons for the show/hide password toggle ───────────
 function EyeIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -40,55 +24,89 @@ function EyeOffIcon() {
   );
 }
 
+function Spinner() {
+  return (
+    <svg className="animate-spin h-4 w-4 mr-2 inline" viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+  );
+}
+
+function isValidEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+
 export default function AuthForm({ mode = "login" }) {
   const { signIn, signUp } = useAuth();
   const navigate            = useNavigate();
   const location            = useLocation();
 
-  // After login, go back to the page they were trying to reach, or homepage
   const from = location.state?.from?.pathname ?? "/";
 
-  // ── Controlled form state ────────────────────────────────────────
   const [fullName,     setFullName]     = useState("");
   const [email,        setEmail]        = useState("");
   const [password,     setPassword]     = useState("");
-  const [role,         setRole]         = useState("renter");  // "renter" | "landlord"
+  const [role,         setRole]         = useState("renter");
   const [showPassword, setShowPassword] = useState(false);
 
-  // ── UI state ────────────────────────────────────────────────────
+  // Track which fields have been touched for inline validation
+  const [touched, setTouched] = useState({ fullName: false, email: false, password: false });
+
   const [error,   setError]   = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const isRegister = mode === "register";
+
+  // Inline validation errors (only shown after field blur)
+  const fieldErrors = {
+    fullName: touched.fullName && isRegister && !fullName.trim()
+      ? "Full name is required."
+      : "",
+    email: touched.email && !email.trim()
+      ? "Email is required."
+      : touched.email && !isValidEmail(email)
+      ? "Please enter a valid email address."
+      : "",
+    password: touched.password && !password
+      ? "Password is required."
+      : touched.password && password.length < 6
+      ? "Password must be at least 6 characters."
+      : "",
+  };
+
+  function blur(field) {
+    setTouched(prev => ({ ...prev, [field]: true }));
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
+    // Mark all fields touched so errors show
+    setTouched({ fullName: true, email: true, password: true });
+
+    if (fieldErrors.email || fieldErrors.password || (isRegister && fieldErrors.fullName)) return;
+
     setError("");
     setSuccess("");
     setLoading(true);
 
-    if (mode === "register") {
-      // Pass fullName and role as the 3rd and 4th args — see AuthContext.jsx
+    if (isRegister) {
       const { error: authError } = await signUp(email, password, fullName, role);
       setLoading(false);
-
       if (authError) {
         setError(authError.message);
       } else {
-        // Show confirmation message, then navigate to /login after 2.5s
         setSuccess("Check your email to confirm your account.");
         setTimeout(() => navigate("/login"), 2500);
       }
     } else {
-      // signIn returns { data: { user, session }, error }
       const { data, error: authError } = await signIn(email, password);
       setLoading(false);
-
       if (authError) {
         setError(authError.message);
       } else {
-        // Check the user's role stored in user_metadata.
-        // Landlords go to their dashboard; everyone else goes back to where
-        // they came from (or the homepage if they navigated directly to /login).
         const userRole = data?.user?.user_metadata?.role;
         if (userRole === "landlord") {
           navigate("/dashboard", { replace: true });
@@ -99,31 +117,37 @@ export default function AuthForm({ mode = "login" }) {
     }
   }
 
-  const isRegister = mode === "register";
+  const inputBase = "w-full border rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:border-transparent placeholder:text-gray-400 min-h-[44px] transition-colors";
+  const inputNormal = `${inputBase} border-gray-300 focus:ring-[#1A73E8]`;
+  const inputError  = `${inputBase} border-red-400 focus:ring-red-400 bg-red-50`;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full">
+    <form onSubmit={handleSubmit} noValidate className="space-y-4 w-full">
 
-      {/* ── Error banner ─────────────────────────────────────────── */}
+      {/* Server error banner */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg flex items-start gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-red-500 shrink-0 mt-0.5">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
           {error}
         </div>
       )}
 
-      {/* ── Success banner (shown after signup) ──────────────────── */}
+      {/* Success banner */}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg">
+        <div className="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg flex items-start gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-green-500 shrink-0 mt-0.5">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
           {success} Redirecting to login…
         </div>
       )}
 
-      {/* ── Full Name — only shown on register ───────────────────── */}
+      {/* Full Name — register only */}
       {isRegister && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
           <input
             type="text"
             required
@@ -131,19 +155,18 @@ export default function AuthForm({ mode = "login" }) {
             placeholder="Jane Smith"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base
-                       focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                       placeholder:text-gray-400 min-h-[44px]"
+            onBlur={() => blur("fullName")}
+            className={fieldErrors.fullName ? inputError : inputNormal}
           />
+          {fieldErrors.fullName && (
+            <p className="text-xs text-red-500 mt-1">{fieldErrors.fullName}</p>
+          )}
         </div>
       )}
 
-      {/* ── Email ────────────────────────────────────────────────── */}
-      {/* text-base (16px) prevents iOS Safari from auto-zooming on input focus */}
+      {/* Email */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Email
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
         <input
           type="email"
           required
@@ -151,20 +174,17 @@ export default function AuthForm({ mode = "login" }) {
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base
-                     focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                     placeholder:text-gray-400 min-h-[44px]"
+          onBlur={() => blur("email")}
+          className={fieldErrors.email ? inputError : inputNormal}
         />
+        {fieldErrors.email && (
+          <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
+        )}
       </div>
 
-      {/* ── Password with show/hide toggle ───────────────────────── */}
-      {/* The toggle button is absolutely positioned inside a relative wrapper.
-          Clicking the eye icon flips `showPassword`, which changes the input
-          `type` between "password" (masked) and "text" (visible). */}
+      {/* Password with show/hide toggle */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Password
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
         <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
@@ -174,11 +194,9 @@ export default function AuthForm({ mode = "login" }) {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 pr-10 text-base
-                       focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                       placeholder:text-gray-400 min-h-[44px]"
+            onBlur={() => blur("password")}
+            className={`${fieldErrors.password ? inputError : inputNormal} pr-10`}
           />
-          {/* type="button" prevents it from accidentally submitting the form */}
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
@@ -189,21 +207,20 @@ export default function AuthForm({ mode = "login" }) {
             {showPassword ? <EyeOffIcon /> : <EyeIcon />}
           </button>
         </div>
+        {fieldErrors.password && (
+          <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>
+        )}
       </div>
 
-      {/* ── Role dropdown — only shown on register ───────────────── */}
-      {/* We store this in user_metadata at signup so we can use it
-          for role-based redirects and feature gating later. */}
+      {/* Role — register only */}
       {isRegister && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            I am a…
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">I am a…</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base
-                       focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+                       focus:outline-none focus:ring-2 focus:ring-[#1A73E8] focus:border-transparent
                        bg-white text-gray-800 min-h-[44px]"
           >
             <option value="renter">Renter — looking for a place</option>
@@ -212,16 +229,18 @@ export default function AuthForm({ mode = "login" }) {
         </div>
       )}
 
-      {/* ── Submit button ─────────────────────────────────────────── */}
+      {/* Submit */}
       <button
         type="submit"
         disabled={loading || !!success}
         className="w-full bg-[#1A73E8] text-white py-3 rounded-lg font-semibold
                    hover:bg-[#1557b0] transition-colors duration-150
-                   disabled:opacity-50 disabled:cursor-not-allowed text-sm mt-2 min-h-[44px]"
+                   disabled:opacity-50 disabled:cursor-not-allowed text-sm mt-2 min-h-[44px]
+                   flex items-center justify-center"
       >
+        {loading && <Spinner />}
         {loading
-          ? "Please wait…"
+          ? (isRegister ? "Creating account…" : "Signing in…")
           : isRegister
           ? "Sign Up"
           : "Log In"}

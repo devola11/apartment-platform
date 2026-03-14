@@ -19,6 +19,7 @@ import { FavoritesProvider } from "./context/FavoritesContext";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 // Pages
 import Home from "./pages/Home";
@@ -41,6 +42,7 @@ export default function App() {
       <FavoritesProvider>
         {/* flex flex-col min-h-screen makes the footer stick to the bottom */}
         <div className="flex flex-col min-h-screen">
+          <ScrollToTop />
           <Navbar />
 
           {/* flex-1 makes this area take up all remaining vertical space */}

@@ -1,19 +1,19 @@
 // src/pages/Home.jsx
-//
-// RESPONSIVE CHANGES:
-//  Hero height:   min-h-[400px] on mobile → min-h-[580px] on md+
-//  Hero heading:  text-3xl (mobile) → text-5xl (md) → text-7xl (lg)
-//  Search bar:    flex-col on mobile (stacked) → flex-row on sm+ (pill)
-//                 Input is full width on both sizes.
-//                 Button is full width below input on mobile, inline on sm+.
-//  Listing grid:  Handled by ListingGrid — 1 col mobile, 2 tablet, 3 desktop.
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useListings } from "../hooks/useListings";
 import ListingGrid from "../components/listings/ListingGrid";
 import ListingsMap from "../components/maps/ListingsMap";
 import SEO from "../components/common/SEO";
+
+const CITIES = [
+  { name: "Los Angeles",  state: "California", count: 12, img: "https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?auto=format&fit=crop&w=600&q=70" },
+  { name: "Miami",        state: "Florida",    count: 10, img: "https://images.unsplash.com/photo-1503891450247-ee5f8ec46dc3?auto=format&fit=crop&w=600&q=70" },
+  { name: "San Francisco",state: "California", count: 8,  img: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=600&q=70" },
+  { name: "Tampa",        state: "Florida",    count: 7,  img: "https://images.unsplash.com/photo-1575517111478-7f6afd0973db?auto=format&fit=crop&w=600&q=70" },
+  { name: "San Diego",    state: "California", count: 8,  img: "https://images.unsplash.com/photo-1538964173425-93884d739596?auto=format&fit=crop&w=600&q=70" },
+  { name: "Orlando",      state: "Florida",    count: 6,  img: "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?auto=format&fit=crop&w=600&q=70" },
+];
 
 const HOME_JSON_LD = {
   "@context": "https://schema.org",
@@ -70,6 +70,8 @@ export default function Home() {
             backgroundImage:
               "url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80')",
           }}
+          role="img"
+          aria-label="Modern apartment building exterior"
         />
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/20" />
@@ -132,12 +134,9 @@ export default function Home() {
             <button
               type="submit"
               className="w-full sm:w-auto rounded-xl sm:rounded-full text-white font-bold
-                         px-8 py-4 sm:px-10 sm:py-4 sm:mr-1
-                         text-base whitespace-nowrap transition-colors duration-150
-                         min-h-[44px]"
-              style={{ backgroundColor: "#1A73E8" }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#1669D3")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1A73E8")}
+                         px-6 py-2.5 sm:px-10 sm:py-4 sm:mr-1
+                         text-sm sm:text-lg whitespace-nowrap transition-colors duration-150
+                         min-h-[44px] bg-[#1A73E8] hover:bg-[#1669D3]"
             >
               Search
             </button>
@@ -182,12 +181,36 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Browse by City ──────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 pb-10 md:pb-14">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-[#202124]">Browse by City</h2>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+          {CITIES.map(({ name, state, count, img }) => (
+            <Link
+              key={name}
+              to={`/listings?q=${encodeURIComponent(name)}`}
+              className="group relative rounded-xl overflow-hidden shadow-sm border border-gray-200
+                         hover:shadow-md transition-shadow duration-200 aspect-[4/3]"
+            >
+              <img
+                src={img}
+                alt={`${name} apartments`}
+                loading="lazy"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-3">
+                <p className="text-white font-bold text-sm leading-tight">{name}</p>
+                <p className="text-white/80 text-xs">{count} listings</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* ── Map preview ────────────────────────────────────────────────── */}
-      {/*
-        The map is decorative/supplemental on the homepage. On mobile it's
-        still visible but at a shorter height (h-[260px] vs h-[400px] on md+).
-        This saves vertical space without removing the feature entirely.
-      */}
       <section className="max-w-7xl mx-auto px-4 pb-12 md:pb-16">
         <h2 className="text-xl md:text-2xl font-bold text-[#202124] mb-6">Explore the Map</h2>
         <div className="rounded-2xl overflow-hidden shadow-md border border-gray-200">

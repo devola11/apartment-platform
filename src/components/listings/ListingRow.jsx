@@ -69,10 +69,6 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
         className={`flex flex-col sm:flex-row bg-white rounded-xl border overflow-hidden shadow-sm
                     hover:shadow-md transition-all duration-150 group
                     ${isActive ? "border-[#1A73E8] shadow-md" : "border-[#E0E0E0]"}`}
-        {/*
-          flex-col:    mobile — image on top, content below (vertical card)
-          sm:flex-row: tablet+ — image on the left, content on the right (horizontal card)
-        */}
       >
 
         {/* ── Image ─────────────────────────────────────────────────────── */}
@@ -84,7 +80,8 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
         <div className="relative w-full h-48 sm:w-48 sm:h-auto shrink-0 overflow-hidden">
           <img
             src={imageUrl}
-            alt={listing.title}
+            alt={`${listing.title} in ${listing.city}, ${listing.state}`}
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {/* State badge */}

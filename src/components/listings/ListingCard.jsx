@@ -116,7 +116,8 @@ export default function ListingCard({ listing }) {
         <div className="relative h-52 overflow-hidden shrink-0">
           <img
             src={imageUrl}
-            alt={listing.title}
+            alt={`${listing.title} in ${listing.city}, ${listing.state}`}
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
