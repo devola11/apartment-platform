@@ -268,7 +268,7 @@ export default function Footer() {
                         items-center justify-between gap-2 text-xs text-gray-500">
           <p>© {new Date().getFullYear()} AptGuide. All rights reserved.</p>
           <p>
-            AptGuide is a branch site of{" "}
+            AptGuide is powered by{" "}
             <a href={AG_URL} target="_blank" rel="noopener noreferrer"
               className="text-gray-400 hover:text-white underline transition-colors duration-150">
               ApartmentGuide.com
