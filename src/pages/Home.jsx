@@ -5,6 +5,7 @@ import { useListings } from "../hooks/useListings";
 import ListingGrid from "../components/listings/ListingGrid";
 import ListingsMap from "../components/maps/ListingsMap";
 import SEO from "../components/common/SEO";
+import CityAutocomplete from "../components/common/CityAutocomplete";
 
 const CITIES = [
   { name: "Los Angeles",  state: "California", count: 12, img: "https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?auto=format&fit=crop&w=600&q=70" },
@@ -94,16 +95,16 @@ export default function Home() {
                        sm:flex-row sm:items-center sm:gap-0
                        sm:bg-white sm:rounded-full sm:shadow-xl sm:p-1.5"
           >
-            {/* Input — own white card on mobile, transparent inside the pill on desktop */}
-            <input
-              type="text"
+            {/* Autocomplete input — own white card on mobile, transparent inside pill on desktop */}
+            <CityAutocomplete
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={setQuery}
               placeholder="City, neighborhood, or ZIP"
-              className="w-full text-[#202124] text-base placeholder-[#9AA0A6]
-                         focus:outline-none
-                         bg-white rounded-xl px-4 py-3 shadow-lg
-                         sm:flex-1 sm:bg-transparent sm:rounded-none sm:px-5 sm:py-2.5 sm:shadow-none"
+              wrapperClassName="sm:flex-1"
+              inputClassName="w-full text-[#202124] text-base placeholder-[#9AA0A6]
+                              focus:outline-none
+                              bg-white rounded-xl px-4 py-3 shadow-lg
+                              sm:bg-transparent sm:rounded-none sm:px-5 sm:py-2.5 sm:shadow-none"
             />
 
             {/* Button — full-width rounded-xl on mobile, compact pill inside container on desktop */}

@@ -17,6 +17,7 @@
 //   horizontal scroll. This is the pattern used by Zillow and Apartments.com.
 
 import { useState } from "react";
+import CityAutocomplete from "../common/CityAutocomplete";
 
 const PRICE_RANGES = [
   { label: "Any Price",       min: "",     max: ""     },
@@ -122,12 +123,12 @@ export default function FilterBar({ onFilter, stateFilter }) {
         {/* City / Zip */}
         <div className="flex flex-col gap-1">
           <label className="text-xs font-semibold text-[#5F6368] uppercase tracking-wide">City or Zip</label>
-          <input
-            type="text"
+          <CityAutocomplete
             value={city}
-            onChange={e => handleCity(e.target.value)}
+            onChange={handleCity}
             placeholder="e.g. Miami"
-            className={`${inputCls} ${wCity} min-h-[44px]`}
+            wrapperClassName={wCity}
+            inputClassName={`${inputCls} w-full min-h-[44px]`}
           />
         </div>
 
