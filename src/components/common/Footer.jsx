@@ -40,7 +40,7 @@ function InstagramIcon() {
 function AppStoreBadge() {
   return (
     <a
-      href={AG_URL}
+      href="https://apps.apple.com/us/app/apartment-guide-home-rentals/id292234839"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Download on the App Store"
@@ -114,7 +114,7 @@ function AppStoreBadge() {
 function GooglePlayBadge() {
   return (
     <a
-      href={AG_URL}
+      href="https://play.google.com/store/apps/details?id=com.primedia.apartmentguide"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Get it on Google Play"
