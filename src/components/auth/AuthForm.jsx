@@ -93,13 +93,41 @@ export default function AuthForm({ mode = "login" }) {
     setLoading(true);
 
     if (isRegister) {
-      const { error: authError } = await signUp(email, password, fullName, role);
-      setLoading(false);
+      const { data, error: authError } = await signUp(email, password, fullName, role);
+
       if (authError) {
+        setLoading(false);
         setError(authError.message);
+        return;
+      }
+
+      // ── Path A: email confirmation is DISABLED in the Supabase Dashboard ──
+      // signUp() returns a non-null session immediately, meaning the user is
+      // already authenticated. onAuthStateChange in AuthContext has already
+      // fired and set the user state. Just navigate home.
+      if (data.session) {
+        // No need to setLoading(false) — we're navigating away
+        navigate("/", { replace: true });
+        return;
+      }
+
+      // ── Path B: email confirmation is still ENABLED ────────────────────
+      // signUp() returned no session. Supabase sent a confirmation email.
+      // Try signing in immediately anyway — this will succeed only if
+      // Supabase auto-confirmed the account (e.g. a whitelisted domain).
+      const { error: signInError } = await signIn(email, password);
+      setLoading(false);
+
+      if (!signInError) {
+        // Supabase signed us in despite sending the email — navigate home.
+        navigate("/", { replace: true });
       } else {
-        setSuccess("Check your email to confirm your account.");
-        setTimeout(() => navigate("/login"), 2500);
+        // Email confirmation is genuinely required. Show the check-email
+        // message as a fallback so the user isn't left stranded.
+        // TO RE-ENABLE: turn "Enable email confirmations" back on in the
+        // Supabase Dashboard (Authentication → Settings).
+        setSuccess("Account created! Check your email to confirm, then log in.");
+        setTimeout(() => navigate("/login"), 3000);
       }
     } else {
       const { data, error: authError } = await signIn(email, password);
@@ -140,7 +168,7 @@ export default function AuthForm({ mode = "login" }) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-green-500 shrink-0 mt-0.5">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
           </svg>
-          {success} Redirecting to login…
+          {success}
         </div>
       )}
 

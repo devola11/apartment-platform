@@ -38,26 +38,34 @@ export function AuthProvider({ children }) {
 
   // Helper functions so components don't import supabase directly
   //
-  // signUp now accepts fullName and role so they're stored in user_metadata -
-  // a JSON object attached to every Supabase auth user. We read it later via
-  // user.user_metadata.full_name and user.user_metadata.role
+  // signUp stores fullName and role in user_metadata — a JSON object
+  // attached to every Supabase auth user. Read later via:
+  //   user.user_metadata.full_name
+  //   user.user_metadata.role
+  //
+  // ── EMAIL CONFIRMATION NOTE ──────────────────────────────────────────
+  // "autoconfirm" is NOT a Supabase JS client option. It is a server-side
+  // toggle only, found in:
+  //   Supabase Dashboard → Authentication → Settings
+  //     → "Enable email confirmations" (toggle OFF for dev)
+  //
+  // When that toggle is OFF:
+  //   signUp() returns { data: { user, session } } — session is non-null.
+  //   The user is immediately logged in. No email is sent.
+  //
+  // When that toggle is ON (re-enable for production):
+  //   signUp() returns { data: { user, session: null } } — no session yet.
+  //   A confirmation email is sent. AuthForm detects the null session and
+  //   shows a "check your email" fallback instead of crashing.
+  //
+  // emailRedirectTo is kept here so it works correctly once email
+  // confirmation is re-enabled in production without any code changes.
+  // ─────────────────────────────────────────────────────────────────────
   const signUp = (email, password, fullName, role) =>
     supabase.auth.signUp({
       email,
       password,
       options: {
-        // emailRedirectTo tells Supabase which URL to put in the confirmation
-        // email link. Without this, Supabase uses whatever "Site URL" is set
-        // in the Dashboard — which is often localhost:3000 (the default) even
-        // when you're running on :5173 or deploying to Vercel.
-        //
-        // window.location.origin resolves automatically:
-        //   dev:        http://localhost:5173
-        //   production: https://apartment-platform.vercel.app
-        //
-        // After the user clicks the link, Supabase redirects to:
-        //   <origin>/auth/callback#access_token=...&type=signup
-        // Our AuthCallback page (src/pages/AuthCallback.jsx) handles that URL.
         emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: {
           full_name: fullName,
