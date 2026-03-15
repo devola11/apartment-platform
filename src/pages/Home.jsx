@@ -1,11 +1,12 @@
 // src/pages/Home.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useListings } from "../hooks/useListings";
 import ListingGrid from "../components/listings/ListingGrid";
 import ListingsMap from "../components/maps/ListingsMap";
 import SEO from "../components/common/SEO";
 import CityAutocomplete from "../components/common/CityAutocomplete";
+import WelcomeBanner from "../components/common/WelcomeBanner";
 
 const CITIES = [
   { name: "Los Angeles",   state: "California", count: 12, img: "https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?auto=format&fit=crop&w=600&q=70" },
@@ -66,9 +67,57 @@ const HOME_JSON_LD = {
   },
 };
 
+// Onboarding steps shown below the trust bar after a fresh signup.
+// Three cards describing the core features, with a dismiss button.
+const ONBOARDING_STEPS = [
+  {
+    label: "Search apartments",
+    desc:  "Filter by city, price, bedrooms, and amenities to find exactly what you need.",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+    ),
+  },
+  {
+    label: "Save your favorites",
+    desc:  "Tap the heart icon on any listing to save it and compare later from your profile.",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Contact landlords",
+    desc:  "Send a message directly from any listing page to ask questions or schedule a tour.",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    ),
+  },
+];
+
 export default function Home() {
   const { listings, loading, error } = useListings({ limit: 6 });
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const location  = useLocation();
+
+  // ── Welcome state ─────────────────────────────────────────────────────────
+  // location.state is set by AuthForm's navigate("/", { state: { welcome, firstName } })
+  // call. It lives on exactly one history entry, so it's gone on refresh or
+  // when the user navigates away — "show only once" with zero storage.
+  const isWelcome = !!location.state?.welcome;
+  const firstName = location.state?.firstName ?? "";
+
+  // Each UI piece has its own visibility toggle so they can be dismissed
+  // independently (closing the banner doesn't close the onboarding section).
+  const [showBanner,     setShowBanner]     = useState(isWelcome);
+  const [showOnboarding, setShowOnboarding] = useState(isWelcome);
 
   const [query, setQuery] = useState("");
 
@@ -81,6 +130,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F8F9FA" }}>
+
+      {/* Welcome banner — only shown on the first render after signup */}
+      {showBanner && (
+        <WelcomeBanner
+          firstName={firstName}
+          onDismiss={() => setShowBanner(false)}
+        />
+      )}
+
       <SEO
         title="Apartments for Rent in California & Florida"
         description="Browse 50+ verified apartments for rent across California and Florida. Filter by city, price, and bedrooms. Find your perfect home with AptGuide."
@@ -161,6 +219,72 @@ export default function Home() {
           <span>Updated Daily</span>
         </div>
       </div>
+
+      {/* ── Onboarding section — only shown on first visit after signup ── */}
+      {showOnboarding && (
+        <section className="bg-[#EBF3FD] border-b border-blue-100 animate-fadeIn">
+          <div className="max-w-7xl mx-auto px-4 py-7">
+
+            {/* Header row */}
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <h2 className="text-base font-bold text-[#202124]">
+                  Get started — here&apos;s what you can do
+                </h2>
+                <p className="text-xs text-[#5F6368] mt-0.5">
+                  Three things to try right now
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowOnboarding(false)}
+                aria-label="Dismiss getting started section"
+                className="shrink-0 p-1.5 rounded-full text-[#5F6368]
+                           hover:bg-blue-100 transition-colors duration-150 mt-0.5"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6"  y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Three feature cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {ONBOARDING_STEPS.map(({ label, desc, icon }) => (
+                <div
+                  key={label}
+                  className="bg-white rounded-xl border border-blue-100
+                             px-5 py-4 flex items-start gap-4 shadow-sm"
+                >
+                  {/* Icon circle */}
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-[#EBF3FD]
+                                  flex items-center justify-center text-[#1A73E8]">
+                    {icon}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm text-[#202124]">{label}</p>
+                    <p className="text-xs text-[#5F6368] mt-0.5 leading-relaxed">{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA nudge */}
+            <div className="mt-4 text-center">
+              <Link
+                to="/listings"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold
+                           text-[#1A73E8] hover:underline transition-colors"
+              >
+                Browse all apartments →
+              </Link>
+            </div>
+
+          </div>
+        </section>
+      )}
 
       {/* ── Popular Cities ─────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 pt-10 pb-4 md:pt-14 md:pb-6">

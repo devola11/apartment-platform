@@ -101,26 +101,34 @@ export default function AuthForm({ mode = "login" }) {
         return;
       }
 
+      // Extract first name from the full name field so we can personalise
+      // the welcome banner (e.g. "Jane Smith" → "Jane").
+      const firstName = fullName.trim().split(" ")[0];
+
       // ── Path A: email confirmation is DISABLED in the Supabase Dashboard ──
       // signUp() returns a non-null session immediately, meaning the user is
       // already authenticated. onAuthStateChange in AuthContext has already
-      // fired and set the user state. Just navigate home.
+      // fired and set the user state. Navigate home and pass welcome state
+      // so Home.jsx knows to show the banner + onboarding section.
       if (data.session) {
-        // No need to setLoading(false) — we're navigating away
-        navigate("/", { replace: true });
+        navigate("/", {
+          replace: true,
+          state: { welcome: true, firstName },
+        });
         return;
       }
 
       // ── Path B: email confirmation is still ENABLED ────────────────────
-      // signUp() returned no session. Supabase sent a confirmation email.
-      // Try signing in immediately anyway — this will succeed only if
-      // Supabase auto-confirmed the account (e.g. a whitelisted domain).
+      // signUp() returned no session. Try signing in immediately anyway.
       const { error: signInError } = await signIn(email, password);
       setLoading(false);
 
       if (!signInError) {
-        // Supabase signed us in despite sending the email — navigate home.
-        navigate("/", { replace: true });
+        // Signed in successfully — show the welcome experience.
+        navigate("/", {
+          replace: true,
+          state: { welcome: true, firstName },
+        });
       } else {
         // Email confirmation is genuinely required. Show the check-email
         // message as a fallback so the user isn't left stranded.
