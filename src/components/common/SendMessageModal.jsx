@@ -139,7 +139,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-8"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 px-4 py-8"
     >
       {/* White modal card */}
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -149,6 +149,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
         <div className="sticky top-0 bg-white flex items-center justify-between px-6 py-4 border-b border-[#E0E0E0] rounded-t-2xl z-10">
           <h2 className="font-bold text-lg text-[#202124]">Send Message</h2>
           <button
+            type="button"
             onClick={onClose}
             aria-label="Close modal"
             className="text-[#5F6368] hover:text-[#202124] transition-colors p-1 rounded-full hover:bg-gray-100"

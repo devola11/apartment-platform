@@ -70,7 +70,7 @@ export default function Navbar() {
     }`;
 
   return (
-    <nav className={`bg-white border-b border-gray-200 sticky top-0 z-50 transition-shadow duration-200 ${scrolled ? "shadow-md" : ""}`}>
+    <nav className={`bg-white border-b border-gray-200 sticky top-0 z-[100] transition-shadow duration-200 ${scrolled ? "shadow-md" : ""}`}>
       {/* ── Main bar ─────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
 
@@ -114,6 +114,7 @@ export default function Navbar() {
                 {user.user_metadata?.full_name || user.email?.split("@")[0]}
               </span>
               <button
+                type="button"
                 onClick={handleSignOut}
                 className="hidden md:block text-sm font-medium text-[#5F6368] border border-gray-300 px-4 py-1.5 rounded-full hover:border-brand-600 hover:text-brand-600 transition-colors duration-150"
               >
@@ -141,6 +142,7 @@ export default function Navbar() {
           {/* w-10 h-10 = 40px × 40px, close to the 44px tap-target minimum.
               The -mr-1 nudges it flush with the right edge padding. */}
           <button
+            type="button"
             onClick={() => setMenuOpen(v => !v)}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
@@ -179,6 +181,7 @@ export default function Navbar() {
                 </p>
                 {/* py-3 = 12px top + 12px bottom + ~20px text ≈ 44px tap target */}
                 <button
+                  type="button"
                   onClick={handleSignOut}
                   className="w-full text-sm font-medium text-[#5F6368] border border-gray-300
                              px-4 py-3 rounded-full hover:border-brand-600 hover:text-brand-600

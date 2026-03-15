@@ -199,6 +199,7 @@ export default function Listings({ stateFilter }) {
                 Placed next to the filter button so both controls are in one row.
               */}
               <button
+                type="button"
                 onClick={() => setShowMobileMap(v => !v)}
                 className="md:hidden flex items-center gap-2 px-4 py-2.5 border border-[#E0E0E0]
                            rounded-lg bg-white text-sm font-medium text-[#202124]
@@ -281,6 +282,7 @@ export default function Listings({ stateFilter }) {
           {!loading && totalPages > 1 && (
             <div className="px-4 sm:px-5 pb-8 flex justify-center items-center gap-1 flex-wrap">
               <button
+                type="button"
                 onClick={() => goPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
                 className="px-3 py-2 text-sm rounded-lg border border-[#E0E0E0]
@@ -294,9 +296,10 @@ export default function Listings({ stateFilter }) {
                   <span key={`ellipsis-${i}`} className="px-2 text-[#5F6368]">…</span>
                 ) : (
                   <button
+                    type="button"
                     key={p}
                     onClick={() => goPage(p)}
-                    className={`w-10 h-10 text-sm rounded-lg border font-medium transition-colors ${
+                    className={`w-11 h-11 text-sm rounded-lg border font-medium transition-colors ${
                       p === currentPage
                         ? "bg-[#1A73E8] text-white border-[#1A73E8]"
                         : "border-[#E0E0E0] text-[#202124] hover:bg-gray-50"
@@ -307,6 +310,7 @@ export default function Listings({ stateFilter }) {
                 )
               )}
               <button
+                type="button"
                 onClick={() => goPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
                 className="px-3 py-2 text-sm rounded-lg border border-[#E0E0E0]

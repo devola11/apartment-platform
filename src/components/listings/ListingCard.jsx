@@ -143,6 +143,7 @@ export default function ListingCard({ listing }) {
             <div className="flex items-center gap-1 shrink-0">
               {/* Share button */}
               <button
+                type="button"
                 onClick={handleShare}
                 aria-label="Share listing"
                 className="p-1.5 rounded-full text-[#5F6368] hover:bg-gray-100 transition-colors"
@@ -152,6 +153,7 @@ export default function ListingCard({ listing }) {
 
               {/* Heart "Save" button - shows label text next to icon */}
               <button
+                type="button"
                 onClick={handleFavorite}
                 aria-label={saved ? "Remove from saved" : "Save listing"}
                 className={`flex items-center gap-1 px-2 py-1.5 rounded-full text-xs font-semibold transition-colors
@@ -212,6 +214,7 @@ export default function ListingCard({ listing }) {
               regardless of how much content is above it. */}
           {/* min-h-[44px] ensures the button meets the 44px touch-target spec on mobile */}
           <button
+            type="button"
             onClick={handleSendMessage}
             className="mt-auto w-full bg-[#1A73E8] hover:bg-blue-700
                        text-white font-semibold py-3 rounded-full

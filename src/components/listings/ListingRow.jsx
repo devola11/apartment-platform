@@ -16,7 +16,7 @@
 //  Below that (phones) the image would be too narrow and text would feel cramped.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import SendMessageModal from "../common/SendMessageModal";
@@ -42,12 +42,13 @@ function HeartIcon({ filled }) {
 export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLeave }) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { user }                        = useAuth();
+  const navigate                        = useNavigate();
   const saved                           = isFavorite(listing.id);
   const [showModal, setShowModal]       = useState(false);
 
   function handleFav(e) {
     e.stopPropagation();
-    if (!user) return;
+    if (!user) { navigate("/login"); return; }
     toggleFavorite(listing.id);
   }
 
@@ -90,6 +91,7 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
           </span>
           {/* Favorite button - min 44px tap target */}
           <button
+            type="button"
             onClick={handleFav}
             aria-label={saved ? "Remove from favorites" : "Save to favorites"}
             className={`absolute top-2 right-2 p-2 rounded-full shadow transition-colors
@@ -154,6 +156,7 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
 
           {/* Send Message - min-h-[44px] for touch target */}
           <button
+            type="button"
             onClick={handleSendMessage}
             className="mt-auto w-full bg-[#1A73E8] hover:bg-blue-700
                        text-white font-semibold py-2.5 rounded-lg

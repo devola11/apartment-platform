@@ -282,6 +282,7 @@ export default function ListingDetail() {
             {/* Favorite button overlay (logged-in users) */}
             {user && (
               <button
+                type="button"
                 onClick={() => toggleFavorite(listing.id)}
                 aria-label={saved ? "Remove from favorites" : "Save to favorites"}
                 className={`absolute top-4 right-4 p-2.5 rounded-full shadow-lg transition-colors
@@ -293,6 +294,7 @@ export default function ListingDetail() {
 
             {/* "View All Photos" button - shown on mobile where the grid is hidden */}
             <button
+              type="button"
               className="md:hidden absolute bottom-4 right-4 text-white text-xs font-semibold
                          bg-black/50 border border-white/60 px-3 py-2 rounded-lg
                          hover:bg-black/70 transition-colors min-h-[44px]"
@@ -313,7 +315,7 @@ export default function ListingDetail() {
                 />
                 {i === 3 && (
                   <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
-                    <button className="text-white text-xs font-semibold bg-black/30 border border-white/60 px-3 py-2 rounded-lg hover:bg-black/50 transition-colors">
+                    <button type="button" className="text-white text-xs font-semibold bg-black/30 border border-white/60 px-3 py-2 rounded-lg hover:bg-black/50 transition-colors">
                       View All Photos
                     </button>
                   </div>
@@ -492,6 +494,7 @@ export default function ListingDetail() {
                 </a>
                 {/* Copy Link */}
                 <button
+                  type="button"
                   onClick={handleCopyLink}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E0E0E0]
                              bg-white text-sm text-[#202124] hover:border-[#1A73E8] hover:text-[#1A73E8]
@@ -541,6 +544,7 @@ export default function ListingDetail() {
 
               {/* CTA buttons - min-h-[44px] for touch targets */}
               <button
+                type="button"
                 onClick={() => setShowModal(true)}
                 className="w-full bg-[#1A73E8] hover:bg-blue-700 text-white font-semibold
                            py-3 rounded-lg mb-3 transition-colors min-h-[44px]"
@@ -548,6 +552,7 @@ export default function ListingDetail() {
                 Request Info
               </button>
               <button
+                type="button"
                 onClick={() => setShowModal(true)}
                 className="w-full border-2 border-[#1A73E8] text-[#1A73E8] hover:bg-blue-50
                            font-semibold py-3 rounded-lg mb-2 transition-colors min-h-[44px]"

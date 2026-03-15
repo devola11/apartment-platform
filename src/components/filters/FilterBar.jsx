@@ -210,6 +210,7 @@ export default function FilterBar({ onFilter, stateFilter }) {
       */}
       <div className="flex items-center gap-3 md:hidden">
         <button
+          type="button"
           onClick={() => setPanelOpen(true)}
           className="flex items-center gap-2 px-4 py-2.5 border border-[#E0E0E0] rounded-lg
                      bg-white text-sm font-medium text-[#202124]
@@ -227,6 +228,7 @@ export default function FilterBar({ onFilter, stateFilter }) {
         {/* Show Reset inline next to the button when filters are active */}
         {activeCount > 0 && (
           <button
+            type="button"
             onClick={handleReset}
             className="text-sm text-[#1A73E8] underline min-h-[44px]"
           >
@@ -243,6 +245,7 @@ export default function FilterBar({ onFilter, stateFilter }) {
       <div className="hidden md:flex flex-wrap gap-3 items-end">
         {renderFilters(false)}
         <button
+          type="button"
           onClick={handleReset}
           className="text-sm text-[#5F6368] hover:text-[#1A73E8] underline self-end pb-2 ml-2"
         >
@@ -263,25 +266,27 @@ export default function FilterBar({ onFilter, stateFilter }) {
             cover the entire screen, overflow-y-auto for long filter lists
       */}
       {panelOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col justify-end md:hidden">
+        <div className="fixed inset-0 z-[120] flex flex-col justify-end md:hidden">
           {/* Backdrop - tap to dismiss */}
           <div
             className="absolute inset-0 bg-black/50"
             onClick={() => setPanelOpen(false)}
           />
 
-          {/* Panel */}
+          {/* Panel - flex column so only the middle content area scrolls.
+              This prevents overflow:hidden from clipping the autocomplete dropdown. */}
           <div className="relative bg-white rounded-t-2xl shadow-2xl
-                          max-h-[85vh] overflow-y-auto">
-            {/* Drag handle - visual affordance that this panel can be swiped */}
-            <div className="flex justify-center pt-3 pb-1">
+                          max-h-[85vh] flex flex-col">
+            {/* Drag handle */}
+            <div className="flex justify-center pt-3 pb-1 shrink-0">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
 
             {/* Panel header */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 shrink-0">
               <h3 className="font-bold text-[#202124] text-base">Filters</h3>
               <button
+                type="button"
                 onClick={() => setPanelOpen(false)}
                 aria-label="Close filters"
                 className="text-[#5F6368] p-1 hover:text-[#202124] transition-colors"
@@ -290,14 +295,15 @@ export default function FilterBar({ onFilter, stateFilter }) {
               </button>
             </div>
 
-            {/* Filter controls - stacked vertically with full-width inputs */}
-            <div className="px-5 py-4 space-y-5">
+            {/* Filter controls - this inner div scrolls; content above/below stays fixed */}
+            <div className="overflow-y-auto flex-1 px-5 py-4 space-y-5">
               {renderFilters(true)}
             </div>
 
             {/* Action buttons */}
-            <div className="px-5 pb-6 pt-2 flex gap-3 border-t border-gray-100">
+            <div className="px-5 pb-6 pt-2 flex gap-3 border-t border-gray-100 shrink-0">
               <button
+                type="button"
                 onClick={() => { handleReset(); }}
                 className="flex-1 border border-gray-300 py-3 rounded-xl text-sm
                            font-medium text-[#5F6368] hover:border-[#1A73E8]
@@ -306,6 +312,7 @@ export default function FilterBar({ onFilter, stateFilter }) {
                 Reset
               </button>
               <button
+                type="button"
                 onClick={() => setPanelOpen(false)}
                 className="flex-1 bg-[#1A73E8] text-white py-3 rounded-xl text-sm
                            font-semibold hover:bg-blue-700 transition-colors min-h-[44px]"

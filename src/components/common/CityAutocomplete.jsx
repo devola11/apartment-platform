@@ -117,7 +117,7 @@ export default function CityAutocomplete({
         <ul
           role="listbox"
           className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-gray-200
-                     rounded-xl shadow-lg z-50 overflow-hidden py-1"
+                     rounded-xl shadow-lg z-[150] overflow-hidden py-1"
         >
           {suggestions.map(({ city, state }) => (
             <li
@@ -125,7 +125,7 @@ export default function CityAutocomplete({
               role="option"
               // onMouseDown + preventDefault keeps input focused while registering the click
               onMouseDown={e => { e.preventDefault(); handleSelect({ city }); }}
-              className="flex items-center gap-2.5 px-4 py-2.5 text-sm
+              className="flex items-center gap-2.5 px-4 py-3 text-sm min-h-[44px]
                          text-[#202124] cursor-pointer
                          hover:bg-blue-50 hover:text-[#1A73E8]
                          transition-colors duration-100"
