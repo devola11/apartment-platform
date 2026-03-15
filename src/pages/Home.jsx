@@ -56,7 +56,7 @@ export default function Home() {
 
       {/* ── Hero ──────────────────────────────────────────────────────── */}
       {/*
-        min-h-[400px]: mobile hero is shorter (400px) — less wasted space on small screens.
+        min-h-[400px]: mobile hero is shorter (400px) - less wasted space on small screens.
         md:min-h-[580px]: tablet/desktop gets the full-height hero.
         Both use min-height so the content can grow if text wraps.
       */}
@@ -77,7 +77,7 @@ export default function Home() {
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/25" />
 
-        {/* Hero content — max-w-xl keeps search bar compact and centered */}
+        {/* Hero content - max-w-xl keeps search bar compact and centered */}
         <div className="relative z-10 w-full max-w-xl mx-auto text-center px-4 py-10 md:py-16">
 
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-tight mb-6 md:mb-8 drop-shadow-lg">
@@ -85,8 +85,8 @@ export default function Home() {
           </h1>
 
           {/*
-            DESKTOP (sm+): one unified white pill — input flex-1, button compact inside on the right.
-            MOBILE: two separate elements stacked — input is its own white rounded-xl card,
+            DESKTOP (sm+): one unified white pill - input flex-1, button compact inside on the right.
+            MOBILE: two separate elements stacked - input is its own white rounded-xl card,
                     button is full-width below it. The outer form has NO background on mobile.
           */}
           <form
@@ -95,7 +95,7 @@ export default function Home() {
                        sm:flex-row sm:items-center sm:gap-0
                        sm:bg-white sm:rounded-full sm:shadow-xl sm:p-1.5"
           >
-            {/* Autocomplete input — own white card on mobile, transparent inside pill on desktop */}
+            {/* Autocomplete input - own white card on mobile, transparent inside pill on desktop */}
             <CityAutocomplete
               value={query}
               onChange={setQuery}
@@ -107,7 +107,7 @@ export default function Home() {
                               sm:bg-transparent sm:rounded-none sm:px-5 sm:py-2.5 sm:shadow-none"
             />
 
-            {/* Button — full-width rounded-xl on mobile, compact pill inside container on desktop */}
+            {/* Button - full-width rounded-xl on mobile, compact pill inside container on desktop */}
             <button
               type="submit"
               className="w-full bg-[#1A73E8] hover:bg-[#1669D3] text-white font-semibold

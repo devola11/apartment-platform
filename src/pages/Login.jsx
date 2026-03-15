@@ -3,12 +3,12 @@
 // The /login route.
 //
 // Layout: full-screen #F8F9FA background (a very light warm gray,
-// just off-white — softer than pure white for large areas) with a
+// just off-white - softer than pure white for large areas) with a
 // centered white card.
 //
 // The card holds:
 //  1. Heading + subtext  (spec: "Welcome Back" / "Log in to manage…")
-//  2. <AuthForm mode="login"> — handles all logic and navigation
+//  2. <AuthForm mode="login"> - handles all logic and navigation
 //  3. "Don't have an account?" link to /register
 // ------------------------------------------------------------------
 import { Link } from "react-router-dom";

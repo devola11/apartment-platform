@@ -1,4 +1,4 @@
-// src/pages/Profile.jsx — Protected page (requires login)
+// src/pages/Profile.jsx - Protected page (requires login)
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import SEO from "../components/common/SEO";
@@ -19,7 +19,7 @@ export default function Profile() {
   const role      = user?.user_metadata?.role;
   const joinedAt  = user?.created_at
     ? new Date(user.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
-    : "—";
+    : "-";
 
   async function handleSignOut() {
     await signOut();

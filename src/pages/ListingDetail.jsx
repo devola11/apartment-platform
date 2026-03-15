@@ -13,9 +13,9 @@
 //     md+:     Original side-by-side gallery (65% main + 35% thumbnails), fixed 420px height.
 //
 //   Two-column layout (info + contact card):
-//     Mobile:  flex-col — everything stacks vertically. Contact card flows
+//     Mobile:  flex-col - everything stacks vertically. Contact card flows
 //              below the property info (not sticky).
-//     lg+:     flex-row — 63% info column on the left, 37% sticky contact
+//     lg+:     flex-row - 63% info column on the left, 37% sticky contact
 //              card on the right.
 //     We use lg (1024px) rather than md (768px) because at 768px the side-by-side
 //     columns are too narrow for the contact card to display comfortably.
@@ -26,7 +26,7 @@
 //     md+:     Original 4-column row (flex with divide-x).
 //
 //   Contact card:
-//     Mobile:  Not sticky — flows naturally after the property info.
+//     Mobile:  Not sticky - flows naturally after the property info.
 //     lg+:     sticky top-20 (original behaviour).
 
 import { useState } from "react";
@@ -59,7 +59,7 @@ function HeartIcon({ filled }) {
     : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F6368" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
 }
 
-// Amenity icons — matched by keyword in amenity name
+// Amenity icons - matched by keyword in amenity name
 const AMENITY_ICONS = {
   pool:        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 12c1.1 0 1.5-.5 2.5-.5S6.4 12 7.5 12s1.5-.5 2.5-.5 1.5.5 2.5.5 1.5-.5 2.5-.5 1.5.5 2.5.5v2c-1.1 0-1.5-.5-2.5-.5s-1.5.5-2.5.5-1.5-.5-2.5-.5-1.5.5-2.5.5-1.5-.5-2.5-.5S3.1 14 2 14v-2zm0 4c1.1 0 1.5-.5 2.5-.5s1.5.5 2.5.5 1.5-.5 2.5-.5 1.5.5 2.5.5 1.5-.5 2.5-.5 1.5.5 2.5.5v2c-1.1 0-1.5-.5-2.5-.5s-1.5.5-2.5.5-1.5-.5-2.5-.5-1.5.5-2.5.5-1.5-.5-2.5-.5S3.1 20 2 20v-4zM15.5 4.5c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm5.5 7h-4V8.5c0-1.1-.9-2-2-2s-2 .9-2 2V14H11V8c0-2.2 1.8-4 4-4 .7 0 1.3.2 1.9.5L21 8v3.5z"/></svg>,
   gym:         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>,
@@ -147,7 +147,7 @@ export default function ListingDetail() {
   const amenityPart = listing.amenities?.length > 0 ? listing.amenities.slice(0, 3).join(", ") : null;
   const seoDescription = (
     parts.join(" ") +
-    (pricePart  ? ` — ${pricePart}` : "") +
+    (pricePart  ? ` - ${pricePart}` : "") +
     (sqftPart   ? `, ${sqftPart}`   : "") +
     (amenityPart ? `. ${amenityPart}.` : ".")
   ) || listing.title;
@@ -196,7 +196,7 @@ export default function ListingDetail() {
   return (
     <div className="bg-[#F8F9FA] min-h-screen">
       <SEO
-        title={`${listing.title} — ${listing.city}, ${listing.state}`}
+        title={`${listing.title} - ${listing.city}, ${listing.state}`}
         description={seoDescription}
         canonical={`/listings/${listing.id}`}
         image={listing.image_url || undefined}
@@ -214,7 +214,7 @@ export default function ListingDetail() {
           This avoids long multi-item breadcrumbs wrapping awkwardly on small screens.
         */}
 
-        {/* Simple back link — mobile only */}
+        {/* Simple back link - mobile only */}
         <div className="md:hidden py-4">
           <Link
             to="/listings"
@@ -224,7 +224,7 @@ export default function ListingDetail() {
           </Link>
         </div>
 
-        {/* Full breadcrumb — tablet/desktop only */}
+        {/* Full breadcrumb - tablet/desktop only */}
         <nav aria-label="Breadcrumb"
           className="hidden md:flex items-center gap-1.5 text-xs text-[#5F6368] py-4 flex-wrap">
           <Link to="/" className="hover:text-[#1A73E8] transition-colors">Home</Link>
@@ -252,17 +252,17 @@ export default function ListingDetail() {
             - Main image: natural height on mobile, full parent height on md+
             - Thumbnail grid: `hidden md:grid`
         */}
-        {/* No inline height here — height is controlled by Tailwind classes on children */}
+        {/* No inline height here - height is controlled by Tailwind classes on children */}
         <div className="mb-6 md:mb-8 rounded-2xl overflow-hidden flex flex-col md:flex-row md:gap-2">
-          {/* Main image — full width on mobile, 65% on md+ */}
+          {/* Main image - full width on mobile, 65% on md+ */}
           <div className="relative overflow-hidden w-full md:w-[65%] md:shrink-0">
             {/*
-              Mobile:  aspect-[4/3] — maintains a nice rectangle without a fixed px height.
-              md+:     h-[420px] — original fixed gallery height.
+              Mobile:  aspect-[4/3] - maintains a nice rectangle without a fixed px height.
+              md+:     h-[420px] - original fixed gallery height.
             */}
             <img
               src={imageUrl}
-              alt={`${listing.title} — main photo`}
+              alt={`${listing.title} - main photo`}
               loading="eager"
               className="w-full aspect-[4/3] md:aspect-auto md:h-[420px] object-cover"
             />
@@ -279,7 +279,7 @@ export default function ListingDetail() {
               </button>
             )}
 
-            {/* "View All Photos" button — shown on mobile where the grid is hidden */}
+            {/* "View All Photos" button - shown on mobile where the grid is hidden */}
             <button
               className="md:hidden absolute bottom-4 right-4 text-white text-xs font-semibold
                          bg-black/50 border border-white/60 px-3 py-2 rounded-lg
@@ -289,13 +289,13 @@ export default function ListingDetail() {
             </button>
           </div>
 
-          {/* 2×2 Thumbnail grid — hidden on mobile, visible on md+; takes the remaining 35% */}
+          {/* 2×2 Thumbnail grid - hidden on mobile, visible on md+; takes the remaining 35% */}
           <div className="hidden md:grid grid-cols-2 grid-rows-2 gap-2 md:flex-1">
             {[0, 1, 2, 3].map(i => (
               <div key={i} className="relative overflow-hidden group/thumb">
                 <img
                   src={imageUrl}
-                  alt={`${listing.title} — photo ${i + 1}`}
+                  alt={`${listing.title} - photo ${i + 1}`}
                   loading="lazy"
                   className="w-full h-[205px] object-cover group-hover/thumb:scale-105 transition-transform duration-300"
                 />
@@ -313,14 +313,14 @@ export default function ListingDetail() {
 
         {/* ── Two-column layout: info (left) + contact card (right) ────── */}
         {/*
-          Mobile:  flex-col — everything stacks. Contact card flows below info.
-          lg+:     flex-row — original two-column side-by-side layout.
+          Mobile:  flex-col - everything stacks. Contact card flows below info.
+          lg+:     flex-row - original two-column side-by-side layout.
           We use lg (1024px) because at md (768px) the columns are too narrow.
           gap-6 on mobile, gap-8 on lg+.
         */}
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start pb-16">
 
-          {/* ── LEFT column — property info ─────────────────────────── */}
+          {/* ── LEFT column - property info ─────────────────────────── */}
           {/* w-full on mobile; on lg+ flex takes it to 63% (the remaining after right col) */}
           <div className="w-full lg:flex-1 min-w-0">
 
@@ -335,8 +335,8 @@ export default function ListingDetail() {
 
             {/* ── Stats row: Price / Beds / Baths / Sqft ──────────── */}
             {/*
-              Mobile:  grid-cols-2 — 2×2 grid so each cell is wide enough.
-              md+:     flex with divide-x — original 4-in-a-row layout.
+              Mobile:  grid-cols-2 - 2×2 grid so each cell is wide enough.
+              md+:     flex with divide-x - original 4-in-a-row layout.
               We achieve this by having two separate elements with responsive visibility:
                 - Grid version:  block md:hidden
                 - Flex version:  hidden md:flex
@@ -350,17 +350,17 @@ export default function ListingDetail() {
               </div>
               <div className="flex flex-col items-center px-4 py-4">
                 <div className="text-[#202124] mb-1"><BedIcon /></div>
-                <p className="font-bold text-[#202124]">{listing.bedrooms ?? "—"}</p>
+                <p className="font-bold text-[#202124]">{listing.bedrooms ?? "-"}</p>
                 <p className="text-xs text-[#5F6368]">Bedrooms</p>
               </div>
               <div className="flex flex-col items-center px-4 py-4 border-r border-[#E0E0E0]">
                 <div className="text-[#202124] mb-1"><BathIcon /></div>
-                <p className="font-bold text-[#202124]">{listing.bathrooms ?? "—"}</p>
+                <p className="font-bold text-[#202124]">{listing.bathrooms ?? "-"}</p>
                 <p className="text-xs text-[#5F6368]">Bathrooms</p>
               </div>
               <div className="flex flex-col items-center px-4 py-4">
                 <div className="text-[#202124] mb-1"><SqftIcon /></div>
-                <p className="font-bold text-[#202124]">{listing.sqft?.toLocaleString() ?? "—"}</p>
+                <p className="font-bold text-[#202124]">{listing.sqft?.toLocaleString() ?? "-"}</p>
                 <p className="text-xs text-[#5F6368]">Sq Ft</p>
               </div>
             </div>
@@ -373,17 +373,17 @@ export default function ListingDetail() {
               </div>
               <div className="flex flex-col items-center px-5 py-4 flex-1">
                 <div className="text-[#202124] mb-1"><BedIcon /></div>
-                <p className="font-bold text-[#202124]">{listing.bedrooms ?? "—"}</p>
+                <p className="font-bold text-[#202124]">{listing.bedrooms ?? "-"}</p>
                 <p className="text-xs text-[#5F6368]">Bedrooms</p>
               </div>
               <div className="flex flex-col items-center px-5 py-4 flex-1">
                 <div className="text-[#202124] mb-1"><BathIcon /></div>
-                <p className="font-bold text-[#202124]">{listing.bathrooms ?? "—"}</p>
+                <p className="font-bold text-[#202124]">{listing.bathrooms ?? "-"}</p>
                 <p className="text-xs text-[#5F6368]">Bathrooms</p>
               </div>
               <div className="flex flex-col items-center px-5 py-4 flex-1">
                 <div className="text-[#202124] mb-1"><SqftIcon /></div>
-                <p className="font-bold text-[#202124]">{listing.sqft?.toLocaleString() ?? "—"}</p>
+                <p className="font-bold text-[#202124]">{listing.sqft?.toLocaleString() ?? "-"}</p>
                 <p className="text-xs text-[#5F6368]">Sq Ft</p>
               </div>
             </div>
@@ -431,7 +431,7 @@ export default function ListingDetail() {
               <section className="mb-8">
                 <h2 className="text-lg font-bold text-[#202124] mb-4">Similar Listings</h2>
                 {/*
-                  Mobile:  1 column (grid-cols-1) — cards are full width.
+                  Mobile:  1 column (grid-cols-1) - cards are full width.
                   sm+:     up to 3 columns (sm:grid-cols-3).
                 */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -443,9 +443,9 @@ export default function ListingDetail() {
             )}
           </div>
 
-          {/* ── RIGHT column — contact card ──────────────────────────── */}
+          {/* ── RIGHT column - contact card ──────────────────────────── */}
           {/*
-            Mobile:  w-full, not sticky — flows naturally below the info column.
+            Mobile:  w-full, not sticky - flows naturally below the info column.
             lg+:     fixed width (lg:w-[37%]), sticky top-20 (original behaviour).
 
             sticky top-20 = 80px from the top of the viewport when scrolling.
@@ -463,7 +463,7 @@ export default function ListingDetail() {
                 <span className="text-sm font-normal text-[#5F6368]">/mo</span>
               </p>
 
-              {/* CTA buttons — min-h-[44px] for touch targets */}
+              {/* CTA buttons - min-h-[44px] for touch targets */}
               <button
                 onClick={() => setShowModal(true)}
                 className="w-full bg-[#1A73E8] hover:bg-blue-700 text-white font-semibold

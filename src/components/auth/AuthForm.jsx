@@ -144,7 +144,7 @@ export default function AuthForm({ mode = "login" }) {
         </div>
       )}
 
-      {/* Full Name — register only */}
+      {/* Full Name - register only */}
       {isRegister && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
@@ -212,7 +212,7 @@ export default function AuthForm({ mode = "login" }) {
         )}
       </div>
 
-      {/* Role — register only */}
+      {/* Role - register only */}
       {isRegister && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">I am a…</label>
@@ -223,8 +223,8 @@ export default function AuthForm({ mode = "login" }) {
                        focus:outline-none focus:ring-2 focus:ring-[#1A73E8] focus:border-transparent
                        bg-white text-gray-800 min-h-[44px]"
           >
-            <option value="renter">Renter — looking for a place</option>
-            <option value="landlord">Landlord — listing a property</option>
+            <option value="renter">Renter - looking for a place</option>
+            <option value="landlord">Landlord - listing a property</option>
           </select>
         </div>
       )}

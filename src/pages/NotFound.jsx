@@ -1,4 +1,4 @@
-// src/pages/NotFound.jsx — Shown for any unmatched route (the * route)
+// src/pages/NotFound.jsx - Shown for any unmatched route (the * route)
 import { Link } from "react-router-dom";
 import SEO from "../components/common/SEO";
 

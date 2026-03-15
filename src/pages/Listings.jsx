@@ -18,7 +18,7 @@
 //   Desktop (lg+ / 1024px+):
 //     - Same split layout as tablet.
 //
-// KEY TECHNIQUE — avoiding duplicated JSX:
+// KEY TECHNIQUE - avoiding duplicated JSX:
 //   Instead of two separate DOM trees (one for mobile, one for desktop),
 //   we use Tailwind prefixes on the SAME elements so they adapt in place:
 //     - Outer wrapper: `md:flex md:h-[calc(100vh-64px)]`
@@ -44,12 +44,12 @@ const ITEMS_PER_PAGE = 10;
 const SEO_CONFIG = {
   California: {
     title: "Apartments for Rent in California",
-    description: "Find apartments for rent across California — Los Angeles, San Francisco, San Diego, and more.",
+    description: "Find apartments for rent across California - Los Angeles, San Francisco, San Diego, and more.",
     canonical: "/listings/california",
   },
   Florida: {
     title: "Apartments for Rent in Florida",
-    description: "Find apartments for rent across Florida — Miami, Orlando, Tampa, and more.",
+    description: "Find apartments for rent across Florida - Miami, Orlando, Tampa, and more.",
     canonical: "/listings/florida",
   },
   default: {
@@ -142,8 +142,8 @@ export default function Listings({ stateFilter }) {
       {/*
         OUTER WRAPPER
         ─────────────
-        Mobile:  block (no flex, no fixed height) — page scrolls normally.
-        md+:     flex + fixed viewport height — creates the split panel layout.
+        Mobile:  block (no flex, no fixed height) - page scrolls normally.
+        md+:     flex + fixed viewport height - creates the split panel layout.
 
         The `md:` prefix means "apply at 768px and above".
         Without a prefix, it's the mobile-first default (block).
@@ -167,9 +167,9 @@ export default function Listings({ stateFilter }) {
           */}
           <div className="sticky top-0 z-10 bg-white border-b border-[#E0E0E0]">
 
-            {/* Top bar — count label + sort */}
+            {/* Top bar - count label + sort */}
             <div className="px-4 sm:px-5 py-3 flex items-center justify-between gap-2 border-b border-[#E0E0E0]">
-              {/* Count label — truncates on very small screens */}
+              {/* Count label - truncates on very small screens */}
               <p className="font-semibold text-[#202124] text-xs sm:text-sm truncate">
                 {countLabel}
               </p>
@@ -183,8 +183,8 @@ export default function Listings({ stateFilter }) {
                              bg-white min-h-[44px]"
                 >
                   <option value="newest">Relevance</option>
-                  <option value="price_asc">Price: Low–High</option>
-                  <option value="price_desc">Price: High–Low</option>
+                  <option value="price_asc">Price: Low-High</option>
+                  <option value="price_desc">Price: High-Low</option>
                 </select>
               </div>
             </div>
@@ -194,7 +194,7 @@ export default function Listings({ stateFilter }) {
               <FilterBar onFilter={handleFilter} stateFilter={stateFilter} />
 
               {/*
-                "Show/Hide Map" button — only rendered on mobile (md:hidden).
+                "Show/Hide Map" button - only rendered on mobile (md:hidden).
                 On desktop the map is always visible in the right panel.
                 Placed next to the filter button so both controls are in one row.
               */}
@@ -214,7 +214,7 @@ export default function Listings({ stateFilter }) {
           {/*
             md:hidden: this block only exists in the DOM on mobile.
             On desktop, the map is in the separate right panel (always visible).
-            Height 260px on mobile — tall enough to be useful, not so tall it
+            Height 260px on mobile - tall enough to be useful, not so tall it
             crowds out the listing cards.
             The conditional {showMobileMap && ...} means it's unmounted when
             hidden, which also unmounts the Leaflet map instance (no memory leak).
@@ -232,7 +232,7 @@ export default function Listings({ stateFilter }) {
           {/* ── Listing rows ────────────────────────────────────────── */}
           <div className="px-4 sm:px-5 py-4 space-y-3">
             {loading ? (
-              // Loading skeleton — flex-col on mobile matches vertical card layout
+              // Loading skeleton - flex-col on mobile matches vertical card layout
               Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="flex flex-col sm:flex-row bg-white rounded-xl
                                         border border-[#E0E0E0] overflow-hidden animate-pulse">

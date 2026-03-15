@@ -3,14 +3,14 @@
 // Uses react-helmet-async so tags are injected safely in the document head.
 //
 // Props:
-//   title       — page title (will be appended with " | AptGuide")
-//   description — meta description (max ~155 chars for best results)
-//   canonical   — canonical URL for this page
-//   image       — OG image URL (optional, falls back to default hero)
-//   imageAlt    — alt text for the OG image
-//   ogType      — og:type value (default "website", use "article" for detail pages)
-//   noindex     — set true to prevent indexing (login, register, profile, etc.)
-//   jsonLd      — plain JS object to emit as application/ld+json structured data
+//   title       - page title (will be appended with " | AptGuide")
+//   description - meta description (max ~155 chars for best results)
+//   canonical   - canonical URL for this page
+//   image       - OG image URL (optional, falls back to default hero)
+//   imageAlt    - alt text for the OG image
+//   ogType      - og:type value (default "website", use "article" for detail pages)
+//   noindex     - set true to prevent indexing (login, register, profile, etc.)
+//   jsonLd      - plain JS object to emit as application/ld+json structured data
 
 import { Helmet } from "react-helmet-async";
 
@@ -30,7 +30,7 @@ export default function SEO({
   noindex = false,
   jsonLd,
 }) {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} — Apartments for Rent in California & Florida`;
+  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} - Apartments for Rent in California & Florida`;
   const canonicalUrl = canonical ? `${SITE_URL}${canonical}` : SITE_URL;
 
   return (

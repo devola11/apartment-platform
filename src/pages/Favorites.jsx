@@ -1,4 +1,4 @@
-// src/pages/Favorites.jsx — Protected page
+// src/pages/Favorites.jsx - Protected page
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";

@@ -1,6 +1,6 @@
 // src/main.jsx
 // ------------------------------------------------------------------
-// This is the JavaScript entry point — the first file Vite loads.
+// This is the JavaScript entry point - the first file Vite loads.
 //
 // createRoot mounts the React app into the <div id="root"> in index.html.
 // BrowserRouter enables HTML5 history-based navigation (clean URLs like

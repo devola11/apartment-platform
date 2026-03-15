@@ -55,13 +55,13 @@ export default function Navbar() {
     setMenuOpen(false); // close the mobile menu after signing out
   }
 
-  // Desktop link class — used for the horizontal nav strip (md+)
+  // Desktop link class - used for the horizontal nav strip (md+)
   const linkClass = ({ isActive }) =>
     isActive
       ? "text-brand-600 font-semibold"
       : "text-[#5F6368] hover:text-brand-600 transition-colors duration-150";
 
-  // Mobile link class — used inside the dropdown drawer
+  // Mobile link class - used inside the dropdown drawer
   // Each link is block-level with a bottom border for visual separation.
   // min-h-[44px] ensures the tap target is at least 44px tall (accessibility).
   const mobileLinkClass = ({ isActive }) =>
@@ -74,7 +74,7 @@ export default function Navbar() {
       {/* ── Main bar ─────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
 
-        {/* Logo — always visible on the left at every breakpoint */}
+        {/* Logo - always visible on the left at every breakpoint */}
         <Link
           to="/"
           onClick={() => setMenuOpen(false)}
@@ -90,7 +90,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Center nav links — hidden below md (768px), flex on tablet+ */}
+        {/* Center nav links - hidden below md (768px), flex on tablet+ */}
         {/* gap-6 is tighter than the original gap-8, matching the tablet spec */}
         <div className="hidden md:flex items-center gap-6 text-sm font-medium">
           <NavLink to="/listings"            className={linkClass}>Search</NavLink>
@@ -98,10 +98,10 @@ export default function Navbar() {
           <NavLink to="/listings/florida"    className={linkClass}>Florida</NavLink>
         </div>
 
-        {/* Right side — desktop auth (hidden on mobile) + hamburger (mobile only) */}
+        {/* Right side - desktop auth (hidden on mobile) + hamburger (mobile only) */}
         <div className="flex items-center gap-3 shrink-0">
 
-          {/* Desktop auth buttons — hidden below md */}
+          {/* Desktop auth buttons - hidden below md */}
           {user ? (
             <>
               <NavLink to="/favorites" className={({ isActive }) => `${linkClass({ isActive })} hidden md:block text-sm font-medium`}>
@@ -137,7 +137,7 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Hamburger button — only visible below md (mobile) */}
+          {/* Hamburger button - only visible below md (mobile) */}
           {/* w-10 h-10 = 40px × 40px, close to the 44px tap-target minimum.
               The -mr-1 nudges it flush with the right edge padding. */}
           <button
@@ -153,19 +153,19 @@ export default function Navbar() {
       </div>
 
       {/* ── Mobile dropdown menu ─────────────────────────────────── */}
-      {/* Conditionally rendered — appears below the main bar when open.
+      {/* Conditionally rendered - appears below the main bar when open.
           md:hidden ensures it's invisible on tablet/desktop even if menuOpen
           somehow stays true (e.g. window resize).
           Shadow gives depth so it feels like an overlay above the content. */}
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 shadow-xl animate-slideDown">
 
-          {/* Navigation links — full-width rows with 44px+ tap targets */}
+          {/* Navigation links - full-width rows with 44px+ tap targets */}
           <NavLink to="/listings"            className={mobileLinkClass} onClick={() => setMenuOpen(false)}>Search</NavLink>
           <NavLink to="/listings/california" className={mobileLinkClass} onClick={() => setMenuOpen(false)}>California</NavLink>
           <NavLink to="/listings/florida"    className={mobileLinkClass} onClick={() => setMenuOpen(false)}>Florida</NavLink>
 
-          {/* Auth section — adapts based on signed-in state */}
+          {/* Auth section - adapts based on signed-in state */}
           {user ? (
             <>
               <NavLink to="/favorites" className={mobileLinkClass} onClick={() => setMenuOpen(false)}>Favorites</NavLink>

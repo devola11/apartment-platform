@@ -1,12 +1,12 @@
 // src/components/listings/ListingCard.jsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Vertical listing card — used on the Home page (featured listings) and on
+// Vertical listing card - used on the Home page (featured listings) and on
 // the ListingDetail page (Similar Listings section).
 //
 // LAYOUT (top to bottom):
 //  1. Full-width property image
 //  2. Price (bold large) + Share icon + Heart "Save" button
-//  3. Address: street bold, city/state/zip normal weight — same line
+//  3. Address: street bold, city/state/zip normal weight - same line
 //  4. All amenities as inline text with " • " separators
 //  5. Beds on its own line | Sqft on its own line | price /mo in gray
 //  6. "Send Message" full-width primary blue button
@@ -69,7 +69,7 @@ export default function ListingCard({ listing }) {
       ? `${listing.bedrooms} Bed${listing.bedrooms !== 1 ? "s" : ""}`
       : null;
 
-  // ── Handlers — all use stopPropagation() ─────────────────────────────────
+  // ── Handlers - all use stopPropagation() ─────────────────────────────────
   // stopPropagation() stops the click from bubbling up to the parent <Link>,
   // so the user can click these buttons without navigating to the detail page.
 
@@ -104,7 +104,7 @@ export default function ListingCard({ listing }) {
 
   return (
     <>
-      {/* ── Card wrapper — entire card navigates to listing detail ─────── */}
+      {/* ── Card wrapper - entire card navigates to listing detail ─────── */}
       <Link
         to={`/listings/${listing.id}`}
         className="group bg-white rounded-xl border border-[#E0E0E0] shadow-sm
@@ -112,7 +112,7 @@ export default function ListingCard({ listing }) {
                    overflow-hidden flex flex-col"
       >
         {/* ── 1. Full-width property image ─────────────────────────────── */}
-        {/* h-52 = 208px — tall enough to show the property clearly */}
+        {/* h-52 = 208px - tall enough to show the property clearly */}
         <div className="relative h-52 overflow-hidden shrink-0">
           <img
             src={imageUrl}
@@ -125,7 +125,7 @@ export default function ListingCard({ listing }) {
         {/* ── Card body ─────────────────────────────────────────────────── */}
         <div className="p-4 flex flex-col flex-1 gap-2">
 
-          {/* ── 2. Price row — price left, share + heart right ─────────── */}
+          {/* ── 2. Price row - price left, share + heart right ─────────── */}
           {/* items-center vertically aligns the price text with the icon buttons */}
           <div className="flex items-center justify-between gap-2">
             <p className="text-2xl font-extrabold text-[#202124] leading-none">
@@ -142,7 +142,7 @@ export default function ListingCard({ listing }) {
                 <ShareIcon />
               </button>
 
-              {/* Heart "Save" button — shows label text next to icon */}
+              {/* Heart "Save" button - shows label text next to icon */}
               <button
                 onClick={handleFavorite}
                 aria-label={saved ? "Remove from saved" : "Save listing"}
@@ -160,7 +160,7 @@ export default function ListingCard({ listing }) {
 
           {/* ── 3. Address line ───────────────────────────────────────── */}
           {/* Street address is bold; city/state/zip follows in normal weight.
-              All on one line — truncate prevents overflow on narrow cards. */}
+              All on one line - truncate prevents overflow on narrow cards. */}
           <p className="text-sm truncate">
             <span className="font-semibold text-[#202124]">{listing.address}</span>
             {listing.address && (listing.city || listing.state) && (
@@ -172,7 +172,7 @@ export default function ListingCard({ listing }) {
 
           {/* ── 4. Amenities inline with bullet separators ────────────── */}
           {/* truncate clips the line if it's wider than the card.
-              This is how ApartmentGuide shows amenities — one scannable line. */}
+              This is how ApartmentGuide shows amenities - one scannable line. */}
           {amenitiesLine && (
             <p className="text-xs text-[#5F6368] truncate">
               {amenitiesLine}
@@ -198,7 +198,7 @@ export default function ListingCard({ listing }) {
             )}
           </div>
 
-          {/* ── 6. Send Message — full-width primary blue button ─────── */}
+          {/* ── 6. Send Message - full-width primary blue button ─────── */}
           {/* mt-auto pushes the button to the bottom of the card so all
               cards in a grid row have the button at the same vertical position
               regardless of how much content is above it. */}
@@ -214,7 +214,7 @@ export default function ListingCard({ listing }) {
         </div>
       </Link>
 
-      {/* ── Send Message modal — rendered outside the Link ───────────────── */}
+      {/* ── Send Message modal - rendered outside the Link ───────────────── */}
       {/* Even though it's inside the component JSX, position:fixed means it
           covers the viewport correctly regardless of its DOM position. */}
       <SendMessageModal

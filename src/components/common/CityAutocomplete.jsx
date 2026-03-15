@@ -2,16 +2,16 @@
 // Reusable city search input with a suggestion dropdown.
 //
 // Props:
-//   value           — controlled input value (string)
-//   onChange        — called with the new string on every keystroke or selection
-//   placeholder     — input placeholder text
-//   wrapperClassName — classes applied to the outer <div> (e.g. sizing, flex-1)
-//   inputClassName   — classes applied to the <input> itself (styling only)
+//   value           - controlled input value (string)
+//   onChange        - called with the new string on every keystroke or selection
+//   placeholder     - input placeholder text
+//   wrapperClassName - classes applied to the outer <div> (e.g. sizing, flex-1)
+//   inputClassName   - classes applied to the <input> itself (styling only)
 //
 // Behaviour:
 //   - Filters CITIES by city or state substring match (case-insensitive)
 //   - Shows max 5 suggestions in a dropdown below the input
-//   - Dropdown shows "City, State" — clicking fills input with just the city name
+//   - Dropdown shows "City, State" - clicking fills input with just the city name
 //   - Escape or click-outside closes the dropdown
 //   - onMouseDown + e.preventDefault() on each suggestion prevents the input's
 //     onBlur from firing before the click registers (a common focus-race pitfall)

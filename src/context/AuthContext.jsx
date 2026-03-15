@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
 
   // Helper functions so components don't import supabase directly
   //
-  // signUp now accepts fullName and role so they're stored in user_metadata —
+  // signUp now accepts fullName and role so they're stored in user_metadata -
   // a JSON object attached to every Supabase auth user. We read it later via
   // user.user_metadata.full_name and user.user_metadata.role
   const signUp = (email, password, fullName, role) =>
@@ -68,7 +68,7 @@ export function AuthProvider({ children }) {
   );
 }
 
-// 3. Custom hook — components call useAuth() instead of useContext(AuthContext)
+// 3. Custom hook - components call useAuth() instead of useContext(AuthContext)
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");

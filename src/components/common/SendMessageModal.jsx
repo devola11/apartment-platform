@@ -4,7 +4,7 @@
 //
 // HOW IT WORKS:
 //  • The caller manages a boolean `isOpen` state and passes `onClose` as a
-//    callback. This keeps the modal stateless about *when* to show — the parent
+//    callback. This keeps the modal stateless about *when* to show - the parent
 //    decides that; the modal only handles *what* to show.
 //  • `position: fixed` makes the overlay cover the entire viewport regardless
 //    of where in the DOM tree the modal is rendered.
@@ -51,7 +51,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
   const [sent, setSent]   = useState(false);
 
   // The overlay <div> ref lets us detect "click outside" reliably.
-  // We compare e.target with the overlay element itself — if they match,
+  // We compare e.target with the overlay element itself - if they match,
   // the user clicked the dark backdrop (not the white card), so we close.
   const overlayRef = useRef(null);
 
@@ -105,7 +105,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
   }, [isOpen, onClose]);
 
   // ── Don't render anything when closed ───────────────────────────────────
-  // Early return keeps the DOM clean — no hidden elements taking up space.
+  // Early return keeps the DOM clean - no hidden elements taking up space.
   if (!isOpen) return null;
 
   // ── Event handlers ───────────────────────────────────────────────────────
@@ -133,7 +133,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    // Fixed overlay — covers 100vw × 100vh, z-50 sits above everything.
+    // Fixed overlay - covers 100vw × 100vh, z-50 sits above everything.
     // bg-black/50 = semi-transparent black (Tailwind JIT arbitrary value).
     // flex items-center justify-center centres the white card.
     <div
@@ -173,7 +173,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
         ) : (
           <form onSubmit={handleSubmit} className="px-6 pb-6 pt-4 space-y-4">
 
-            {/* First Name + Last Name — side by side using flex gap */}
+            {/* First Name + Last Name - side by side using flex gap */}
             {/* Two inputs on one row shows the ApartmentGuide split-name pattern */}
             <div className="flex gap-3">
               <input
@@ -196,7 +196,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
               />
             </div>
 
-            {/* Email — full width */}
+            {/* Email - full width */}
             <input
               type="email"
               name="email"
@@ -207,7 +207,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
               className={inputCls}
             />
 
-            {/* Phone — full width, optional */}
+            {/* Phone - full width, optional */}
             <input
               type="tel"
               name="phone"
@@ -217,12 +217,12 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
               className={inputCls}
             />
 
-            {/* Move-in date — relative wrapper positions the calendar icon */}
+            {/* Move-in date - relative wrapper positions the calendar icon */}
             <div className="relative">
               <label className="text-xs text-[#5F6368] mb-1 block font-medium">
                 Move-in Date
               </label>
-              {/* The calendar icon is purely decorative — pointer-events:none
+              {/* The calendar icon is purely decorative - pointer-events:none
                   ensures it doesn't block clicks on the input beneath it */}
               <div className="relative">
                 <input
@@ -238,7 +238,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
               </div>
             </div>
 
-            {/* Message textarea — pre-filled in useEffect above */}
+            {/* Message textarea - pre-filled in useEffect above */}
             <textarea
               name="message"
               value={form.message}
@@ -247,7 +247,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
               className={inputCls + " resize-none"}
             />
 
-            {/* Send button — full width, primary blue */}
+            {/* Send button - full width, primary blue */}
             <button
               type="submit"
               className="w-full bg-[#1A73E8] hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
@@ -255,7 +255,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
               Send
             </button>
 
-            {/* Tips opt-in checkbox — matches ApartmentGuide's newsletter opt-in */}
+            {/* Tips opt-in checkbox - matches ApartmentGuide's newsletter opt-in */}
             <label className="flex items-start gap-2.5 cursor-pointer">
               <input
                 type="checkbox"
@@ -268,7 +268,7 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
               </span>
             </label>
 
-            {/* Legal disclaimer — small print at bottom */}
+            {/* Legal disclaimer - small print at bottom */}
             <p className="text-xs text-[#5F6368] text-center leading-relaxed">
               By submitting this form, you agree to our{" "}
               <span className="text-[#1A73E8] cursor-pointer hover:underline">

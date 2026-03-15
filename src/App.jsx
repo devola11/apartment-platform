@@ -6,10 +6,10 @@
 //  3. Declares ALL routes using React Router v6's <Routes> / <Route>
 //
 // React Router v6 key concepts:
-//  - <BrowserRouter>  — enables URL-based routing (in main.jsx)
-//  - <Routes>         — container that matches the current URL to a route
-//  - <Route>          — maps a path to a component
-//  - <Outlet>         — placeholder where child routes render (in layouts)
+//  - <BrowserRouter>  - enables URL-based routing (in main.jsx)
+//  - <Routes>         - container that matches the current URL to a route
+//  - <Route>          - maps a path to a component
+//  - <Outlet>         - placeholder where child routes render (in layouts)
 // ------------------------------------------------------------------
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
@@ -31,7 +31,7 @@ import Profile from "./pages/Profile";
 import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";
 
-// Leaflet CSS — must be imported globally so map tiles render correctly
+// Leaflet CSS - must be imported globally so map tiles render correctly
 import "leaflet/dist/leaflet.css";
 
 export default function App() {
@@ -53,12 +53,12 @@ export default function App() {
               <Route path="/listings" element={<Listings />} />
               <Route path="/listings/california" element={<Listings stateFilter="California" />} />
               <Route path="/listings/florida" element={<Listings stateFilter="Florida" />} />
-              {/* Dynamic route — :id is a URL parameter read with useParams() */}
+              {/* Dynamic route - :id is a URL parameter read with useParams() */}
               <Route path="/listings/:id" element={<ListingDetail />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
-              {/* Protected routes — redirect to /login if not authenticated */}
+              {/* Protected routes - redirect to /login if not authenticated */}
               <Route
                 path="/profile"
                 element={
@@ -76,7 +76,7 @@ export default function App() {
                 }
               />
 
-              {/* Catch-all — must be last */}
+              {/* Catch-all - must be last */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

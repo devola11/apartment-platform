@@ -4,11 +4,11 @@
 //
 // RESPONSIVE LAYOUT:
 //   Mobile (< sm / 640px):
-//     flex-col — image on top (full width, fixed 180px height),
+//     flex-col - image on top (full width, fixed 180px height),
 //     content below. Same visual as ListingCard for visual consistency.
 //
 //   Tablet / Desktop (sm+ / 640px+):
-//     flex-row — image fixed 192px wide on the left, content on the right.
+//     flex-row - image fixed 192px wide on the left, content on the right.
 //     This is the original desktop layout.
 //
 // WHY sm (640px)?
@@ -88,7 +88,7 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
           <span className="absolute top-2 left-2 bg-[#1A73E8] text-white text-xs font-semibold px-2 py-0.5 rounded-full">
             {listing.state === "California" ? "CA" : listing.state === "Florida" ? "FL" : listing.state}
           </span>
-          {/* Favorite button — min 44px tap target */}
+          {/* Favorite button - min 44px tap target */}
           <button
             onClick={handleFav}
             aria-label={saved ? "Remove from favorites" : "Save to favorites"}
@@ -120,11 +120,11 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
 
           {/* Beds / Baths / Sqft */}
           <div className="flex items-center gap-2 text-xs text-[#5F6368] mb-2">
-            <span className="flex items-center gap-1"><BedIcon />{listing.bedrooms ?? "—"} bd</span>
+            <span className="flex items-center gap-1"><BedIcon />{listing.bedrooms ?? "-"} bd</span>
             <span className="text-[#E0E0E0]">|</span>
-            <span className="flex items-center gap-1"><BathIcon />{listing.bathrooms ?? "—"} ba</span>
+            <span className="flex items-center gap-1"><BathIcon />{listing.bathrooms ?? "-"} ba</span>
             <span className="text-[#E0E0E0]">|</span>
-            <span className="flex items-center gap-1"><SqftIcon />{listing.sqft?.toLocaleString() ?? "—"} sqft</span>
+            <span className="flex items-center gap-1"><SqftIcon />{listing.sqft?.toLocaleString() ?? "-"} sqft</span>
           </div>
 
           {/* Phone */}
@@ -143,7 +143,7 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
             </div>
           )}
 
-          {/* Send Message — min-h-[44px] for touch target */}
+          {/* Send Message - min-h-[44px] for touch target */}
           <button
             onClick={handleSendMessage}
             className="mt-auto w-full bg-[#1A73E8] hover:bg-blue-700

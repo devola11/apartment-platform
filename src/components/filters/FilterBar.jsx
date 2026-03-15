@@ -8,7 +8,7 @@
 //     clears all values.
 //
 //   Tablet / Desktop (md+ / 768px+):
-//     Shows the original horizontal flex-wrap filter bar — all controls
+//     Shows the original horizontal flex-wrap filter bar - all controls
 //     visible inline at the top of the listings panel.
 //
 // WHY a separate mobile panel rather than collapsing in place?
@@ -22,9 +22,9 @@ import CityAutocomplete from "../common/CityAutocomplete";
 const PRICE_RANGES = [
   { label: "Any Price",       min: "",     max: ""     },
   { label: "Under $1,500",   min: "",     max: "1500" },
-  { label: "$1,500–$2,000",  min: "1500", max: "2000" },
-  { label: "$2,000–$3,000",  min: "2000", max: "3000" },
-  { label: "$3,000–$5,000",  min: "3000", max: "5000" },
+  { label: "$1,500-$2,000",  min: "1500", max: "2000" },
+  { label: "$2,000-$3,000",  min: "2000", max: "3000" },
+  { label: "$3,000-$5,000",  min: "3000", max: "5000" },
   { label: "$5,000+",        min: "5000", max: ""     },
 ];
 
@@ -237,7 +237,7 @@ export default function FilterBar({ onFilter, stateFilter }) {
 
       {/* ── DESKTOP: horizontal filter bar ────────────────────────────── */}
       {/*
-        hidden md:flex — invisible on mobile, flex-wrap on tablet/desktop.
+        hidden md:flex - invisible on mobile, flex-wrap on tablet/desktop.
         This is the original inline filter bar layout.
       */}
       <div className="hidden md:flex flex-wrap gap-3 items-end">
@@ -258,13 +258,13 @@ export default function FilterBar({ onFilter, stateFilter }) {
         Only rendered when panelOpen is true, and hidden on desktop via md:hidden.
 
         Structure:
-          - Backdrop (semi-transparent black) — clicking it closes the panel
-          - White panel — slides up from the bottom, max 85vh so it doesn't
+          - Backdrop (semi-transparent black) - clicking it closes the panel
+          - White panel - slides up from the bottom, max 85vh so it doesn't
             cover the entire screen, overflow-y-auto for long filter lists
       */}
       {panelOpen && (
         <div className="fixed inset-0 z-50 flex flex-col justify-end md:hidden">
-          {/* Backdrop — tap to dismiss */}
+          {/* Backdrop - tap to dismiss */}
           <div
             className="absolute inset-0 bg-black/50"
             onClick={() => setPanelOpen(false)}
@@ -273,7 +273,7 @@ export default function FilterBar({ onFilter, stateFilter }) {
           {/* Panel */}
           <div className="relative bg-white rounded-t-2xl shadow-2xl
                           max-h-[85vh] overflow-y-auto">
-            {/* Drag handle — visual affordance that this panel can be swiped */}
+            {/* Drag handle - visual affordance that this panel can be swiped */}
             <div className="flex justify-center pt-3 pb-1">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
@@ -290,7 +290,7 @@ export default function FilterBar({ onFilter, stateFilter }) {
               </button>
             </div>
 
-            {/* Filter controls — stacked vertically with full-width inputs */}
+            {/* Filter controls - stacked vertically with full-width inputs */}
             <div className="px-5 py-4 space-y-5">
               {renderFilters(true)}
             </div>
