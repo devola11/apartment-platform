@@ -60,8 +60,8 @@ export default function Home() {
         Both use min-height so the content can grow if text wraps.
       */}
       <section
-        className="relative flex items-center justify-center text-white overflow-hidden
-                   min-h-[400px] md:min-h-[580px]"
+        className="relative flex items-center justify-center text-white
+                   min-h-[380px] md:min-h-[540px]"
       >
         {/* Background image */}
         <div
@@ -74,69 +74,45 @@ export default function Home() {
           aria-label="Modern apartment building exterior"
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/25" />
 
-        {/* Hero content */}
-        <div className="relative z-10 max-w-2xl mx-auto text-center px-4 py-12 md:py-20 w-full">
+        {/* Hero content — max-w-xl keeps search bar compact and centered */}
+        <div className="relative z-10 w-full max-w-xl mx-auto text-center px-4 py-10 md:py-16">
 
-          {/*
-            Heading size progression:
-              text-3xl  = 30px — readable on a 375px phone, nothing feels cramped.
-              md:text-5xl = 48px — tablet gets a bigger, bolder headline.
-              lg:text-7xl = 72px — desktop gets the dramatic full-size heading.
-            mb-6 md:mb-10 tightens the gap on mobile so the search bar
-            doesn't feel too far away.
-          */}
-          <h1 className="text-3xl md:text-5xl lg:text-7xl font-black leading-tight mb-6 md:mb-10 drop-shadow-lg">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-tight mb-6 md:mb-8 drop-shadow-lg">
             Find the Perfect Apartment.
           </h1>
 
-          {/* ── Pill search bar ────────────────────────────────────── */}
           {/*
-            On mobile: flex-col — input is full width, button goes below it.
-            On sm (640px)+: flex-row — pill shape is restored with input + button side by side.
-
-            We also change the shape:
-              Mobile:  rounded-2xl on the container, rounded-xl on each child
-                       so they look like separate rounded boxes stacked.
-              sm+:     rounded-full on the container, rounded-full on the button
-                       restoring the pill look.
-
-            overflow-hidden on the container clips the children to the container shape.
+            DESKTOP (sm+): one unified white pill — input flex-1, button compact inside on the right.
+            MOBILE: two separate elements stacked — input is its own white rounded-xl card,
+                    button is full-width below it. The outer form has NO background on mobile.
           */}
           <form
             onSubmit={handleSearch}
-            className="bg-white shadow-xl overflow-hidden
-                       flex flex-col sm:flex-row
-                       rounded-2xl sm:rounded-full"
+            className="flex flex-col gap-2.5
+                       sm:flex-row sm:items-center sm:gap-0
+                       sm:bg-white sm:rounded-full sm:shadow-xl sm:p-1.5"
           >
-            {/*
-              flex-1 + w-full: input fills all available width in both layouts.
-              On mobile, it's a block. On sm+, it shares space with the button.
-              text-base (16px) prevents iOS from auto-zooming the input on focus
-              (iOS zooms if font-size < 16px).
-            */}
+            {/* Input — own white card on mobile, transparent inside the pill on desktop */}
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="City, Neighborhood, or ZIP"
-              className="flex-1 w-full text-[#202124] text-base placeholder-[#5F6368]
-                         focus:outline-none px-5 py-4 sm:px-7 sm:py-5 bg-transparent"
+              placeholder="City, neighborhood, or ZIP"
+              className="w-full text-[#202124] text-base placeholder-[#9AA0A6]
+                         focus:outline-none
+                         bg-white rounded-xl px-4 py-3 shadow-lg
+                         sm:flex-1 sm:bg-transparent sm:rounded-none sm:px-5 sm:py-2.5 sm:shadow-none"
             />
 
-            {/*
-              Mobile: w-full button fills the full row below the input.
-              sm+: auto width, floats to the right of the input.
-              min-h-[44px]: satisfies the 44px minimum touch target requirement.
-              mr-0 sm:mr-1 + rounded-xl sm:rounded-full: matches shape of container.
-            */}
+            {/* Button — full-width rounded-xl on mobile, compact pill inside container on desktop */}
             <button
               type="submit"
-              className="w-full sm:w-auto rounded-xl sm:rounded-full text-white font-bold
-                         px-6 py-2.5 sm:px-10 sm:py-4 sm:mr-1
-                         text-sm sm:text-lg whitespace-nowrap transition-colors duration-150
-                         min-h-[44px] bg-[#1A73E8] hover:bg-[#1669D3]"
+              className="w-full bg-[#1A73E8] hover:bg-[#1669D3] text-white font-semibold
+                         rounded-xl py-3 text-base
+                         transition-colors duration-150 min-h-[44px]
+                         sm:w-auto sm:shrink-0 sm:rounded-full sm:py-2.5 sm:px-7 sm:text-sm"
             >
               Search
             </button>
