@@ -46,6 +46,19 @@ export function AuthProvider({ children }) {
       email,
       password,
       options: {
+        // emailRedirectTo tells Supabase which URL to put in the confirmation
+        // email link. Without this, Supabase uses whatever "Site URL" is set
+        // in the Dashboard — which is often localhost:3000 (the default) even
+        // when you're running on :5173 or deploying to Vercel.
+        //
+        // window.location.origin resolves automatically:
+        //   dev:        http://localhost:5173
+        //   production: https://apartment-platform.vercel.app
+        //
+        // After the user clicks the link, Supabase redirects to:
+        //   <origin>/auth/callback#access_token=...&type=signup
+        // Our AuthCallback page (src/pages/AuthCallback.jsx) handles that URL.
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: {
           full_name: fullName,
           role: role,           // 'renter' or 'landlord'

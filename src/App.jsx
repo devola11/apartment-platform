@@ -31,6 +31,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";
+import AuthCallback from "./pages/AuthCallback";
 
 // Leaflet CSS - must be imported globally so map tiles render correctly
 import "leaflet/dist/leaflet.css";
@@ -58,6 +59,8 @@ export default function App() {
               <Route path="/listings/:id" element={<ListingDetail />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              {/* Supabase email confirmation lands here after clicking the link */}
+              <Route path="/auth/callback" element={<AuthCallback />} />
 
               {/* Protected routes - redirect to /login if not authenticated */}
               <Route
