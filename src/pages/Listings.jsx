@@ -32,7 +32,7 @@
 //       → md+:    always visible, takes up 50% of width
 
 import { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { useListings } from "../hooks/useListings";
 import ListingRow from "../components/listings/ListingRow";
 import ListingsMap from "../components/maps/ListingsMap";
@@ -251,10 +251,18 @@ export default function Listings({ stateFilter }) {
                   className="text-gray-300 mx-auto mb-4">
                   <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <p className="text-lg font-semibold text-[#202124]">No apartments found</p>
-                <p className="text-sm text-[#5F6368] mt-2">
-                  Try adjusting your filters or searching in a different city.
+                <p className="text-lg font-semibold text-[#202124]">No apartments match your search</p>
+                <p className="text-sm text-[#5F6368] mt-2 mb-6">
+                  Try adjusting your filters or browsing all listings.
                 </p>
+                <Link
+                  to="/listings"
+                  className="inline-flex items-center justify-center bg-[#1A73E8] text-white
+                             font-semibold px-6 py-2.5 rounded-full text-sm hover:bg-[#1669D3]
+                             transition-colors duration-150 min-h-[44px]"
+                >
+                  View All Listings
+                </Link>
               </div>
             ) : (
               pagedListings.map(l => (

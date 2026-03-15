@@ -112,14 +112,22 @@ export default function ListingCard({ listing }) {
                    overflow-hidden flex flex-col"
       >
         {/* ── 1. Full-width property image ─────────────────────────────── */}
-        {/* h-52 = 208px - tall enough to show the property clearly */}
-        <div className="relative h-52 overflow-hidden shrink-0">
+        {/* aspect-[4/3] gives a consistent 4:3 ratio across all cards */}
+        <div className="relative aspect-[4/3] overflow-hidden shrink-0">
           <img
             src={imageUrl}
             alt={`${listing.title} in ${listing.city}, ${listing.state}`}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
+          {/* Verified badge */}
+          <span className="absolute top-2 left-2 flex items-center gap-1 bg-[#1A73E8] text-white
+                            text-xs font-semibold px-2 py-0.5 rounded-full">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            Verified
+          </span>
         </div>
 
         {/* ── Card body ─────────────────────────────────────────────────── */}
@@ -206,7 +214,7 @@ export default function ListingCard({ listing }) {
           <button
             onClick={handleSendMessage}
             className="mt-auto w-full bg-[#1A73E8] hover:bg-blue-700
-                       text-white font-semibold py-3 rounded-xl
+                       text-white font-semibold py-3 rounded-full
                        transition-colors duration-150 text-sm min-h-[44px]"
           >
             Send Message

@@ -67,8 +67,10 @@ export default function ListingGrid({ listings, loading, error, emptyMessage }) 
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {listings.map((listing) => (
-        <ListingCard key={listing.id} listing={listing} />
+      {listings.map((listing, i) => (
+        <div key={listing.id} className="animate-fadeIn" style={{ animationDelay: `${i * 60}ms` }}>
+          <ListingCard listing={listing} />
+        </div>
       ))}
     </div>
   );

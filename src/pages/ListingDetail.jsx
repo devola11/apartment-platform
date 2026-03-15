@@ -29,7 +29,7 @@
 //     Mobile:  Not sticky - flows naturally after the property info.
 //     lg+:     sticky top-20 (original behaviour).
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useListing } from "../hooks/useListing";
 import { useListings } from "../hooks/useListings";
@@ -100,7 +100,19 @@ export default function ListingDetail() {
   });
   const similarListings = similar.filter(l => l.id !== id).slice(0, 3);
 
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal]       = useState(false);
+  const [linkCopied, setLinkCopied]     = useState(false);
+
+  const listingUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/listings/${id}`
+    : `/listings/${id}`;
+
+  const handleCopyLink = useCallback(() => {
+    navigator.clipboard.writeText(listingUrl).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    }).catch(() => {});
+  }, [listingUrl]);
 
   // Loading skeleton
   if (loading) {
@@ -441,6 +453,70 @@ export default function ListingDetail() {
                 </div>
               </section>
             )}
+
+            {/* Share This Listing */}
+            <section className="mb-6">
+              <h2 className="text-sm font-semibold text-[#5F6368] uppercase tracking-wide mb-3">
+                Share This Listing
+              </h2>
+              <div className="flex items-center gap-3 flex-wrap">
+                {/* Facebook */}
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(listingUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Share on Facebook"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E0E0E0]
+                             bg-white text-sm text-[#202124] hover:border-[#1A73E8] hover:text-[#1A73E8]
+                             transition-colors duration-150"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                  </svg>
+                  Facebook
+                </a>
+                {/* Twitter / X */}
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(listingUrl)}&text=${encodeURIComponent(listing.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Share on Twitter"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E0E0E0]
+                             bg-white text-sm text-[#202124] hover:border-[#1A73E8] hover:text-[#1A73E8]
+                             transition-colors duration-150"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                  Twitter
+                </a>
+                {/* Copy Link */}
+                <button
+                  onClick={handleCopyLink}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E0E0E0]
+                             bg-white text-sm text-[#202124] hover:border-[#1A73E8] hover:text-[#1A73E8]
+                             transition-colors duration-150"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  </svg>
+                  {linkCopied ? "Copied!" : "Copy Link"}
+                </button>
+              </div>
+            </section>
+
+            {/* Report This Listing */}
+            <p className="text-xs text-[#9AA0A6] pb-4">
+              Something wrong with this listing?{" "}
+              <a
+                href="https://www.apartmentguide.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-[#5F6368] transition-colors"
+              >
+                Report this listing
+              </a>
+            </p>
           </div>
 
           {/* ── RIGHT column - contact card ──────────────────────────── */}

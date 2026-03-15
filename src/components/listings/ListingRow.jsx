@@ -104,9 +104,18 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
 
           {/* Title + price header */}
           <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="font-bold text-[#202124] text-sm leading-snug truncate flex-1">
-              {listing.title}
-            </h3>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-[#202124] text-sm leading-snug truncate">
+                {listing.title}
+              </h3>
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold
+                               text-[#1A73E8] mt-0.5">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                Verified
+              </span>
+            </div>
             <p className="text-[#1A73E8] font-extrabold text-lg leading-tight shrink-0">
               ${listing.price?.toLocaleString()}
               <span className="text-xs font-normal text-[#5F6368]">/mo</span>

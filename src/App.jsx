@@ -20,6 +20,7 @@ import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import ScrollToTop from "./components/common/ScrollToTop";
+import BackToTop from "./components/common/BackToTop";
 
 // Pages
 import Home from "./pages/Home";
@@ -82,6 +83,7 @@ export default function App() {
           </main>
 
           <Footer />
+          <BackToTop />
         </div>
       </FavoritesProvider>
     </AuthProvider>
