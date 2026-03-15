@@ -448,7 +448,7 @@ export default function ListingDetail() {
                   Mobile:  1 column (grid-cols-1) - cards are full width.
                   sm+:     up to 3 columns (sm:grid-cols-3).
                 */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {similarListings.map(l => (
                     <ListingCard key={l.id} listing={l} />
                   ))}

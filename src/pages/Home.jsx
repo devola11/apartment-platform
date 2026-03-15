@@ -223,7 +223,7 @@ export default function Home() {
           <h2 className="text-xl md:text-2xl font-bold text-[#202124] text-center mb-10">
             Renting Made Easy
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {HOW_IT_WORKS.map(({ title, desc, icon }) => (
               <div key={title} className="flex flex-col items-center text-center p-6
                                           bg-[#F8F9FA] rounded-2xl border border-gray-100">

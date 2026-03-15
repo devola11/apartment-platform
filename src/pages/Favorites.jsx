@@ -62,9 +62,9 @@ export default function Favorites() {
             </p>
             <Link
               to="/listings"
-              className="inline-block bg-[#1A73E8] text-white font-semibold
+              className="inline-flex items-center justify-center bg-[#1A73E8] text-white font-semibold
                          px-8 py-3 rounded-full hover:bg-[#1557b0]
-                         transition-colors duration-150 text-sm"
+                         transition-colors duration-150 text-sm min-h-[44px]"
             >
               Browse Apartments
             </Link>

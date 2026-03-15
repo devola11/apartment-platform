@@ -174,9 +174,8 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
         ) : (
           <form onSubmit={handleSubmit} className="px-6 pb-6 pt-4 space-y-4">
 
-            {/* First Name + Last Name - side by side using flex gap */}
-            {/* Two inputs on one row shows the ApartmentGuide split-name pattern */}
-            <div className="flex gap-3">
+            {/* First Name + Last Name - stacked on mobile, side by side on sm+ */}
+            <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
                 name="firstName"

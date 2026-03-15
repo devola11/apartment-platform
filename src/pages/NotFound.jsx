@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-4">
       <SEO title="Page Not Found" noindex />
-      <p className="text-8xl font-extrabold text-brand-200">404</p>
+      <p className="text-6xl sm:text-8xl font-extrabold text-brand-200">404</p>
       <h1 className="text-2xl font-bold text-gray-900 mt-4">Page not found</h1>
       <p className="text-gray-500 mt-2">The page you&apos;re looking for doesn&apos;t exist.</p>
       <Link
