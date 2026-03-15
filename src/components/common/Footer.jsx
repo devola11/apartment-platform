@@ -189,17 +189,17 @@ export default function Footer() {
             </p>
             {/* Social icons */}
             <div className="flex items-center gap-3">
-              <a href={AG_URL} target="_blank" rel="noopener noreferrer"
+              <a href="https://www.facebook.com/apartmentguide" target="_blank" rel="noopener noreferrer"
                 aria-label="Facebook"
                 className="text-gray-400 hover:text-white transition-colors duration-150 p-1.5">
                 <FacebookIcon />
               </a>
-              <a href={AG_URL} target="_blank" rel="noopener noreferrer"
+              <a href="https://x.com/apartmentguide" target="_blank" rel="noopener noreferrer"
                 aria-label="Twitter / X"
                 className="text-gray-400 hover:text-white transition-colors duration-150 p-1.5">
                 <TwitterIcon />
               </a>
-              <a href={AG_URL} target="_blank" rel="noopener noreferrer"
+              <a href="https://www.instagram.com/apartmentguide" target="_blank" rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="text-gray-400 hover:text-white transition-colors duration-150 p-1.5">
                 <InstagramIcon />
