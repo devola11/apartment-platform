@@ -11,16 +11,23 @@ export function useListing(id) {
   useEffect(() => {
     if (!id) return;
 
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
     supabase
       .from("listings")
       .select("*")
       .eq("id", id)
-      .single() // .single() returns one object instead of an array
+      .single()
       .then(({ data, error: err }) => {
+        if (cancelled) return;
         if (err) setError(err.message);
         else setListing(data);
         setLoading(false);
       });
+
+    return () => { cancelled = true; };
   }, [id]);
 
   return { listing, loading, error };

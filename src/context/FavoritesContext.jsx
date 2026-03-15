@@ -36,30 +36,47 @@ export function FavoritesProvider({ children }) {
       });
   }, [user]);
 
-  // Toggle a listing in/out of favorites
+  // Toggle a listing in/out of favorites.
+  // Uses optimistic UI: state updates immediately, then rolls back on DB error.
   async function toggleFavorite(listingId) {
-    if (!user) return; // must be logged in
+    if (!user) return;
 
     if (favoriteIds.has(listingId)) {
-      // Remove from favorites
-      await supabase
-        .from("favorites")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("listing_id", listingId);
-
+      // Optimistic remove
       setFavoriteIds((prev) => {
         const next = new Set(prev);
         next.delete(listingId);
         return next;
       });
+
+      const { error } = await supabase
+        .from("favorites")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("listing_id", listingId);
+
+      if (error) {
+        // Rollback: re-add the id
+        setFavoriteIds((prev) => new Set(prev).add(listingId));
+        console.error("Failed to remove favorite:", error.message);
+      }
     } else {
-      // Add to favorites
-      await supabase
+      // Optimistic add
+      setFavoriteIds((prev) => new Set(prev).add(listingId));
+
+      const { error } = await supabase
         .from("favorites")
         .insert({ user_id: user.id, listing_id: listingId });
 
-      setFavoriteIds((prev) => new Set(prev).add(listingId));
+      if (error) {
+        // Rollback: remove the id
+        setFavoriteIds((prev) => {
+          const next = new Set(prev);
+          next.delete(listingId);
+          return next;
+        });
+        console.error("Failed to save favorite:", error.message);
+      }
     }
   }
 

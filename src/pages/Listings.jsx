@@ -31,7 +31,7 @@
 //       → Mobile: hidden (shown/hidden by JS state instead)
 //       → md+:    always visible, takes up 50% of width
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { useListings } from "../hooks/useListings";
 import ListingRow from "../components/listings/ListingRow";
@@ -89,34 +89,32 @@ export default function Listings({ stateFilter }) {
   // Default: map hidden on mobile (false), always visible on desktop via CSS
   const [showMobileMap, setShowMobileMap] = useState(false);
 
+  // Reset to page 1 whenever filters/sort/state change
   useEffect(() => { setPage(1); }, [filters, sort, stateFilter]);
 
-  const { listings, loading } = useListings({
-    state:     stateFilter || undefined,
-    city:      filters.city,
-    minPrice:  filters.minPrice,
-    maxPrice:  filters.maxPrice,
-    bedrooms:  filters.bedrooms,
-    bathrooms: filters.bathrooms,
+  const { listings, loading, error, total } = useListings({
+    state:       stateFilter || undefined,
+    city:        filters.city,
+    minPrice:    filters.minPrice,
+    maxPrice:    filters.maxPrice,
+    bedrooms:    filters.bedrooms,
+    bathrooms:   filters.bathrooms,
+    petFriendly: filters.petFriendly,
     sort,
+    page,
+    pageSize:    ITEMS_PER_PAGE,
   });
 
-  const filtered = useMemo(() => {
-    if (!filters.petFriendly) return listings;
-    return listings.filter(l =>
-      l.amenities?.some(a => a.toLowerCase().includes("pet"))
-    );
-  }, [listings, filters.petFriendly]);
-
-  const totalPages    = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  // listings is already the current page from Supabase .range()
+  const pagedListings = listings;
+  const totalPages    = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
   const currentPage   = Math.min(page, totalPages);
-  const pagedListings = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  const seo          = SEO_CONFIG[stateFilter] || SEO_CONFIG.default;
+  const seo           = SEO_CONFIG[stateFilter] || SEO_CONFIG.default;
   const locationLabel = stateFilter || "California & Florida";
-  const countLabel   = loading
+  const countLabel    = loading
     ? "Loading…"
-    : `${filtered.length} Apartment${filtered.length !== 1 ? "s" : ""} for Rent in ${locationLabel}`;
+    : `${total} Apartment${total !== 1 ? "s" : ""} for Rent in ${locationLabel}`;
 
   function handleFilter(f) { setFilters(f); }
   function goPage(p)        { setPage(p); }
@@ -223,7 +221,7 @@ export default function Listings({ stateFilter }) {
           {showMobileMap && (
             <div className="md:hidden">
               <ListingsMap
-                listings={filtered}
+                listings={listings}
                 hoveredId={hoveredId}
                 className="h-[260px] rounded-none"
               />
@@ -232,7 +230,29 @@ export default function Listings({ stateFilter }) {
 
           {/* ── Listing rows ────────────────────────────────────────── */}
           <div className="px-4 sm:px-5 py-4 space-y-3">
-            {loading ? (
+            {error ? (
+              <div className="text-center py-20">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"
+                  className="text-red-300 mx-auto mb-4">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p className="text-lg font-semibold text-[#202124]">Could not load listings</p>
+                <p className="text-sm text-[#5F6368] mt-2 mb-6">
+                  Check your connection and try again.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="inline-flex items-center justify-center bg-[#1A73E8] text-white
+                             font-semibold px-6 py-2.5 rounded-full text-sm hover:bg-[#1669D3]
+                             transition-colors duration-150 min-h-[44px]"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : loading ? (
               // Loading skeleton - flex-col on mobile matches vertical card layout
               Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="flex flex-col sm:flex-row bg-white rounded-xl
@@ -332,7 +352,7 @@ export default function Listings({ stateFilter }) {
         */}
         <div className="hidden md:block md:w-1/2 shrink-0">
           <ListingsMap
-            listings={filtered}
+            listings={listings}
             hoveredId={hoveredId}
             className="h-full rounded-none"
           />

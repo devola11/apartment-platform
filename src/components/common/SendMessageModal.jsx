@@ -12,6 +12,8 @@
 //  • Body scroll is locked while open so the page behind doesn't scroll.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useEffect, useRef, useState } from "react";
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../context/AuthContext";
 
 function XIcon() {
   return (
@@ -38,6 +40,8 @@ const inputCls =
   "placeholder-[#5F6368] focus:outline-none focus:ring-2 focus:ring-[#1A73E8] bg-white";
 
 export default function SendMessageModal({ isOpen, onClose, listing }) {
+  const { user } = useAuth();
+
   // ── Local state ──────────────────────────────────────────────────────────
   const [form, setForm] = useState({
     firstName: "",
@@ -47,8 +51,10 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
     moveIn: "",
     message: "",
   });
-  const [tips, setTips]   = useState(false);
-  const [sent, setSent]   = useState(false);
+  const [tips,       setTips]       = useState(false);
+  const [sent,       setSent]       = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   // The overlay <div> ref lets us detect "click outside" reliably.
   // We compare e.target with the overlay element itself - if they match,
@@ -66,10 +72,13 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
   useEffect(() => {
     if (isOpen && listing) {
       setSent(false);
+      setSubmitError(null);
+      // Pre-fill email from the logged-in user if available
+      const emailPrefill = user?.email ?? "";
       setForm({
         firstName: "",
         lastName: "",
-        email: "",
+        email: emailPrefill,
         phone: "",
         moveIn: "",
         message: `Hello, I'd like more information about ${address}.`,
@@ -120,10 +129,30 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    // In a real app: POST to your API here.
-    // For now, show a success state then auto-close after 1.5 s.
+    setSubmitting(true);
+    setSubmitError(null);
+
+    const { error } = await supabase.from("inquiries").insert({
+      listing_id:   listing?.id ?? null,
+      user_id:      user?.id    ?? null,
+      first_name:   form.firstName,
+      last_name:    form.lastName,
+      email:        form.email,
+      phone:        form.phone  || null,
+      move_in_date: form.moveIn || null,
+      message:      form.message,
+      opt_in_tips:  tips,
+    });
+
+    setSubmitting(false);
+
+    if (error) {
+      setSubmitError("Something went wrong. Please try again.");
+      return;
+    }
+
     setSent(true);
     setTimeout(() => {
       setSent(false);
@@ -247,12 +276,20 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
               className={inputCls + " resize-none"}
             />
 
+            {/* Error banner */}
+            {submitError && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {submitError}
+              </p>
+            )}
+
             {/* Send button - full width, primary blue */}
             <button
               type="submit"
-              className="w-full bg-[#1A73E8] hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
+              disabled={submitting}
+              className="w-full bg-[#1A73E8] hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors text-sm"
             >
-              Send
+              {submitting ? "Sending…" : "Send"}
             </button>
 
             {/* Tips opt-in checkbox - matches ApartmentGuide's newsletter opt-in */}
