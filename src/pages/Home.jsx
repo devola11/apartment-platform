@@ -370,6 +370,49 @@ export default function Home() {
           <ListingsMap listings={listings} className="h-[260px] md:h-[400px]" />
         </div>
       </section>
+
+      {/* ── Need Help CTA ──────────────────────────────────────────────── */}
+      <section className="bg-[#e8f0fe] border-t border-blue-100">
+        <div className="max-w-7xl mx-auto px-4 py-12 md:py-16 text-center">
+          <h2 className="text-xl md:text-2xl font-bold text-[#202124] mb-2">
+            Need Help Finding Your Home?
+          </h2>
+          <p className="text-sm md:text-base text-[#5F6368] mb-7">
+            Talk to our rental experts today
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="tel:8336750288"
+              className="inline-flex items-center justify-center gap-2
+                         bg-[#1A73E8] hover:bg-[#1557b0] text-white
+                         font-semibold text-sm px-7 py-3 rounded-full
+                         transition-colors duration-150 min-h-[44px] w-full sm:w-auto"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24
+                         11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0
+                         1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57
+                         3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/>
+              </svg>
+              Call Us
+            </a>
+            <a
+              href="mailto:support@aptguide.com"
+              className="inline-flex items-center justify-center gap-2
+                         bg-white hover:bg-gray-50 text-[#1A73E8] border border-[#1A73E8]
+                         font-semibold text-sm px-7 py-3 rounded-full
+                         transition-colors duration-150 min-h-[44px] w-full sm:w-auto"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              Email Us
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

@@ -70,10 +70,9 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
   // useEffect with [isOpen] runs whenever isOpen changes. When it becomes
   // true we reset all fields so old data doesn't bleed between opens.
   useEffect(() => {
-    if (isOpen && listing) {
+    if (isOpen) {
       setSent(false);
       setSubmitError(null);
-      // Pre-fill email from the logged-in user if available
       const emailPrefill = user?.email ?? "";
       setForm({
         firstName: "",
@@ -81,7 +80,11 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
         email: emailPrefill,
         phone: "",
         moveIn: "",
-        message: `Hello, I'd like more information about ${address}.`,
+        // When opened without a specific listing (e.g. "Contact Us" on the
+        // search page) the address string is empty, so use a generic opener.
+        message: address
+          ? `Hello, I'd like more information about ${address}.`
+          : "Hello, I'd like help finding an apartment.",
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

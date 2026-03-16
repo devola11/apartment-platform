@@ -38,6 +38,7 @@ import ListingRow from "../components/listings/ListingRow";
 import ListingsMap from "../components/maps/ListingsMap";
 import FilterBar from "../components/filters/FilterBar";
 import SEO from "../components/common/SEO";
+import SendMessageModal from "../components/common/SendMessageModal";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -83,7 +84,8 @@ export default function Listings({ stateFilter }) {
   });
   const [sort,      setSort]      = useState("newest");
   const [page,      setPage]      = useState(1);
-  const [hoveredId, setHoveredId] = useState(null);
+  const [hoveredId,    setHoveredId]    = useState(null);
+  const [contactOpen,  setContactOpen]  = useState(false);
 
   // Controls the mobile "Show Map" toggle
   // Default: map hidden on mobile (false), always visible on desktop via CSS
@@ -341,6 +343,69 @@ export default function Listings({ stateFilter }) {
               </button>
             </div>
           )}
+          {/* ── Can't Find section ──────────────────────────────────── */}
+          {!loading && (
+            <div className="mx-4 sm:mx-5 mb-8 mt-2 rounded-2xl border border-[#E0E0E0]
+                            bg-white px-6 py-7 text-center">
+              <div className="w-12 h-12 rounded-full bg-[#e8f0fe] flex items-center justify-center
+                              mx-auto mb-4 text-[#1A73E8]">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-[#202124] text-base mb-1">
+                Can&apos;t find your perfect apartment?
+              </h3>
+              <p className="text-sm text-[#5F6368] leading-relaxed mb-5 max-w-xs mx-auto">
+                Our team can help you find the right home. Get in touch and
+                we&apos;ll match you with available listings.
+              </p>
+
+              {/* Contact details */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-5">
+                <a
+                  href="tel:8336750288"
+                  className="flex items-center gap-2 text-sm text-[#202124]
+                             hover:text-[#1A73E8] transition-colors"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"
+                    className="text-[#1A73E8] shrink-0">
+                    <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24
+                             11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0
+                             1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57
+                             3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/>
+                  </svg>
+                  (833) 675-0288
+                </a>
+                <span className="hidden sm:block text-[#E0E0E0]">|</span>
+                <a
+                  href="mailto:support@aptguide.com"
+                  className="flex items-center gap-2 text-sm text-[#202124]
+                             hover:text-[#1A73E8] transition-colors"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                    className="text-[#1A73E8] shrink-0">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1
+                             0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  support@aptguide.com
+                </a>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setContactOpen(true)}
+                className="inline-flex items-center justify-center bg-[#1A73E8] hover:bg-[#1557b0]
+                           text-white font-semibold text-sm px-6 py-2.5 rounded-full
+                           transition-colors duration-150 min-h-[44px]"
+              >
+                Contact Us
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ── RIGHT PANEL: map (desktop always, mobile hidden) ─────────── */}
@@ -358,6 +423,13 @@ export default function Listings({ stateFilter }) {
           />
         </div>
       </div>
+
+      {/* Contact modal triggered by the "Can't Find" section */}
+      <SendMessageModal
+        isOpen={contactOpen}
+        onClose={() => setContactOpen(false)}
+        listing={null}
+      />
     </>
   );
 }
