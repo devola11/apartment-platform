@@ -39,6 +39,7 @@ import ListingsMap from "../components/maps/ListingsMap";
 import FilterBar from "../components/filters/FilterBar";
 import SEO from "../components/common/SEO";
 import SendMessageModal from "../components/common/SendMessageModal";
+import FindApartmentModal from "../components/common/FindApartmentModal";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -86,6 +87,7 @@ export default function Listings({ stateFilter }) {
   const [page,      setPage]      = useState(1);
   const [hoveredId,    setHoveredId]    = useState(null);
   const [contactOpen,  setContactOpen]  = useState(false);
+  const [findOpen,     setFindOpen]     = useState(false);
 
   // Controls the mobile "Show Map" toggle
   // Default: map hidden on mobile (false), always visible on desktop via CSS
@@ -379,11 +381,19 @@ export default function Listings({ stateFilter }) {
                   (833) 675-0288
                 </a>
                 <span className="hidden sm:block text-[#E0E0E0]">|</span>
-                <a
-                  href="mailto:support@aptguide.com"
+                {/*
+                  Email address row — clicking the envelope icon OR the address
+                  text opens the FindApartmentModal instead of mailto:.
+                  Using a <button> (not <a href="mailto:">) keeps the intent
+                  clear: we want the user to fill in the structured form.
+                */}
+                <button
+                  type="button"
+                  onClick={() => setFindOpen(true)}
                   className="flex items-center gap-2 text-sm text-[#202124]
                              hover:text-[#1A73E8] transition-colors"
                 >
+                  {/* Envelope icon in brand blue — acts as a visual email cue */}
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" strokeWidth="2" strokeLinecap="round"
                     className="text-[#1A73E8] shrink-0">
@@ -392,12 +402,16 @@ export default function Listings({ stateFilter }) {
                     <polyline points="22,6 12,13 2,6"/>
                   </svg>
                   support@aptguide.com
-                </a>
+                </button>
               </div>
 
+              {/*
+                "Contact Us" CTA — now opens FindApartmentModal so the user
+                can submit structured preferences instead of a generic mailto.
+              */}
               <button
                 type="button"
-                onClick={() => setContactOpen(true)}
+                onClick={() => setFindOpen(true)}
                 className="inline-flex items-center justify-center bg-[#1A73E8] hover:bg-[#1557b0]
                            text-white font-semibold text-sm px-6 py-2.5 rounded-full
                            transition-colors duration-150 min-h-[44px]"
@@ -424,11 +438,18 @@ export default function Listings({ stateFilter }) {
         </div>
       </div>
 
-      {/* Contact modal triggered by the "Can't Find" section */}
+      {/* Generic contact modal (kept for listing-specific use elsewhere) */}
       <SendMessageModal
         isOpen={contactOpen}
         onClose={() => setContactOpen(false)}
         listing={null}
+      />
+
+      {/* "Tell Us What You're Looking For" modal — opened by the email icon,
+          email address text, and "Contact Us" button in the Can't Find section */}
+      <FindApartmentModal
+        isOpen={findOpen}
+        onClose={() => setFindOpen(false)}
       />
     </>
   );

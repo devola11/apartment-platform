@@ -7,6 +7,7 @@ import ListingsMap from "../components/maps/ListingsMap";
 import SEO from "../components/common/SEO";
 import CityAutocomplete from "../components/common/CityAutocomplete";
 import WelcomeBanner from "../components/common/WelcomeBanner";
+import FindApartmentModal from "../components/common/FindApartmentModal";
 
 const CITIES = [
   { name: "Los Angeles",   state: "California", count: 12, img: "https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?auto=format&fit=crop&w=600&q=70" },
@@ -118,6 +119,7 @@ export default function Home() {
   // independently (closing the banner doesn't close the onboarding section).
   const [showBanner,     setShowBanner]     = useState(isWelcome);
   const [showOnboarding, setShowOnboarding] = useState(isWelcome);
+  const [findOpen,       setFindOpen]       = useState(false);
 
   const [query, setQuery] = useState("");
 
@@ -396,23 +398,37 @@ export default function Home() {
               </svg>
               Call Us
             </a>
-            <a
-              href="mailto:support@aptguide.com"
+            {/*
+              "Email Us" — changed from <a href="mailto:"> to a <button> that
+              opens FindApartmentModal. The envelope SVG is the email icon shown
+              next to the label, rendered in brand blue via currentColor on the
+              button's text-[#1A73E8] class.
+            */}
+            <button
+              type="button"
+              onClick={() => setFindOpen(true)}
               className="inline-flex items-center justify-center gap-2
                          bg-white hover:bg-gray-50 text-[#1A73E8] border border-[#1A73E8]
                          font-semibold text-sm px-7 py-3 rounded-full
                          transition-colors duration-150 min-h-[44px] w-full sm:w-auto"
             >
+              {/* Envelope SVG icon — brand blue from parent's text-[#1A73E8] */}
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                 <polyline points="22,6 12,13 2,6"/>
               </svg>
               Email Us
-            </a>
+            </button>
           </div>
         </div>
       </section>
+
+      {/* "Tell Us What You're Looking For" modal — opened by the Email Us button */}
+      <FindApartmentModal
+        isOpen={findOpen}
+        onClose={() => setFindOpen(false)}
+      />
     </div>
   );
 }
