@@ -198,7 +198,7 @@ export default function FindApartmentModal({ isOpen, onClose }) {
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 px-4 py-8"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-4 py-8"
     >
       {/* White modal card */}
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
