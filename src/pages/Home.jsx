@@ -153,15 +153,15 @@ export default function Home() {
         className="relative flex items-center justify-center text-white
                    min-h-[380px] md:min-h-[540px]"
       >
-        {/* Background image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80')",
-          }}
-          role="img"
-          aria-label="Modern apartment building exterior"
+        {/* Hero image — proper <img> so the browser preload scanner discovers it
+            immediately (CSS background-images are invisible to the scanner).
+            fetchPriority="high" + the <link rel="preload"> in index.html together
+            ensure this is the first resource fetched, minimising LCP. */}
+        <img
+          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80"
+          alt="Modern apartment building exterior"
+          fetchPriority="high"
+          className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/25" />
