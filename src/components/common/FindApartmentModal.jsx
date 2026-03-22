@@ -67,7 +67,7 @@ const inputCls =
 const DEFAULT_MESSAGE =
   "Hi, I'm looking for an apartment and would love some help finding the right match.";
 
-const SUCCESS_MSG = "Message sent! We'll get back to you within 24 hours.";
+const SUCCESS_MSG = "Thank you! We'll get back to you within 24 hours.";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 

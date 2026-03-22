@@ -36,11 +36,24 @@ export default {
           "0%":   { opacity: "0", transform: "translateX(-50%) translateY(12px)" },
           "100%": { opacity: "1", transform: "translateX(-50%) translateY(0)"    },
         },
+        // Toast: slides down from top, holds, then fades out — all in one animation.
+        // Using translateX(-50%) inside the keyframe so the centered position is
+        // stable throughout the animation without conflicting with Tailwind's
+        // CSS-var-based transform utilities.
+        toastShow: {
+          "0%":  { opacity: "0", transform: "translateX(-50%) translateY(-20px)" },
+          "8%":  { opacity: "1", transform: "translateX(-50%) translateY(0)"     },
+          "78%": { opacity: "1", transform: "translateX(-50%) translateY(0)"     },
+          "100%":{ opacity: "0", transform: "translateX(-50%) translateY(0)"     },
+        },
       },
       animation: {
         slideDown: "slideDown 0.18s ease-out",
         fadeIn:    "fadeIn 0.3s ease-out both",
         slideUp:   "slideUp 0.22s ease-out both",
+        // `both` = apply 0% before start (prevents flash) + keep 100% after end
+        // (element stays invisible while React unmounts it after the timer).
+        toastShow: "toastShow 5s ease-out both",
       },
     },
   },

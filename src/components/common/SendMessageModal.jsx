@@ -44,7 +44,7 @@ const inputCls =
   "w-full border border-[#E0E0E0] rounded-lg px-3 py-2.5 text-sm text-[#202124] " +
   "placeholder-[#5F6368] focus:outline-none focus:ring-2 focus:ring-[#1A73E8] bg-white";
 
-const SUCCESS_MSG = "Message sent! We'll get back to you within 24 hours.";
+const SUCCESS_MSG = "Thank you! We'll get back to you within 24 hours.";
 
 export default function SendMessageModal({ isOpen, onClose, listing, formSource = "listing" }) {
   const { showToast } = useToast();
