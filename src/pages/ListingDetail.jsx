@@ -573,6 +573,7 @@ export default function ListingDetail() {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         listing={listing}
+        formSource="contact"
       />
     </div>
   );

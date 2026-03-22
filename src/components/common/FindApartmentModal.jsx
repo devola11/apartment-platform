@@ -4,17 +4,23 @@
 //
 // Triggered from the "Can't Find What You're Looking For?" CTA on Listings
 // and the "Email Us" button on Home. Collects structured apartment-search
-// preferences and submits them to the `inquiries` table as a formatted message.
+// preferences and submits them via submitInquiry() with form_source = 'help'.
 //
-// MODAL SHELL is identical to SendMessageModal:
-//  • Fixed full-viewport overlay with bg-black/50
-//  • White rounded card, max-w-lg, max-h-90vh with overflow-y-auto
+// On submit:
+//   1. Calls submitInquiry() — saves to Supabase AND Web3Forms in parallel,
+//      each in its own try/catch so one failure never blocks the other.
+//   2. Shows a success toast via useToast() and immediately closes the modal.
+//
+// MODAL SHELL:
+//  • Fixed full-viewport overlay, z-[9999] — always above Leaflet map
+//  • White rounded card, max-w-lg, centered on all screen sizes
 //  • Sticky header with X button
 //  • Close on: X click, click-outside overlay, Escape key
 //  • Body scroll locked while open
 // ─────────────────────────────────────────────────────────────────────────────
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "../../lib/supabase";
+import { submitInquiry } from "../../lib/submitInquiry";
+import { useToast } from "../../context/ToastContext";
 import { useAuth } from "../../context/AuthContext";
 
 // ── Icon helpers ─────────────────────────────────────────────────────────────
@@ -42,82 +48,62 @@ function CalendarIcon() {
 }
 
 // ── City options ─────────────────────────────────────────────────────────────
-// Grouped by state so the <select> uses <optgroup> for clarity.
 
 const CA_CITIES = [
-  "Los Angeles",
-  "San Francisco",
-  "San Diego",
-  "Sacramento",
-  "Oakland",
-  "San Jose",
-  "Fresno",
-  "Long Beach",
-  "Anaheim",
-  "Bakersfield",
+  "Los Angeles", "San Francisco", "San Diego", "Sacramento", "Oakland",
+  "San Jose", "Fresno", "Long Beach", "Anaheim", "Bakersfield",
 ];
 
 const FL_CITIES = [
-  "Miami",
-  "Orlando",
-  "Tampa",
-  "Jacksonville",
-  "Fort Lauderdale",
-  "St. Petersburg",
-  "Tallahassee",
-  "Cape Coral",
-  "Hialeah",
-  "Fort Myers",
+  "Miami", "Orlando", "Tampa", "Jacksonville", "Fort Lauderdale",
+  "St. Petersburg", "Tallahassee", "Cape Coral", "Hialeah", "Fort Myers",
 ];
 
-// ── Shared input class (mirrors SendMessageModal for visual consistency) ─────
+// ── Shared input class ────────────────────────────────────────────────────────
 const inputCls =
   "w-full border border-[#E0E0E0] rounded-lg px-3 py-2.5 text-sm text-[#202124] " +
   "placeholder-[#5F6368] focus:outline-none focus:ring-2 focus:ring-[#1A73E8] bg-white";
 
-// ── Default message pre-fill ──────────────────────────────────────────────────
 const DEFAULT_MESSAGE =
   "Hi, I'm looking for an apartment and would love some help finding the right match.";
+
+const SUCCESS_MSG = "Message sent! We'll get back to you within 24 hours.";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function FindApartmentModal({ isOpen, onClose }) {
   const { user } = useAuth();
+  const { showToast } = useToast();
 
-  // Form state — all fields reset when modal opens (see useEffect below)
   const [form, setForm] = useState({
-    fullName:   "",
-    email:      "",
-    phone:      "",
-    city:       "",
-    bedrooms:   "",
-    budget:     "",
-    moveIn:     "",
-    message:    DEFAULT_MESSAGE,
+    fullName:  "",
+    email:     "",
+    phone:     "",
+    city:      "",
+    bedrooms:  "",
+    budget:    "",
+    moveIn:    "",
+    message:   DEFAULT_MESSAGE,
   });
 
-  const [sent,        setSent]        = useState(false);
   const [submitting,  setSubmitting]  = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
-  // Used for click-outside detection — only close when clicking the dark
-  // backdrop itself, not the white card inside it.
   const overlayRef = useRef(null);
 
   // ── Reset & pre-fill when modal opens ────────────────────────────────────
   useEffect(() => {
     if (isOpen) {
-      setSent(false);
       setSubmitError(null);
       setForm({
-        fullName:  "",
-        email:     user?.email ?? "",
-        phone:     "",
-        city:      "",
-        bedrooms:  "",
-        budget:    "",
-        moveIn:    "",
-        message:   DEFAULT_MESSAGE,
+        fullName: "",
+        email:    user?.email ?? "",
+        phone:    "",
+        city:     "",
+        bedrooms: "",
+        budget:   "",
+        moveIn:   "",
+        message:  DEFAULT_MESSAGE,
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -136,7 +122,6 @@ export default function FindApartmentModal({ isOpen, onClose }) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen, onClose]);
 
-  // Don't render when closed — keeps the DOM clean.
   if (!isOpen) return null;
 
   // ── Handlers ─────────────────────────────────────────────────────────────
@@ -154,47 +139,34 @@ export default function FindApartmentModal({ isOpen, onClose }) {
     setSubmitting(true);
     setSubmitError(null);
 
-    // Build a structured message so all preferences are captured in the
-    // `message` column without needing extra schema columns.
-    const structured = [
-      form.message,
-      "",
-      `Preferred city: ${form.city || "—"}`,
-      `Bedrooms: ${form.bedrooms || "—"}`,
-      `Budget: ${form.budget || "—"}`,
-      `Move-in: ${form.moveIn || "—"}`,
-      `Phone: ${form.phone || "—"}`,
-    ].join("\n");
-
-    const { error } = await supabase.from("inquiries").insert({
-      listing_id:   null,
-      user_id:      user?.id ?? null,
-      first_name:   form.fullName.split(" ")[0] || form.fullName,
-      last_name:    form.fullName.split(" ").slice(1).join(" ") || "",
-      email:        form.email,
-      phone:        form.phone || null,
-      move_in_date: form.moveIn || null,
-      message:      structured,
-      opt_in_tips:  false,
+    const { ok } = await submitInquiry({
+      name:               form.fullName,
+      email:              form.email,
+      phone:              form.phone    || null,
+      preferred_city:     form.city     || null,
+      preferred_bedrooms: form.bedrooms || null,
+      budget_range:       form.budget   || null,
+      move_in_date:       form.moveIn   || null,
+      message:            form.message  || null,
+      listing_id:         null,
+      form_source:        "help",
     });
 
     setSubmitting(false);
 
-    if (error) {
+    if (!ok) {
       setSubmitError("Something went wrong. Please try again.");
       return;
     }
 
-    setSent(true);
-    setTimeout(() => {
-      setSent(false);
-      onClose();
-    }, 1500);
+    showToast(SUCCESS_MSG);
+    onClose();
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    // Fixed overlay — identical z-index and backdrop style as SendMessageModal
+    // Fixed overlay — z-[9999] always renders above Leaflet map (highest
+    // Leaflet pane is popup at z-index 700).
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
@@ -204,14 +176,12 @@ export default function FindApartmentModal({ isOpen, onClose }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
 
         {/* ── Sticky header ──────────────────────────────────────────── */}
-        {/* sticky top-0 keeps the title + X visible while scrolling the form */}
         <div className="sticky top-0 bg-white flex items-center justify-between
                         px-6 py-4 border-b border-[#E0E0E0] rounded-t-2xl z-10">
           <div>
             <h2 className="font-bold text-lg text-[#202124] leading-tight">
               Tell Us What You&apos;re Looking For
             </h2>
-            {/* Subtitle sits directly below the title in the header */}
             <p className="text-xs text-[#5F6368] mt-0.5">
               We&apos;ll help match you with the right apartment.
             </p>
@@ -227,164 +197,145 @@ export default function FindApartmentModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* ── Form / Success state ────────────────────────────────────── */}
-        {sent ? (
-          // Auto-closes 1.5 s after submission — same UX as SendMessageModal
-          <div className="px-6 py-12 text-center">
-            <div className="text-green-500 text-5xl mb-3">✓</div>
-            <p className="font-bold text-lg text-[#202124]">Request Sent!</p>
-            <p className="text-sm text-[#5F6368] mt-1">
-              We&apos;ll get back to you within 24 hours.
-            </p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="px-6 pb-6 pt-5 space-y-4">
+        {/* ── Form ──────────────────────────────────────────────────── */}
+        <form onSubmit={handleSubmit} className="px-6 pb-6 pt-5 space-y-4">
 
-            {/* 1 — Full Name ─────────────────────────────────────────── */}
-            {/* Single full-name field instead of first/last split because
-                the CTA is informal and one field feels lighter. */}
-            <input
-              type="text"
-              name="fullName"
-              value={form.fullName}
-              onChange={handleChange}
-              placeholder="Full Name"
-              required
-              className={inputCls}
-            />
+          {/* 1 — Full Name */}
+          <input
+            type="text"
+            name="fullName"
+            value={form.fullName}
+            onChange={handleChange}
+            placeholder="Full Name"
+            required
+            className={inputCls}
+          />
 
-            {/* 2 — Email ─────────────────────────────────────────────── */}
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Email"
-              required
-              className={inputCls}
-            />
+          {/* 2 — Email */}
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+            className={inputCls}
+          />
 
-            {/* 3 — Phone (optional) ──────────────────────────────────── */}
-            <input
-              type="tel"
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              placeholder="Phone (optional)"
-              className={inputCls}
-            />
+          {/* 3 — Phone (optional) */}
+          <input
+            type="tel"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            placeholder="Phone (optional)"
+            className={inputCls}
+          />
 
-            {/* 4 — Preferred City ────────────────────────────────────── */}
-            {/* optgroup separates California / Florida cities visually */}
+          {/* 4 — Preferred City */}
+          <select
+            name="city"
+            value={form.city}
+            onChange={handleChange}
+            className={inputCls}
+          >
+            <option value="">Preferred City</option>
+            <optgroup label="California">
+              {CA_CITIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </optgroup>
+            <optgroup label="Florida">
+              {FL_CITIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </optgroup>
+          </select>
+
+          {/* 5 + 6 — Bedrooms & Budget */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <select
-              name="city"
-              value={form.city}
+              name="bedrooms"
+              value={form.bedrooms}
               onChange={handleChange}
               className={inputCls}
             >
-              <option value="">Preferred City</option>
-              <optgroup label="California">
-                {CA_CITIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </optgroup>
-              <optgroup label="Florida">
-                {FL_CITIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </optgroup>
+              <option value="">Preferred Bedrooms</option>
+              <option value="Studio">Studio</option>
+              <option value="1 Bed">1 Bed</option>
+              <option value="2 Beds">2 Beds</option>
+              <option value="3+ Beds">3+ Beds</option>
             </select>
 
-            {/* 5 + 6 — Bedrooms & Budget — side by side on sm+ screens ─ */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              {/* 5 — Preferred Bedrooms */}
-              <select
-                name="bedrooms"
-                value={form.bedrooms}
-                onChange={handleChange}
-                className={inputCls}
-              >
-                <option value="">Preferred Bedrooms</option>
-                <option value="Studio">Studio</option>
-                <option value="1 Bed">1 Bed</option>
-                <option value="2 Beds">2 Beds</option>
-                <option value="3+ Beds">3+ Beds</option>
-              </select>
-
-              {/* 6 — Budget Range */}
-              <select
-                name="budget"
-                value={form.budget}
-                onChange={handleChange}
-                className={inputCls}
-              >
-                <option value="">Budget Range</option>
-                <option value="Under $1,500">Under $1,500</option>
-                <option value="$1,500–$2,000">$1,500–$2,000</option>
-                <option value="$2,000–$3,000">$2,000–$3,000</option>
-                <option value="$3,000–$5,000">$3,000–$5,000</option>
-                <option value="$5,000+">$5,000+</option>
-              </select>
-            </div>
-
-            {/* 7 — Move-in Date with calendar icon ──────────────────── */}
-            {/* The icon is pointer-events:none so clicks pass through to
-                the input, which opens the native date picker. */}
-            <div>
-              <label className="text-xs text-[#5F6368] mb-1 block font-medium">
-                Move-in Date
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  name="moveIn"
-                  value={form.moveIn}
-                  onChange={handleChange}
-                  className={inputCls + " pr-10"}
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2
-                                 text-[#5F6368] pointer-events-none">
-                  <CalendarIcon />
-                </span>
-              </div>
-            </div>
-
-            {/* 8 — Message textarea — pre-filled with friendly opener ── */}
-            <textarea
-              name="message"
-              value={form.message}
+            <select
+              name="budget"
+              value={form.budget}
               onChange={handleChange}
-              rows={4}
-              placeholder="Message"
-              className={inputCls + " resize-none"}
-            />
-
-            {/* Error banner */}
-            {submitError && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200
-                            rounded-lg px-3 py-2">
-                {submitError}
-              </p>
-            )}
-
-            {/* 9 — Submit button — full-width primary blue ──────────── */}
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full bg-[#1A73E8] hover:bg-blue-700 disabled:opacity-60
-                         disabled:cursor-not-allowed text-white font-semibold py-3
-                         rounded-xl transition-colors text-sm"
+              className={inputCls}
             >
-              {submitting ? "Submitting…" : "Submit Request"}
-            </button>
+              <option value="">Budget Range</option>
+              <option value="Under $1,500">Under $1,500</option>
+              <option value="$1,500–$2,000">$1,500–$2,000</option>
+              <option value="$2,000–$3,000">$2,000–$3,000</option>
+              <option value="$3,000–$5,000">$3,000–$5,000</option>
+              <option value="$5,000+">$5,000+</option>
+            </select>
+          </div>
 
-            {/* 10 — Disclaimer ───────────────────────────────────────── */}
-            <p className="text-xs text-[#5F6368] text-center">
-              We&apos;ll get back to you within 24 hours.
+          {/* 7 — Move-in Date */}
+          <div>
+            <label className="text-xs text-[#5F6368] mb-1 block font-medium">
+              Move-in Date
+            </label>
+            <div className="relative">
+              <input
+                type="date"
+                name="moveIn"
+                value={form.moveIn}
+                onChange={handleChange}
+                className={inputCls + " pr-10"}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2
+                               text-[#5F6368] pointer-events-none">
+                <CalendarIcon />
+              </span>
+            </div>
+          </div>
+
+          {/* 8 — Message */}
+          <textarea
+            name="message"
+            value={form.message}
+            onChange={handleChange}
+            rows={4}
+            placeholder="Message"
+            className={inputCls + " resize-none"}
+          />
+
+          {/* Error banner */}
+          {submitError && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200
+                          rounded-lg px-3 py-2">
+              {submitError}
             </p>
+          )}
 
-          </form>
-        )}
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full bg-[#1A73E8] hover:bg-blue-700 disabled:opacity-60
+                       disabled:cursor-not-allowed text-white font-semibold py-3
+                       rounded-xl transition-colors text-sm"
+          >
+            {submitting ? "Submitting…" : "Submit Request"}
+          </button>
+
+          <p className="text-xs text-[#5F6368] text-center">
+            We&apos;ll get back to you within 24 hours.
+          </p>
+
+        </form>
       </div>
     </div>
   );

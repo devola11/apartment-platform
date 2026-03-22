@@ -1,19 +1,24 @@
 // src/components/common/SendMessageModal.jsx
 // ─────────────────────────────────────────────────────────────────────────────
-// A reusable modal dialog for contacting a property.
+// Reusable contact modal for messaging about a specific property.
 //
-// HOW IT WORKS:
-//  • The caller manages a boolean `isOpen` state and passes `onClose` as a
-//    callback. This keeps the modal stateless about *when* to show - the parent
-//    decides that; the modal only handles *what* to show.
-//  • `position: fixed` makes the overlay cover the entire viewport regardless
-//    of where in the DOM tree the modal is rendered.
-//  • Three UX patterns for closing: X button, click-outside, Escape key.
-//  • Body scroll is locked while open so the page behind doesn't scroll.
+// Props:
+//   isOpen     — boolean controlling visibility (parent manages this)
+//   onClose    — callback to close the modal
+//   listing    — optional listing object ({ id, address, city, state, zip })
+//   formSource — 'listing' (card) | 'contact' (detail page). Default: 'listing'
+//
+// On submit:
+//   1. Calls submitInquiry() which saves to Supabase AND Web3Forms in parallel,
+//      each in its own try/catch so one failure never blocks the other.
+//   2. Shows a success toast via useToast() and immediately closes the modal.
+//
+// Three close mechanisms: X button, click-outside overlay, Escape key.
+// Body scroll is locked while open.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { useAuth } from "../../context/AuthContext";
+import { submitInquiry } from "../../lib/submitInquiry";
+import { useToast } from "../../context/ToastContext";
 
 function XIcon() {
   return (
@@ -39,50 +44,39 @@ const inputCls =
   "w-full border border-[#E0E0E0] rounded-lg px-3 py-2.5 text-sm text-[#202124] " +
   "placeholder-[#5F6368] focus:outline-none focus:ring-2 focus:ring-[#1A73E8] bg-white";
 
-export default function SendMessageModal({ isOpen, onClose, listing }) {
-  const { user } = useAuth();
+const SUCCESS_MSG = "Message sent! We'll get back to you within 24 hours.";
 
-  // ── Local state ──────────────────────────────────────────────────────────
+export default function SendMessageModal({ isOpen, onClose, listing, formSource = "listing" }) {
+  const { showToast } = useToast();
+
   const [form, setForm] = useState({
     firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    moveIn: "",
-    message: "",
+    lastName:  "",
+    email:     "",
+    phone:     "",
+    moveIn:    "",
+    message:   "",
   });
-  const [tips,       setTips]       = useState(false);
-  const [sent,       setSent]       = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [submitting,  setSubmitting]  = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
-  // The overlay <div> ref lets us detect "click outside" reliably.
-  // We compare e.target with the overlay element itself - if they match,
-  // the user clicked the dark backdrop (not the white card), so we close.
   const overlayRef = useRef(null);
 
-  // ── Build address string for display + pre-fill ─────────────────────────
   const address = [listing?.address, listing?.city, listing?.state, listing?.zip]
     .filter(Boolean)
     .join(", ");
 
-  // ── Reset form & pre-fill message every time modal opens ────────────────
-  // useEffect with [isOpen] runs whenever isOpen changes. When it becomes
-  // true we reset all fields so old data doesn't bleed between opens.
+  // ── Reset & pre-fill when modal opens ────────────────────────────────────
   useEffect(() => {
     if (isOpen) {
-      setSent(false);
       setSubmitError(null);
-      const emailPrefill = user?.email ?? "";
       setForm({
         firstName: "",
-        lastName: "",
-        email: emailPrefill,
-        phone: "",
-        moveIn: "",
-        // When opened without a specific listing (e.g. "Contact Us" on the
-        // search page) the address string is empty, so use a generic opener.
-        message: address
+        lastName:  "",
+        email:     "",
+        phone:     "",
+        moveIn:    "",
+        message:   address
           ? `Hello, I'd like more information about ${address}.`
           : "Hello, I'd like help finding an apartment.",
       });
@@ -91,40 +85,23 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
   }, [isOpen]);
 
   // ── Lock body scroll while open ──────────────────────────────────────────
-  // Prevents the page behind the overlay from scrolling, which would look
-  // broken. The cleanup function (return) restores scroll when modal closes.
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
-  // ── Close on Escape key ──────────────────────────────────────────────────
-  // window.addEventListener is used (not a React event) because keyboard
-  // events on the document don't bubble through React's synthetic event system
-  // unless a focusable element is focused. The cleanup removes the listener.
+  // ── Close on Escape ──────────────────────────────────────────────────────
   useEffect(() => {
-    function handleKey(e) {
-      if (e.key === "Escape") onClose();
-    }
+    function handleKey(e) { if (e.key === "Escape") onClose(); }
     if (isOpen) window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen, onClose]);
 
-  // ── Don't render anything when closed ───────────────────────────────────
-  // Early return keeps the DOM clean - no hidden elements taking up space.
   if (!isOpen) return null;
 
-  // ── Event handlers ───────────────────────────────────────────────────────
+  // ── Handlers ─────────────────────────────────────────────────────────────
+
   function handleOverlayClick(e) {
-    // e.target is the element the user actually clicked.
-    // overlayRef.current is the dark backdrop div.
-    // Only close if they clicked the backdrop itself, not the white card.
     if (e.target === overlayRef.current) onClose();
   }
 
@@ -137,47 +114,39 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
     setSubmitting(true);
     setSubmitError(null);
 
-    const { error } = await supabase.from("inquiries").insert({
-      listing_id:   listing?.id ?? null,
-      user_id:      user?.id    ?? null,
-      first_name:   form.firstName,
-      last_name:    form.lastName,
-      email:        form.email,
-      phone:        form.phone  || null,
-      move_in_date: form.moveIn || null,
-      message:      form.message,
-      opt_in_tips:  tips,
+    const { ok } = await submitInquiry({
+      name:        `${form.firstName} ${form.lastName}`.trim(),
+      email:       form.email,
+      phone:       form.phone    || null,
+      move_in_date: form.moveIn  || null,
+      message:     form.message  || null,
+      listing_id:  listing?.id   || null,
+      form_source: formSource,
+      // preferred_city / preferred_bedrooms / budget_range not collected here
     });
 
     setSubmitting(false);
 
-    if (error) {
+    if (!ok) {
       setSubmitError("Something went wrong. Please try again.");
       return;
     }
 
-    setSent(true);
-    setTimeout(() => {
-      setSent(false);
-      onClose();
-    }, 1500);
+    showToast(SUCCESS_MSG);
+    onClose();
   }
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    // Fixed overlay - covers 100vw × 100vh, z-50 sits above everything.
-    // bg-black/50 = semi-transparent black (Tailwind JIT arbitrary value).
-    // flex items-center justify-center centres the white card.
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 px-4 py-8"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-4 py-8"
     >
       {/* White modal card */}
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
 
         {/* ── Header ────────────────────────────────────────── */}
-        {/* sticky top-0 keeps header visible while scrolling long forms */}
         <div className="sticky top-0 bg-white flex items-center justify-between px-6 py-4 border-b border-[#E0E0E0] rounded-t-2xl z-10">
           <h2 className="font-bold text-lg text-[#202124]">Send Message</h2>
           <button
@@ -191,138 +160,113 @@ export default function SendMessageModal({ isOpen, onClose, listing }) {
         </div>
 
         {/* ── Property address ──────────────────────────────── */}
-        <div className="px-6 pt-4 pb-1">
-          <p className="text-sm text-[#5F6368]">{address}</p>
-        </div>
-
-        {/* ── Form / Success state ──────────────────────────── */}
-        {sent ? (
-          // Success state shown briefly before auto-close
-          <div className="px-6 py-12 text-center">
-            <div className="text-green-500 text-5xl mb-3">✓</div>
-            <p className="font-bold text-lg text-[#202124]">Message Sent!</p>
-            <p className="text-sm text-[#5F6368] mt-1">We&apos;ll be in touch shortly.</p>
+        {address && (
+          <div className="px-6 pt-4 pb-1">
+            <p className="text-sm text-[#5F6368]">{address}</p>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="px-6 pb-6 pt-4 space-y-4">
+        )}
 
-            {/* First Name + Last Name - stacked on mobile, side by side on sm+ */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                name="firstName"
-                value={form.firstName}
-                onChange={handleChange}
-                placeholder="First Name"
-                required
-                className={inputCls}
-              />
-              <input
-                type="text"
-                name="lastName"
-                value={form.lastName}
-                onChange={handleChange}
-                placeholder="Last Name"
-                required
-                className={inputCls}
-              />
-            </div>
+        {/* ── Form ──────────────────────────────────────────── */}
+        <form onSubmit={handleSubmit} className="px-6 pb-6 pt-4 space-y-4">
 
-            {/* Email - full width */}
+          {/* First Name + Last Name */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
-              type="email"
-              name="email"
-              value={form.email}
+              type="text"
+              name="firstName"
+              value={form.firstName}
               onChange={handleChange}
-              placeholder="Email"
+              placeholder="First Name"
               required
               className={inputCls}
             />
-
-            {/* Phone - full width, optional */}
             <input
-              type="tel"
-              name="phone"
-              value={form.phone}
+              type="text"
+              name="lastName"
+              value={form.lastName}
               onChange={handleChange}
-              placeholder="Phone (optional)"
+              placeholder="Last Name"
+              required
               className={inputCls}
             />
+          </div>
 
-            {/* Move-in date - relative wrapper positions the calendar icon */}
-            <div className="relative">
-              <label className="text-xs text-[#5F6368] mb-1 block font-medium">
-                Move-in Date
-              </label>
-              {/* The calendar icon is purely decorative - pointer-events:none
-                  ensures it doesn't block clicks on the input beneath it */}
-              <div className="relative">
-                <input
-                  type="date"
-                  name="moveIn"
-                  value={form.moveIn}
-                  onChange={handleChange}
-                  className={inputCls + " pr-10"}
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5F6368] pointer-events-none">
-                  <CalendarIcon />
-                </span>
-              </div>
-            </div>
+          {/* Email */}
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+            className={inputCls}
+          />
 
-            {/* Message textarea - pre-filled in useEffect above */}
-            <textarea
-              name="message"
-              value={form.message}
-              onChange={handleChange}
-              rows={4}
-              className={inputCls + " resize-none"}
-            />
+          {/* Phone */}
+          <input
+            type="tel"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            placeholder="Phone (optional)"
+            className={inputCls}
+          />
 
-            {/* Error banner */}
-            {submitError && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                {submitError}
-              </p>
-            )}
-
-            {/* Send button - full width, primary blue */}
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full bg-[#1A73E8] hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors text-sm"
-            >
-              {submitting ? "Sending…" : "Send"}
-            </button>
-
-            {/* Tips opt-in checkbox - matches ApartmentGuide's newsletter opt-in */}
-            <label className="flex items-start gap-2.5 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={tips}
-                onChange={(e) => setTips(e.target.checked)}
-                className="mt-0.5 w-4 h-4 accent-[#1A73E8] shrink-0"
-              />
-              <span className="text-sm text-[#5F6368] leading-snug">
-                Simplify my search with helpful tips and rental recommendations.
-              </span>
+          {/* Move-in date */}
+          <div>
+            <label className="text-xs text-[#5F6368] mb-1 block font-medium">
+              Move-in Date
             </label>
-
-            {/* Legal disclaimer - small print at bottom */}
-            <p className="text-xs text-[#5F6368] text-center leading-relaxed">
-              By submitting this form, you agree to our{" "}
-              <span className="text-[#1A73E8] cursor-pointer hover:underline">
-                Terms of Service
-              </span>{" "}
-              and{" "}
-              <span className="text-[#1A73E8] cursor-pointer hover:underline">
-                Privacy Policy
+            <div className="relative">
+              <input
+                type="date"
+                name="moveIn"
+                value={form.moveIn}
+                onChange={handleChange}
+                className={inputCls + " pr-10"}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5F6368] pointer-events-none">
+                <CalendarIcon />
               </span>
-              .
-            </p>
+            </div>
+          </div>
 
-          </form>
-        )}
+          {/* Message */}
+          <textarea
+            name="message"
+            value={form.message}
+            onChange={handleChange}
+            rows={4}
+            className={inputCls + " resize-none"}
+          />
+
+          {/* Error banner */}
+          {submitError && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {submitError}
+            </p>
+          )}
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full bg-[#1A73E8] hover:bg-blue-700 disabled:opacity-60
+                       disabled:cursor-not-allowed text-white font-semibold py-3
+                       rounded-xl transition-colors text-sm"
+          >
+            {submitting ? "Sending…" : "Send"}
+          </button>
+
+          {/* Legal disclaimer */}
+          <p className="text-xs text-[#5F6368] text-center leading-relaxed">
+            By submitting this form, you agree to our{" "}
+            <span className="text-[#1A73E8] cursor-pointer hover:underline">Terms of Service</span>
+            {" "}and{" "}
+            <span className="text-[#1A73E8] cursor-pointer hover:underline">Privacy Policy</span>.
+          </p>
+
+        </form>
       </div>
     </div>
   );

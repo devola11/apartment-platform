@@ -32,10 +32,15 @@ export default {
           "0%":   { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)"    },
         },
+        slideUp: {
+          "0%":   { opacity: "0", transform: "translateX(-50%) translateY(12px)" },
+          "100%": { opacity: "1", transform: "translateX(-50%) translateY(0)"    },
+        },
       },
       animation: {
         slideDown: "slideDown 0.18s ease-out",
         fadeIn:    "fadeIn 0.3s ease-out both",
+        slideUp:   "slideUp 0.22s ease-out both",
       },
     },
   },
