@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Lighthouse reports
+lighthouse-report*.json
