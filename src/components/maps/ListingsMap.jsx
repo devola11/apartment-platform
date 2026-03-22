@@ -97,6 +97,7 @@ export default function ListingsMap({ listings = [], className = "h-[420px]", ho
                     <img
                       src={l.image_url || "https://placehold.co/200x100?text=No+Image"}
                       alt={l.title}
+                      loading="lazy"
                       style={{ width: "100%", height: 100, objectFit: "cover", display: "block" }}
                     />
                     <div style={{ padding: "8px 10px" }}>

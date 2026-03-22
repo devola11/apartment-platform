@@ -177,6 +177,7 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
               value={form.firstName}
               onChange={handleChange}
               placeholder="First Name"
+              aria-label="First Name"
               required
               className={inputCls}
             />
@@ -186,6 +187,7 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
               value={form.lastName}
               onChange={handleChange}
               placeholder="Last Name"
+              aria-label="Last Name"
               required
               className={inputCls}
             />
@@ -198,6 +200,7 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
             value={form.email}
             onChange={handleChange}
             placeholder="Email"
+            aria-label="Email"
             required
             className={inputCls}
           />
@@ -209,6 +212,7 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
             value={form.phone}
             onChange={handleChange}
             placeholder="Phone (optional)"
+            aria-label="Phone (optional)"
             className={inputCls}
           />
 
@@ -237,6 +241,7 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
             value={form.message}
             onChange={handleChange}
             rows={4}
+            aria-label="Message"
             className={inputCls + " resize-none"}
           />
 

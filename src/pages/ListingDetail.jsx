@@ -275,7 +275,7 @@ export default function ListingDetail() {
             <img
               src={imageUrl}
               alt={`${listing.title} - main photo`}
-              loading="eager"
+              loading="lazy"
               className="w-full aspect-[4/3] md:aspect-auto md:h-[420px] object-cover"
             />
 

@@ -58,7 +58,6 @@ export function FavoritesProvider({ children }) {
       if (error) {
         // Rollback: re-add the id
         setFavoriteIds((prev) => new Set(prev).add(listingId));
-        console.error("Failed to remove favorite:", error.message);
       }
     } else {
       // Optimistic add
@@ -75,7 +74,6 @@ export function FavoritesProvider({ children }) {
           next.delete(listingId);
           return next;
         });
-        console.error("Failed to save favorite:", error.message);
       }
     }
   }

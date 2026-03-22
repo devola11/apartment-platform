@@ -207,6 +207,7 @@ export default function FindApartmentModal({ isOpen, onClose }) {
             value={form.fullName}
             onChange={handleChange}
             placeholder="Full Name"
+            aria-label="Full Name"
             required
             className={inputCls}
           />
@@ -218,6 +219,7 @@ export default function FindApartmentModal({ isOpen, onClose }) {
             value={form.email}
             onChange={handleChange}
             placeholder="Email"
+            aria-label="Email"
             required
             className={inputCls}
           />
@@ -229,6 +231,7 @@ export default function FindApartmentModal({ isOpen, onClose }) {
             value={form.phone}
             onChange={handleChange}
             placeholder="Phone (optional)"
+            aria-label="Phone (optional)"
             className={inputCls}
           />
 
@@ -237,6 +240,7 @@ export default function FindApartmentModal({ isOpen, onClose }) {
             name="city"
             value={form.city}
             onChange={handleChange}
+            aria-label="Preferred City"
             className={inputCls}
           >
             <option value="">Preferred City</option>
@@ -258,6 +262,7 @@ export default function FindApartmentModal({ isOpen, onClose }) {
               name="bedrooms"
               value={form.bedrooms}
               onChange={handleChange}
+              aria-label="Preferred Bedrooms"
               className={inputCls}
             >
               <option value="">Preferred Bedrooms</option>
@@ -271,6 +276,7 @@ export default function FindApartmentModal({ isOpen, onClose }) {
               name="budget"
               value={form.budget}
               onChange={handleChange}
+              aria-label="Budget Range"
               className={inputCls}
             >
               <option value="">Budget Range</option>
@@ -309,6 +315,7 @@ export default function FindApartmentModal({ isOpen, onClose }) {
             onChange={handleChange}
             rows={4}
             placeholder="Message"
+            aria-label="Message"
             className={inputCls + " resize-none"}
           />
 
