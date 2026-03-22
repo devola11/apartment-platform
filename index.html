@@ -55,13 +55,42 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Fonts -->
+    <!--
+      Hero image preload — tells the browser to fetch this image immediately,
+      before it parses the JS bundle and discovers the CSS background-image.
+      This is the LCP element on the Home page; early discovery cuts LCP
+      by several seconds on slow connections.
+    -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80"
+      fetchpriority="high"
+    />
+
+    <!-- Fonts — async (non-render-blocking) -->
+    <!--
+      Loading strategy:
+        1. preconnect  — opens the TCP connection to Google Fonts early
+        2. rel=preload + onload swap — fetches the CSS file in the background,
+           then swaps rel to "stylesheet" once it's ready. This removes the
+           ~970 ms render-blocking delay from the critical path entirely.
+        3. <noscript>  — fallback for browsers with JS disabled
+    -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      />
+    </noscript>
   </head>
   <body>
     <div id="root"></div>
