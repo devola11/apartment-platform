@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { useFavorites } from "../context/FavoritesContext";
 import ListingGrid from "../components/listings/ListingGrid";
 import SEO from "../components/common/SEO";
+import SendMessageModal from "../components/common/SendMessageModal";
 
 function HeartEmptyIcon() {
   return (
@@ -22,6 +23,8 @@ export default function Favorites() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // Single modal for all cards — null = closed, listing object = open
+  const [selectedListing, setSelectedListing] = useState(null);
 
   useEffect(() => {
     if (!user || favoriteIds.size === 0) {
@@ -70,9 +73,16 @@ export default function Favorites() {
             </Link>
           </div>
         ) : (
-          <ListingGrid listings={listings} loading={loading} error={error} />
+          <ListingGrid listings={listings} loading={loading} error={error} onSendMessage={setSelectedListing} />
         )}
       </div>
+
+      {/* Single Send Message modal for all listing cards on this page */}
+      <SendMessageModal
+        isOpen={!!selectedListing}
+        onClose={() => setSelectedListing(null)}
+        listing={selectedListing}
+      />
     </div>
   );
 }

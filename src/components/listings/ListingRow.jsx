@@ -15,11 +15,9 @@
 //  At 640px the card is wide enough for the side-by-side layout to look good.
 //  Below that (phones) the image would be too narrow and text would feel cramped.
 // ─────────────────────────────────────────────────────────────────────────────
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
-import SendMessageModal from "../common/SendMessageModal";
 
 function fakePhone(id) {
   const n = parseInt((id || "0").replace(/-/g, "").slice(0, 8), 16);
@@ -39,12 +37,13 @@ function HeartIcon({ filled }) {
     : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
 }
 
-export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLeave }) {
+// onSendMessage(listing) — called when the Send Message button is clicked.
+// The parent page holds the single modal instance and passes this callback down.
+export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLeave, onSendMessage }) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { user }                        = useAuth();
   const navigate                        = useNavigate();
   const saved                           = isFavorite(listing.id);
-  const [showModal, setShowModal]       = useState(false);
 
   function handleFav(e) {
     e.preventDefault();    // prevent <a> navigation
@@ -56,7 +55,7 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
   function handleSendMessage(e) {
     e.preventDefault();    // prevent <a> navigation
     e.stopPropagation();
-    setShowModal(true);
+    onSendMessage?.(listing);
   }
 
   const imageUrl  = listing.image_url || "https://placehold.co/320x200?text=No+Image";
@@ -64,7 +63,6 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
   const phone     = fakePhone(listing.id);
 
   return (
-    <>
       <Link
         to={`/listings/${listing.id}`}
         onMouseEnter={onMouseEnter}
@@ -168,12 +166,5 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
           </button>
         </div>
       </Link>
-
-      <SendMessageModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        listing={listing}
-      />
-    </>
   );
 }

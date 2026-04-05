@@ -23,7 +23,7 @@ function ErrorIcon() {
   );
 }
 
-export default function ListingGrid({ listings, loading, error, emptyMessage }) {
+export default function ListingGrid({ listings, loading, error, emptyMessage, onSendMessage }) {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -69,7 +69,7 @@ export default function ListingGrid({ listings, loading, error, emptyMessage }) 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {listings.map((listing, i) => (
         <div key={listing.id} className="animate-fadeIn" style={{ animationDelay: `${i * 60}ms` }}>
-          <ListingCard listing={listing} />
+          <ListingCard listing={listing} onSendMessage={onSendMessage} />
         </div>
       ))}
     </div>

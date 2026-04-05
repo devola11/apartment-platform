@@ -19,6 +19,7 @@
 //  • Body scroll locked while open
 // ─────────────────────────────────────────────────────────────────────────────
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { submitInquiry } from "../../lib/submitInquiry";
 import { useToast } from "../../context/ToastContext";
 import { useAuth } from "../../context/AuthContext";
@@ -168,8 +169,9 @@ export default function FindApartmentModal({ isOpen, onClose }) {
     onClose();
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
-  return (
+  // ── Render — portal guarantees the overlay is always a direct child of
+  // document.body, outside every stacking context in the app tree.
+  return createPortal(
     // Fixed overlay — z-[9999] always renders above Leaflet map (highest
     // Leaflet pane is popup at z-index 700).
     <div
@@ -354,6 +356,7 @@ export default function FindApartmentModal({ isOpen, onClose }) {
 
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

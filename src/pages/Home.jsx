@@ -8,6 +8,7 @@ import SEO from "../components/common/SEO";
 import CityAutocomplete from "../components/common/CityAutocomplete";
 import WelcomeBanner from "../components/common/WelcomeBanner";
 import FindApartmentModal from "../components/common/FindApartmentModal";
+import SendMessageModal from "../components/common/SendMessageModal";
 
 const CITIES = [
   { name: "Los Angeles",   state: "California", count: 12, img: "https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?auto=format&fit=crop&w=600&q=70" },
@@ -117,9 +118,12 @@ export default function Home() {
 
   // Each UI piece has its own visibility toggle so they can be dismissed
   // independently (closing the banner doesn't close the onboarding section).
-  const [showBanner,     setShowBanner]     = useState(isWelcome);
-  const [showOnboarding, setShowOnboarding] = useState(isWelcome);
-  const [findOpen,       setFindOpen]       = useState(false);
+  const [showBanner,       setShowBanner]       = useState(isWelcome);
+  const [showOnboarding,   setShowOnboarding]   = useState(isWelcome);
+  const [findOpen,         setFindOpen]         = useState(false);
+  // selectedListing: the listing whose Send Message modal is open, or null.
+  // One modal for all cards on the page — only one can be open at a time.
+  const [selectedListing,  setSelectedListing]  = useState(null);
 
   const [query, setQuery] = useState("");
 
@@ -329,7 +333,7 @@ export default function Home() {
             View all →
           </Link>
         </div>
-        <ListingGrid listings={listings} loading={loading} error={error} />
+        <ListingGrid listings={listings} loading={loading} error={error} onSendMessage={setSelectedListing} />
 
         <div className="text-center mt-8 md:mt-10">
           <Link
@@ -428,6 +432,13 @@ export default function Home() {
       <FindApartmentModal
         isOpen={findOpen}
         onClose={() => setFindOpen(false)}
+      />
+
+      {/* Single Send Message modal for all listing cards on this page */}
+      <SendMessageModal
+        isOpen={!!selectedListing}
+        onClose={() => setSelectedListing(null)}
+        listing={selectedListing}
       />
     </div>
   );

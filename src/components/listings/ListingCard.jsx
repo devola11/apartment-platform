@@ -15,11 +15,9 @@
 // Buttons inside (Share, Save, Send Message) call e.stopPropagation() so
 // their clicks do NOT bubble up to the Link and trigger navigation.
 // ─────────────────────────────────────────────────────────────────────────────
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
-import SendMessageModal from "../common/SendMessageModal";
 
 // ── Inline SVG icons (no icon library dependency) ────────────────────────────
 function ShareIcon() {
@@ -46,14 +44,13 @@ function HeartIcon({ filled }) {
   );
 }
 
-export default function ListingCard({ listing }) {
+// onSendMessage(listing) — called when the Send Message button is clicked.
+// The parent page holds the single modal instance and passes this callback down.
+export default function ListingCard({ listing, onSendMessage }) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { user }                        = useAuth();
   const navigate                        = useNavigate();
   const saved                           = isFavorite(listing.id);
-
-  // Controls the Send Message modal visibility
-  const [showModal, setShowModal] = useState(false);
 
   const imageUrl = listing.image_url || "https://placehold.co/400x260?text=No+Image";
 
@@ -102,12 +99,10 @@ export default function ListingCard({ listing }) {
   function handleSendMessage(e) {
     e.preventDefault();    // prevent the wrapping <a> from navigating
     e.stopPropagation();   // prevent Link's React onClick from firing
-    setShowModal(true);
+    onSendMessage?.(listing);
   }
 
   return (
-    <>
-      {/* ── Card wrapper - entire card navigates to listing detail ─────── */}
       <Link
         to={`/listings/${listing.id}`}
         className="group bg-white rounded-xl border border-[#E0E0E0] shadow-sm
@@ -227,15 +222,5 @@ export default function ListingCard({ listing }) {
           </button>
         </div>
       </Link>
-
-      {/* ── Send Message modal - rendered outside the Link ───────────────── */}
-      {/* Even though it's inside the component JSX, position:fixed means it
-          covers the viewport correctly regardless of its DOM position. */}
-      <SendMessageModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        listing={listing}
-      />
-    </>
   );
 }

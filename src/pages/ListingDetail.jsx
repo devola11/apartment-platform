@@ -100,7 +100,9 @@ export default function ListingDetail() {
   });
   const similarListings = similar.filter(l => l.id !== id).slice(0, 3);
 
-  const [showModal, setShowModal]       = useState(false);
+  // selectedListing: which listing's modal is open (the detail listing itself,
+  // or a similar-listing card). null = modal closed.
+  const [selectedListing, setSelectedListing] = useState(null);
   const [linkCopied, setLinkCopied]     = useState(false);
 
   const listingUrl = typeof window !== "undefined"
@@ -450,7 +452,7 @@ export default function ListingDetail() {
                 */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {similarListings.map(l => (
-                    <ListingCard key={l.id} listing={l} />
+                    <ListingCard key={l.id} listing={l} onSendMessage={setSelectedListing} />
                   ))}
                 </div>
               </section>
@@ -545,7 +547,7 @@ export default function ListingDetail() {
               {/* CTA buttons - min-h-[44px] for touch targets */}
               <button
                 type="button"
-                onClick={() => setShowModal(true)}
+                onClick={() => setSelectedListing(listing)}
                 className="w-full bg-[#1A73E8] hover:bg-blue-700 text-white font-semibold
                            py-3 rounded-lg mb-3 transition-colors min-h-[44px]"
               >
@@ -553,7 +555,7 @@ export default function ListingDetail() {
               </button>
               <button
                 type="button"
-                onClick={() => setShowModal(true)}
+                onClick={() => setSelectedListing(listing)}
                 className="w-full border-2 border-[#1A73E8] text-[#1A73E8] hover:bg-blue-50
                            font-semibold py-3 rounded-lg mb-2 transition-colors min-h-[44px]"
               >
@@ -569,11 +571,13 @@ export default function ListingDetail() {
         </div>
       </div>
 
+      {/* Single modal — covers both the detail page contact card and
+          any similar-listing card on this page */}
       <SendMessageModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        listing={listing}
-        formSource="contact"
+        isOpen={!!selectedListing}
+        onClose={() => setSelectedListing(null)}
+        listing={selectedListing}
+        formSource={selectedListing?.id === listing?.id ? "contact" : "listing"}
       />
     </div>
   );

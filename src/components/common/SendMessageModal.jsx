@@ -17,6 +17,7 @@
 // Body scroll is locked while open; scroll position is restored on close.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { submitInquiry } from "../../lib/submitInquiry";
 
 function XIcon() {
@@ -157,8 +158,9 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
     setSubmitted(true);
   }
 
-  // ── Render ───────────────────────────────────────────────────────────────
-  return (
+  // ── Render — portal guarantees the overlay is always a direct child of
+  // document.body, outside every stacking context in the app tree.
+  return createPortal(
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
@@ -314,6 +316,7 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

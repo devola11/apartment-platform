@@ -85,9 +85,10 @@ export default function Listings({ stateFilter }) {
   });
   const [sort,      setSort]      = useState("newest");
   const [page,      setPage]      = useState(1);
-  const [hoveredId,    setHoveredId]    = useState(null);
-  const [contactOpen,  setContactOpen]  = useState(false);
-  const [findOpen,     setFindOpen]     = useState(false);
+  const [hoveredId,       setHoveredId]       = useState(null);
+  // selectedListing: the listing whose Send Message modal is open, or null.
+  const [selectedListing, setSelectedListing] = useState(null);
+  const [findOpen,        setFindOpen]        = useState(false);
 
   // Controls the mobile "Show Map" toggle
   // Default: map hidden on mobile (false), always visible on desktop via CSS
@@ -297,6 +298,7 @@ export default function Listings({ stateFilter }) {
                   isActive={hoveredId === l.id}
                   onMouseEnter={() => setHoveredId(l.id)}
                   onMouseLeave={() => setHoveredId(null)}
+                  onSendMessage={setSelectedListing}
                 />
               ))
             )}
@@ -438,11 +440,11 @@ export default function Listings({ stateFilter }) {
         </div>
       </div>
 
-      {/* Generic contact modal (kept for listing-specific use elsewhere) */}
+      {/* Single Send Message modal for all listing rows on this page */}
       <SendMessageModal
-        isOpen={contactOpen}
-        onClose={() => setContactOpen(false)}
-        listing={null}
+        isOpen={!!selectedListing}
+        onClose={() => setSelectedListing(null)}
+        listing={selectedListing}
       />
 
       {/* "Tell Us What You're Looking For" modal — opened by the email icon,
