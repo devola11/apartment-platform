@@ -47,12 +47,14 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
   const [showModal, setShowModal]       = useState(false);
 
   function handleFav(e) {
+    e.preventDefault();    // prevent <a> navigation
     e.stopPropagation();
     if (!user) { navigate("/login"); return; }
     toggleFavorite(listing.id);
   }
 
   function handleSendMessage(e) {
+    e.preventDefault();    // prevent <a> navigation
     e.stopPropagation();
     setShowModal(true);
   }

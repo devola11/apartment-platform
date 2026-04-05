@@ -74,6 +74,7 @@ export default function ListingCard({ listing }) {
   // so the user can click these buttons without navigating to the detail page.
 
   function handleFavorite(e) {
+    e.preventDefault();    // prevent <a> navigation
     e.stopPropagation();
     // If not logged in, send the user to /login instead of silently doing nothing.
     // We pass the current page as `state.from` so ProtectedRoute and AuthForm
@@ -86,6 +87,7 @@ export default function ListingCard({ listing }) {
   }
 
   function handleShare(e) {
+    e.preventDefault();    // prevent <a> navigation
     e.stopPropagation();
     const url = `${window.location.origin}/listings/${listing.id}`;
     // Web Share API is available on mobile/some desktop browsers
@@ -98,7 +100,8 @@ export default function ListingCard({ listing }) {
   }
 
   function handleSendMessage(e) {
-    e.stopPropagation();
+    e.preventDefault();    // prevent the wrapping <a> from navigating
+    e.stopPropagation();   // prevent Link's React onClick from firing
     setShowModal(true);
   }
 

@@ -11,14 +11,13 @@
 // On submit:
 //   1. Calls submitInquiry() which saves to Supabase AND Web3Forms in parallel,
 //      each in its own try/catch so one failure never blocks the other.
-//   2. Shows a success toast via useToast() and immediately closes the modal.
+//   2. Shows an in-modal success state for 3 seconds, then closes automatically.
 //
 // Three close mechanisms: X button, click-outside overlay, Escape key.
-// Body scroll is locked while open.
+// Body scroll is locked while open; scroll position is restored on close.
 // ─────────────────────────────────────────────────────────────────────────────
 import { useEffect, useRef, useState } from "react";
 import { submitInquiry } from "../../lib/submitInquiry";
-import { useToast } from "../../context/ToastContext";
 
 function XIcon() {
   return (
@@ -40,15 +39,19 @@ function CalendarIcon() {
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 6L9 17l-5-5" />
+    </svg>
+  );
+}
+
 const inputCls =
   "w-full border border-[#E0E0E0] rounded-lg px-3 py-2.5 text-sm text-[#202124] " +
   "placeholder-[#5F6368] focus:outline-none focus:ring-2 focus:ring-[#1A73E8] bg-white";
 
-const SUCCESS_MSG = "Thank you! We'll get back to you within 24 hours.";
-
 export default function SendMessageModal({ isOpen, onClose, listing, formSource = "listing" }) {
-  const { showToast } = useToast();
-
   const [form, setForm] = useState({
     firstName: "",
     lastName:  "",
@@ -59,8 +62,13 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
   });
   const [submitting,  setSubmitting]  = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  // true = form was submitted successfully; triggers the in-modal success view
+  const [submitted,   setSubmitted]   = useState(false);
 
-  const overlayRef = useRef(null);
+  const overlayRef  = useRef(null);
+  // Keep a stable ref to onClose so the auto-close timer never goes stale
+  const onCloseRef  = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
 
   const address = [listing?.address, listing?.city, listing?.state, listing?.zip]
     .filter(Boolean)
@@ -70,6 +78,7 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
   useEffect(() => {
     if (isOpen) {
       setSubmitError(null);
+      setSubmitted(false);
       setForm({
         firstName: "",
         lastName:  "",
@@ -84,10 +93,16 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  // ── Lock body scroll while open ──────────────────────────────────────────
+  // ── Lock body scroll while open; restore exact scroll position on close ──
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (!isOpen) return;
+    const scrollY = window.scrollY;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+      // Restore the scroll position the user was at before opening the modal
+      window.scrollTo(0, scrollY);
+    };
   }, [isOpen]);
 
   // ── Close on Escape ──────────────────────────────────────────────────────
@@ -96,6 +111,13 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
     if (isOpen) window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen, onClose]);
+
+  // ── Auto-close 3 seconds after a successful submission ───────────────────
+  useEffect(() => {
+    if (!submitted) return;
+    const timer = setTimeout(() => onCloseRef.current(), 3000);
+    return () => clearTimeout(timer);
+  }, [submitted]);
 
   if (!isOpen) return null;
 
@@ -122,7 +144,6 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
       message:     form.message  || null,
       listing_id:  listing?.id   || null,
       form_source: formSource,
-      // preferred_city / preferred_bedrooms / budget_range not collected here
     });
 
     setSubmitting(false);
@@ -132,8 +153,8 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
       return;
     }
 
-    showToast(SUCCESS_MSG);
-    onClose();
+    // Show success state inside the modal; auto-close fires after 3 s (see effect above)
+    setSubmitted(true);
   }
 
   // ── Render ───────────────────────────────────────────────────────────────
@@ -159,119 +180,134 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
           </button>
         </div>
 
-        {/* ── Property address ──────────────────────────────── */}
-        {address && (
-          <div className="px-6 pt-4 pb-1">
-            <p className="text-sm text-[#5F6368]">{address}</p>
-          </div>
-        )}
-
-        {/* ── Form ──────────────────────────────────────────── */}
-        <form onSubmit={handleSubmit} className="px-6 pb-6 pt-4 space-y-4">
-
-          {/* First Name + Last Name */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="text"
-              name="firstName"
-              value={form.firstName}
-              onChange={handleChange}
-              placeholder="First Name"
-              aria-label="First Name"
-              required
-              className={inputCls}
-            />
-            <input
-              type="text"
-              name="lastName"
-              value={form.lastName}
-              onChange={handleChange}
-              placeholder="Last Name"
-              aria-label="Last Name"
-              required
-              className={inputCls}
-            />
-          </div>
-
-          {/* Email */}
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Email"
-            aria-label="Email"
-            required
-            className={inputCls}
-          />
-
-          {/* Phone */}
-          <input
-            type="tel"
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-            placeholder="Phone (optional)"
-            aria-label="Phone (optional)"
-            className={inputCls}
-          />
-
-          {/* Move-in date */}
-          <div>
-            <label className="text-xs text-[#5F6368] mb-1 block font-medium">
-              Move-in Date
-            </label>
-            <div className="relative">
-              <input
-                type="date"
-                name="moveIn"
-                value={form.moveIn}
-                onChange={handleChange}
-                className={inputCls + " pr-10"}
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5F6368] pointer-events-none">
-                <CalendarIcon />
-              </span>
+        {/* ── Success state — shown after form is submitted ──── */}
+        {submitted ? (
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-5">
+              <CheckIcon />
             </div>
-          </div>
-
-          {/* Message */}
-          <textarea
-            name="message"
-            value={form.message}
-            onChange={handleChange}
-            rows={4}
-            aria-label="Message"
-            className={inputCls + " resize-none"}
-          />
-
-          {/* Error banner */}
-          {submitError && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-              {submitError}
+            <h3 className="text-xl font-bold text-[#202124] mb-2">Thank you!</h3>
+            <p className="text-sm text-[#5F6368]">
+              We'll get back to you within 24 hours.
             </p>
-          )}
+          </div>
+        ) : (
+          <>
+            {/* ── Property address ──────────────────────────── */}
+            {address && (
+              <div className="px-6 pt-4 pb-1">
+                <p className="text-sm text-[#5F6368]">{address}</p>
+              </div>
+            )}
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-[#1A73E8] hover:bg-blue-700 disabled:opacity-60
-                       disabled:cursor-not-allowed text-white font-semibold py-3
-                       rounded-xl transition-colors text-sm"
-          >
-            {submitting ? "Sending…" : "Send"}
-          </button>
+            {/* ── Form ──────────────────────────────────────── */}
+            <form onSubmit={handleSubmit} className="px-6 pb-6 pt-4 space-y-4">
 
-          {/* Legal disclaimer */}
-          <p className="text-xs text-[#5F6368] text-center leading-relaxed">
-            By submitting this form, you agree to our{" "}
-            <span className="text-[#1A73E8] cursor-pointer hover:underline">Terms of Service</span>
-            {" "}and{" "}
-            <span className="text-[#1A73E8] cursor-pointer hover:underline">Privacy Policy</span>.
-          </p>
+              {/* First Name + Last Name */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  name="firstName"
+                  value={form.firstName}
+                  onChange={handleChange}
+                  placeholder="First Name"
+                  aria-label="First Name"
+                  required
+                  className={inputCls}
+                />
+                <input
+                  type="text"
+                  name="lastName"
+                  value={form.lastName}
+                  onChange={handleChange}
+                  placeholder="Last Name"
+                  aria-label="Last Name"
+                  required
+                  className={inputCls}
+                />
+              </div>
 
-        </form>
+              {/* Email */}
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Email"
+                aria-label="Email"
+                required
+                className={inputCls}
+              />
+
+              {/* Phone */}
+              <input
+                type="tel"
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="Phone (optional)"
+                aria-label="Phone (optional)"
+                className={inputCls}
+              />
+
+              {/* Move-in date */}
+              <div>
+                <label className="text-xs text-[#5F6368] mb-1 block font-medium">
+                  Move-in Date
+                </label>
+                <div className="relative">
+                  <input
+                    type="date"
+                    name="moveIn"
+                    value={form.moveIn}
+                    onChange={handleChange}
+                    className={inputCls + " pr-10"}
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5F6368] pointer-events-none">
+                    <CalendarIcon />
+                  </span>
+                </div>
+              </div>
+
+              {/* Message */}
+              <textarea
+                name="message"
+                value={form.message}
+                onChange={handleChange}
+                rows={4}
+                aria-label="Message"
+                className={inputCls + " resize-none"}
+              />
+
+              {/* Error banner */}
+              {submitError && (
+                <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                  {submitError}
+                </p>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full bg-[#1A73E8] hover:bg-blue-700 disabled:opacity-60
+                           disabled:cursor-not-allowed text-white font-semibold py-3
+                           rounded-xl transition-colors text-sm"
+              >
+                {submitting ? "Sending…" : "Send"}
+              </button>
+
+              {/* Legal disclaimer */}
+              <p className="text-xs text-[#5F6368] text-center leading-relaxed">
+                By submitting this form, you agree to our{" "}
+                <span className="text-[#1A73E8] cursor-pointer hover:underline">Terms of Service</span>
+                {" "}and{" "}
+                <span className="text-[#1A73E8] cursor-pointer hover:underline">Privacy Policy</span>.
+              </p>
+
+            </form>
+          </>
+        )}
       </div>
     </div>
   );
