@@ -412,6 +412,39 @@ export default function ListingDetail() {
               </section>
             )}
 
+            {/* ── Contact card — mobile / tablet only (below lg) ─────────── */}
+            {/*
+              The right column is hidden on mobile/tablet (hidden lg:block below).
+              This copy appears immediately after the description so the CTAs are
+              reachable without scrolling past amenities, map, and similar listings.
+              At lg+ this div is hidden and the sticky right-column card takes over.
+            */}
+            <div className="lg:hidden mb-8">
+              <div className="bg-white rounded-xl border border-[#E0E0E0] shadow-lg p-5">
+                <button
+                  type="button"
+                  onClick={() => setSelectedListing(listing)}
+                  className="w-full bg-[#1A73E8] hover:bg-blue-700 text-white font-semibold
+                             py-3 rounded-lg mb-3 transition-colors min-h-[44px]"
+                >
+                  Request Info
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedListing(listing)}
+                  className="w-full border-2 border-[#1A73E8] text-[#1A73E8] hover:bg-blue-50
+                             font-semibold py-3 rounded-lg mb-2 transition-colors min-h-[44px]"
+                >
+                  Schedule Tour
+                </button>
+                <div className="mt-4 pt-4 border-t border-[#E0E0E0] flex items-center gap-2
+                                text-[#1A73E8] font-semibold text-sm">
+                  <PhoneIcon />
+                  <span>{phone}</span>
+                </div>
+              </div>
+            </div>
+
             {/* Amenities & Features */}
             {listing.amenities?.length > 0 && (
               <section className="mb-8">
@@ -524,16 +557,15 @@ export default function ListingDetail() {
             </p>
           </div>
 
-          {/* ── RIGHT column - contact card ──────────────────────────── */}
+          {/* ── RIGHT column - contact card (desktop only) ───────────── */}
           {/*
-            Mobile:  w-full, not sticky - flows naturally below the info column.
-            lg+:     fixed width (lg:w-[37%]), sticky top-20 (original behaviour).
-
-            sticky top-20 = 80px from the top of the viewport when scrolling.
-            This keeps the contact card visible as the user reads long descriptions.
-            On mobile, sticky is removed (the card just sits at the bottom of content).
+            hidden:    not rendered on mobile/tablet — the lg:hidden copy above
+                       handles those breakpoints.
+            lg:block:  becomes a block element at 1024px+, restoring the original
+                       sticky right-column layout.
+            Everything below lg sees the inline card inserted after the description.
           */}
-          <div className="w-full lg:w-[37%] lg:sticky lg:top-24 lg:self-start shrink-0">
+          <div className="hidden lg:block lg:w-[37%] lg:sticky lg:top-24 lg:self-start shrink-0">
             <div className="bg-white rounded-xl border border-[#E0E0E0] shadow-lg p-5 sm:p-6">
 
               <h3 className="font-bold text-[#202124] text-base leading-snug mb-1 line-clamp-2">
