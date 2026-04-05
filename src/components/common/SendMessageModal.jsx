@@ -162,10 +162,15 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-4 py-8"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 animate-overlayShow"
     >
-      {/* White modal card */}
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      {/* White modal card — mx-4 gives 16px breathing room on mobile edges.
+          stopPropagation prevents card clicks from bubbling to the overlay
+          and accidentally triggering the click-outside-to-close logic. */}
+      <div
+        onClick={e => e.stopPropagation()}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto animate-fadeIn"
+      >
 
         {/* ── Header ────────────────────────────────────────── */}
         <div className="sticky top-0 bg-white flex items-center justify-between px-6 py-4 border-b border-[#E0E0E0] rounded-t-2xl z-10">

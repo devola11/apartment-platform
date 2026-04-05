@@ -24,6 +24,11 @@ export default {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       keyframes: {
+        // Pure-opacity fade for modal overlays (no transform — fixed overlay must not shift)
+        overlayShow: {
+          "0%":   { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
         slideDown: {
           "0%":   { opacity: "0", transform: "translateY(-8px)" },
           "100%": { opacity: "1", transform: "translateY(0)"    },
@@ -48,6 +53,7 @@ export default {
         },
       },
       animation: {
+        overlayShow: "overlayShow 0.2s ease-out both",
         slideDown: "slideDown 0.18s ease-out",
         fadeIn:    "fadeIn 0.3s ease-out both",
         slideUp:   "slideUp 0.22s ease-out both",
