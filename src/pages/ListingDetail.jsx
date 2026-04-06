@@ -29,7 +29,8 @@
 //     Mobile:  Not sticky - flows naturally after the property info.
 //     lg+:     sticky top-20 (original behaviour).
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useParams, Link } from "react-router-dom";
 import { useListing } from "../hooks/useListing";
 import { useListings } from "../hooks/useListings";
@@ -39,6 +40,53 @@ import ListingsMap from "../components/maps/ListingsMap";
 import ListingCard from "../components/listings/ListingCard";
 import SEO from "../components/common/SEO";
 import SendMessageModal from "../components/common/SendMessageModal";
+
+// Unsplash crop variations for the 2×2 thumbnail grid.
+// Each index uses a different focal crop so thumbnails look visually distinct.
+const THUMB_CROPS = ["top", "bottom", "entropy", "faces"];
+function getThumbnailUrl(url, i) {
+  if (!url || !url.includes("unsplash.com")) return url;
+  const base = url.split("?")[0];
+  return `${base}?w=400&h=300&fit=crop&crop=${THUMB_CROPS[i]}&auto=format&q=80`;
+}
+
+// Full-screen lightbox modal rendered into document.body
+function PhotoLightbox({ imageUrl, title, onClose }) {
+  useEffect(() => {
+    function handleKey(e) { if (e.key === "Escape") onClose(); }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onClose]);
+
+  return createPortal(
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90"
+      role="dialog"
+      aria-label="Photo viewer"
+      aria-modal="true"
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close photo viewer"
+        className="absolute top-4 right-4 text-white bg-black/40 hover:bg-black/70
+                   rounded-full p-2.5 transition-colors z-10"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <img
+        src={imageUrl}
+        alt={title}
+        onClick={e => e.stopPropagation()}
+        className="max-w-[92vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
+      />
+    </div>,
+    document.body
+  );
+}
 
 function fakePhone(id) {
   const n = parseInt((id || "0").replace(/-/g, "").slice(0, 8), 16);
@@ -103,6 +151,7 @@ export default function ListingDetail() {
   // selectedListing: which listing's modal is open (the detail listing itself,
   // or a similar-listing card). null = modal closed.
   const [selectedListing, setSelectedListing] = useState(null);
+  const [lightboxOpen,    setLightboxOpen]    = useState(false);
   const [linkCopied, setLinkCopied]     = useState(false);
 
   const listingUrl = typeof window !== "undefined"
@@ -297,6 +346,7 @@ export default function ListingDetail() {
             {/* "View All Photos" button - shown on mobile where the grid is hidden */}
             <button
               type="button"
+              onClick={() => setLightboxOpen(true)}
               className="md:hidden absolute bottom-4 right-4 text-white text-xs font-semibold
                          bg-black/50 border border-white/60 px-3 py-2 rounded-lg
                          hover:bg-black/70 transition-colors min-h-[44px]"
@@ -310,14 +360,18 @@ export default function ListingDetail() {
             {[0, 1, 2, 3].map(i => (
               <div key={i} className="relative overflow-hidden group/thumb">
                 <img
-                  src={imageUrl}
+                  src={getThumbnailUrl(imageUrl, i)}
                   alt={`${listing.title} - photo ${i + 1}`}
                   loading="lazy"
                   className="w-full h-[205px] object-cover group-hover/thumb:scale-105 transition-transform duration-300"
                 />
                 {i === 3 && (
                   <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
-                    <button type="button" className="text-white text-xs font-semibold bg-black/30 border border-white/60 px-3 py-2 rounded-lg hover:bg-black/50 transition-colors">
+                    <button
+                      type="button"
+                      onClick={() => setLightboxOpen(true)}
+                      className="text-white text-xs font-semibold bg-black/30 border border-white/60 px-3 py-2 rounded-lg hover:bg-black/50 transition-colors"
+                    >
                       View All Photos
                     </button>
                   </div>
@@ -611,6 +665,14 @@ export default function ListingDetail() {
         listing={selectedListing}
         formSource={selectedListing?.id === listing?.id ? "contact" : "listing"}
       />
+
+      {lightboxOpen && (
+        <PhotoLightbox
+          imageUrl={imageUrl}
+          title={listing.title}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </div>
   );
 }

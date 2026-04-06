@@ -13,10 +13,13 @@
 //   - Shows max 5 suggestions in a dropdown below the input
 //   - Dropdown shows "City, State" - clicking fills input with just the city name
 //   - Escape or click-outside closes the dropdown
+//   - ArrowDown/ArrowUp navigates suggestions; Enter selects the highlighted one
 //   - onMouseDown + e.preventDefault() on each suggestion prevents the input's
 //     onBlur from firing before the click registers (a common focus-race pitfall)
+//   - Full ARIA: role="combobox", aria-expanded, aria-activedescendant,
+//     role="listbox", role="option" with IDs for screen-reader support
 
-import { useState, useRef, useEffect } from "react";
+import { useId, useState, useRef, useEffect } from "react";
 
 const CITIES = [
   { city: "Los Angeles",     state: "California" },
@@ -58,8 +61,13 @@ export default function CityAutocomplete({
   wrapperClassName = "",
   inputClassName = "",
 }) {
-  const [suggestions, setSuggestions] = useState([]);
-  const [open, setOpen]               = useState(false);
+  const uid = useId();
+  const listboxId = `city-listbox-${uid}`;
+  const optionId  = (i) => `city-option-${uid}-${i}`;
+
+  const [suggestions,  setSuggestions]  = useState([]);
+  const [open,         setOpen]         = useState(false);
+  const [activeIndex,  setActiveIndex]  = useState(-1);
   const wrapRef = useRef(null);
 
   // Close when the user clicks anywhere outside this component
@@ -67,11 +75,15 @@ export default function CityAutocomplete({
     function onMouseDown(e) {
       if (wrapRef.current && !wrapRef.current.contains(e.target)) {
         setOpen(false);
+        setActiveIndex(-1);
       }
     }
     document.addEventListener("mousedown", onMouseDown);
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
+
+  // Reset active index whenever the suggestion list changes
+  useEffect(() => { setActiveIndex(-1); }, [suggestions]);
 
   function handleChange(v) {
     onChange(v);
@@ -95,16 +107,41 @@ export default function CityAutocomplete({
     onChange(city);
     setSuggestions([]);
     setOpen(false);
+    setActiveIndex(-1);
   }
 
   function handleKeyDown(e) {
-    if (e.key === "Escape") setOpen(false);
+    if (!open) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex(prev => Math.min(prev + 1, suggestions.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex(prev => Math.max(prev - 1, -1));
+    } else if (e.key === "Enter") {
+      if (activeIndex >= 0 && activeIndex < suggestions.length) {
+        e.preventDefault();
+        handleSelect(suggestions[activeIndex]);
+      }
+    } else if (e.key === "Escape") {
+      setOpen(false);
+      setActiveIndex(-1);
+    }
   }
+
+  const activeDescendant = open && activeIndex >= 0 ? optionId(activeIndex) : undefined;
 
   return (
     <div ref={wrapRef} className={`relative ${wrapperClassName}`}>
       <input
         type="text"
+        role="combobox"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-autocomplete="list"
+        aria-controls={listboxId}
+        aria-activedescendant={activeDescendant}
         value={value}
         onChange={e => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -115,20 +152,24 @@ export default function CityAutocomplete({
 
       {open && (
         <ul
+          id={listboxId}
           role="listbox"
           className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-gray-200
                      rounded-xl shadow-lg z-[150] overflow-hidden py-1"
         >
-          {suggestions.map(({ city, state }) => (
+          {suggestions.map(({ city, state }, i) => (
             <li
               key={`${city}-${state}`}
+              id={optionId(i)}
               role="option"
+              aria-selected={i === activeIndex}
               // onMouseDown + preventDefault keeps input focused while registering the click
               onMouseDown={e => { e.preventDefault(); handleSelect({ city }); }}
-              className="flex items-center gap-2.5 px-4 py-3 text-sm min-h-[44px]
-                         text-[#202124] cursor-pointer
-                         hover:bg-blue-50 hover:text-[#1A73E8]
-                         transition-colors duration-100"
+              className={`flex items-center gap-2.5 px-4 py-3 text-sm min-h-[44px]
+                         text-[#202124] cursor-pointer transition-colors duration-100
+                         ${i === activeIndex
+                           ? "bg-blue-50 text-[#1A73E8]"
+                           : "hover:bg-blue-50 hover:text-[#1A73E8]"}`}
             >
               <PinIcon />
               <span>

@@ -29,7 +29,7 @@ export function ToastProvider({ children }) {
   const [toast, setToast] = useState(null); // { message, id } | null
 
   const showToast = useCallback((message) => {
-    const id = Date.now();
+    const id = crypto.randomUUID();
     setToast({ message, id });
     // Remove from DOM after the full 5 s animation completes.
     // The element is already opacity-0 at this point (animation fill forwards).

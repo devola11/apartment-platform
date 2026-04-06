@@ -1,6 +1,7 @@
 // src/pages/Profile.jsx - Protected page (requires login)
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
 import SEO from "../components/common/SEO";
 
 function UserIcon() {
@@ -13,6 +14,7 @@ function UserIcon() {
 
 export default function Profile() {
   const { user, signOut } = useAuth();
+  const { favoriteIds } = useFavorites();
   const navigate = useNavigate();
 
   const fullName  = user?.user_metadata?.full_name;
@@ -69,6 +71,10 @@ export default function Profile() {
             <div>
               <p className="text-xs font-semibold text-[#5F6368] uppercase tracking-wide mb-1">Member Since</p>
               <p className="text-[#202124]">{joinedAt}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-[#5F6368] uppercase tracking-wide mb-1">Saved Listings</p>
+              <p className="text-[#202124] font-medium">{favoriteIds.size}</p>
             </div>
           </div>
 

@@ -307,9 +307,9 @@ export default function SendMessageModal({ isOpen, onClose, listing, formSource 
               {/* Legal disclaimer */}
               <p className="text-xs text-[#5F6368] text-center leading-relaxed">
                 By submitting this form, you agree to our{" "}
-                <span className="text-[#1A73E8] cursor-pointer hover:underline">Terms of Service</span>
+                <a href="https://www.apartmentguide.com/terms" target="_blank" rel="noopener noreferrer" className="text-[#1A73E8] hover:underline">Terms of Service</a>
                 {" "}and{" "}
-                <span className="text-[#1A73E8] cursor-pointer hover:underline">Privacy Policy</span>.
+                <a href="https://www.apartmentguide.com/privacy" target="_blank" rel="noopener noreferrer" className="text-[#1A73E8] hover:underline">Privacy Policy</a>.
               </p>
 
             </form>

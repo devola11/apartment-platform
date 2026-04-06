@@ -145,7 +145,7 @@ export default function AuthForm({ mode = "login" }) {
       } else {
         const userRole = data?.user?.user_metadata?.role;
         if (userRole === "landlord") {
-          navigate("/dashboard", { replace: true });
+          navigate("/", { replace: true });
         } else {
           navigate(from, { replace: true });
         }

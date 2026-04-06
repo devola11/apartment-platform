@@ -28,8 +28,6 @@ const PRICE_RANGES = [
   { label: "$5,000+",        min: "5000", max: ""     },
 ];
 
-const PROPERTY_TYPES = ["Apartment", "Condo", "House", "Townhouse"];
-
 const inputCls = "border border-[#E0E0E0] rounded-lg px-3 py-2 text-sm text-[#202124] focus:outline-none focus:ring-2 focus:ring-[#1A73E8] bg-white";
 
 // CloseIcon for the mobile panel header
@@ -61,7 +59,6 @@ export default function FilterBar({ onFilter, stateFilter }) {
   const [bathrooms,   setBathrooms]   = useState("");
   const [priceKey,    setPriceKey]    = useState("0");
   const [petFriendly, setPetFriendly] = useState(false);
-  const [propTypes,   setPropTypes]   = useState([]);
 
   // Controls the mobile slide-up panel
   const [panelOpen, setPanelOpen] = useState(false);
@@ -86,12 +83,8 @@ export default function FilterBar({ onFilter, stateFilter }) {
 
   function handleReset() {
     setCity(""); setBedrooms(""); setBathrooms("");
-    setPriceKey("0"); setPetFriendly(false); setPropTypes([]);
+    setPriceKey("0"); setPetFriendly(false);
     onFilter({ city: "", bedrooms: "", bathrooms: "", minPrice: "", maxPrice: "", petFriendly: false });
-  }
-
-  function togglePropType(t) {
-    setPropTypes(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]);
   }
 
   // Count how many filters are actively set so we can show a badge on the button
@@ -101,7 +94,6 @@ export default function FilterBar({ onFilter, stateFilter }) {
     bathrooms !== "",
     priceKey !== "0",
     petFriendly,
-    propTypes.length > 0,
   ].filter(Boolean).length;
 
   // ── renderFilters(fullWidth) ─────────────────────────────────────
@@ -163,24 +155,6 @@ export default function FilterBar({ onFilter, stateFilter }) {
               <option key={i} value={i}>{r.label}</option>
             ))}
           </select>
-        </div>
-
-        {/* Property Type */}
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold text-[#5F6368] uppercase tracking-wide">Type</label>
-          <div className={`flex gap-2 flex-wrap ${fullWidth ? "py-1" : ""}`}>
-            {PROPERTY_TYPES.map(t => (
-              <label key={t} className="flex items-center gap-1 text-sm text-[#202124] cursor-pointer min-h-[44px]">
-                <input
-                  type="checkbox"
-                  checked={propTypes.includes(t)}
-                  onChange={() => togglePropType(t)}
-                  className="accent-[#1A73E8] w-4 h-4"
-                />
-                {t}
-              </label>
-            ))}
-          </div>
         </div>
 
         {/* Pet Friendly */}
