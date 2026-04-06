@@ -2,9 +2,13 @@
 // Reusable city search input with a suggestion dropdown.
 //
 // Props:
-//   value           - controlled input value (string)
-//   onChange        - called with the new string on every keystroke or selection
-//   placeholder     - input placeholder text
+//   value            - controlled input value (string)
+//   onChange         - called with the new string on every keystroke or selection
+//   onConfirm        - optional: called with the city string when a suggestion is
+//                      confirmed via keyboard Enter. Use this to trigger side-effects
+//                      (e.g. form navigation) that need the selected value immediately,
+//                      since React state from onChange may not have flushed yet.
+//   placeholder      - input placeholder text
 //   wrapperClassName - classes applied to the outer <div> (e.g. sizing, flex-1)
 //   inputClassName   - classes applied to the <input> itself (styling only)
 //
@@ -14,6 +18,7 @@
 //   - Dropdown shows "City, State" - clicking fills input with just the city name
 //   - Escape or click-outside closes the dropdown
 //   - ArrowDown/ArrowUp navigates suggestions; Enter selects the highlighted one
+//     and calls onConfirm(city) so the parent can act immediately (e.g. navigate)
 //   - onMouseDown + e.preventDefault() on each suggestion prevents the input's
 //     onBlur from firing before the click registers (a common focus-race pitfall)
 //   - Full ARIA: role="combobox", aria-expanded, aria-activedescendant,
@@ -57,6 +62,7 @@ function PinIcon() {
 export default function CityAutocomplete({
   value,
   onChange,
+  onConfirm,
   placeholder,
   wrapperClassName = "",
   inputClassName = "",
@@ -122,7 +128,11 @@ export default function CityAutocomplete({
     } else if (e.key === "Enter") {
       if (activeIndex >= 0 && activeIndex < suggestions.length) {
         e.preventDefault();
-        handleSelect(suggestions[activeIndex]);
+        const { city } = suggestions[activeIndex];
+        handleSelect({ city });
+        // onConfirm lets the parent act immediately with the selected value,
+        // bypassing the async React state flush from onChange.
+        onConfirm?.(city);
       }
     } else if (e.key === "Escape") {
       setOpen(false);

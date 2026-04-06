@@ -94,6 +94,12 @@ export default function Listings({ stateFilter }) {
   // Default: map hidden on mobile (false), always visible on desktop via CSS
   const [showMobileMap, setShowMobileMap] = useState(false);
 
+  // Sync the city filter whenever the URL ?q= param changes (e.g. navigating
+  // from the home page search bar while already on /listings).
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, city: searchParams.get("q") || "" }));
+  }, [searchParams]);
+
   // Reset to page 1 whenever filters/sort/state change
   useEffect(() => { setPage(1); }, [filters, sort, stateFilter]);
 

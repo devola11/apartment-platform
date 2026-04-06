@@ -190,6 +190,11 @@ export default function Home() {
             <CityAutocomplete
               value={query}
               onChange={setQuery}
+              onConfirm={(city) => {
+                const params = new URLSearchParams();
+                if (city) params.set("q", city);
+                navigate(`/listings?${params.toString()}`);
+              }}
               placeholder="City, neighborhood, or ZIP"
               wrapperClassName="sm:flex-1"
               inputClassName="w-full text-[#202124] text-base placeholder-[#9AA0A6]
