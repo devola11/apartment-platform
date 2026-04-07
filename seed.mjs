@@ -5,9 +5,11 @@
 
 import { createClient } from "@supabase/supabase-js";
 
+// Read credentials from environment — never hardcode keys in source.
+// Usage: SUPABASE_URL=https://xxx.supabase.co SUPABASE_KEY=sb_xxx node seed.mjs
 const supabase = createClient(
-  "https://xnabwbnpqoqkdjlpsriw.supabase.co",
-  "sb_publishable_GkQzX2syZmt3bnwRs2NOZw_ieMwwbGq"
+  process.env.SUPABASE_URL  || "",
+  process.env.SUPABASE_KEY  || ""
 );
 
 // Variety of real apartment-style Unsplash images
