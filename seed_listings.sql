@@ -1,382 +1,508 @@
 -- seed_listings.sql
--- Run this in your Supabase SQL Editor to populate the listings table.
--- 50 listings: 25 in California, 25 in Florida
+-- 60 listings: 10 studios · 25 one-bedrooms · 25 two-bedrooms
+-- 31 California · 29 Florida
+--
+-- Run in your Supabase SQL Editor.
+-- The image_group column records which folder in apartment-images-raw
+-- maps to each listing so images can be uploaded and linked later.
+--
+-- Add image_group column if it doesn't exist yet:
+--   ALTER TABLE listings ADD COLUMN IF NOT EXISTS image_group text;
 
-INSERT INTO listings (title, description, address, city, state, zip, price, bedrooms, bathrooms, sqft, latitude, longitude, image_url, amenities) VALUES
+TRUNCATE TABLE listings RESTART IDENTITY CASCADE;
 
--- ─── CALIFORNIA ────────────────────────────────────────────────────────────
+INSERT INTO listings (
+  title, description, address, city, state, zip,
+  price, bedrooms, bathrooms, sqft,
+  latitude, longitude, image_url, amenities, image_group
+) VALUES
 
--- Los Angeles
-('Modern Studio in Downtown LA',
- 'Stylish studio in the heart of downtown Los Angeles. Floor-to-ceiling windows with city views. Walking distance to restaurants, nightlife, and public transit.',
- '123 S Grand Ave', 'Los Angeles', 'California', '90012',
- 1850, 0, 1, 480, 34.0522, -118.2584,
- 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
- ARRAY['Gym', 'Rooftop Deck', 'Concierge', 'Pet Friendly']),
+-- ─── STUDIOS ────────────────────────────────────────────────────────────────
 
-('Bright 1BR in Silver Lake',
- 'Charming one-bedroom in trendy Silver Lake with hardwood floors, updated kitchen, and private patio. Minutes from Sunset Blvd dining and shopping.',
- '456 Hyperion Ave', 'Los Angeles', 'California', '90027',
- 2450, 1, 1, 720, 34.0869, -118.2703,
- 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
- ARRAY['Parking', 'In-Unit Laundry', 'Pet Friendly', 'Air Conditioning']),
+-- 1 · Santa Monica · CA
+('The Promenade Studio',
+ 'Light-filled studio steps from the Third Street Promenade in the heart of Santa Monica. Features an efficient open layout with modern kitchen finishes and oversized windows letting in the Southern California sun. Rooftop sun deck and bike storage included.',
+ '1450 2nd St', 'Santa Monica', 'California', '90401',
+ 2100, 0, 1, 480, 34.0160, -118.4957, '',
+ ARRAY['Rooftop Deck','Gym','In-Unit Laundry','Dishwasher','Bike Storage','Elevator'],
+ 'Studio 144-50 25th Rd'),
 
-('Spacious 2BR in Koreatown',
- 'Renovated two-bedroom with open-plan living, stainless steel appliances, and in-unit washer/dryer. Close to Metro Purple Line.',
- '789 Wilshire Blvd', 'Los Angeles', 'California', '90010',
- 3100, 2, 2, 1050, 34.0625, -118.3103,
- 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
- ARRAY['In-Unit Laundry', 'Dishwasher', 'Air Conditioning', 'Parking']),
+-- 2 · San Francisco · CA
+('Mission Street Studio Loft',
+ 'Stylish studio loft in San Francisco''s vibrant Mission District, moments from Dolores Park and the city''s best taquerias. Polished concrete floors and high ceilings give this compact space a distinct urban character. Steps from the 16th St BART station.',
+ '2390 Mission St', 'San Francisco', 'California', '94110',
+ 2400, 0, 1, 460, 37.7588, -122.4186, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Bike Storage','Elevator'],
+ 'Brownsville Transit Village V'),
 
-('Luxury 3BR in West Hollywood',
- 'Stunning three-bedroom with designer finishes, private balcony, and gourmet kitchen. Building features rooftop pool and valet parking.',
- '222 N La Cienega Blvd', 'Los Angeles', 'California', '90048',
- 5200, 3, 2, 1600, 34.0771, -118.3747,
- 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80',
- ARRAY['Pool', 'Gym', 'Valet Parking', 'Concierge', 'Rooftop Deck']),
+-- 3 · Oakland · CA
+('Grand Lake Studio',
+ 'Cozy studio in Oakland''s sought-after Grand Lake neighborhood, blocks from the lakeside farmers market and beloved independent cinemas. Bright and efficient layout with updated kitchen and bath. Easy access to the 580 freeway and Lake Merritt BART.',
+ '576 Grand Ave', 'Oakland', 'California', '94610',
+ 1800, 0, 1, 440, 37.8133, -122.2571, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Pet Friendly','Hardwood Floors'],
+ 'Studio 275 Fontaine Parc'),
 
-('Cozy 1BR in Hollywood Hills',
- 'Hillside one-bedroom with breathtaking canyon views and private deck. Updated bathroom, newer appliances, and gated parking.',
- '55 Mulholland Dr', 'Los Angeles', 'California', '90068',
- 2750, 1, 1, 690, 34.1120, -118.3396,
- 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
- ARRAY['Parking', 'Deck', 'Air Conditioning', 'Views']),
+-- 4 · Irvine · CA
+('Campus Quarter Studio',
+ 'Modern studio near UC Irvine in the University Park neighborhood. Clean lines, in-unit laundry, and resort-style pool and gym make this the ideal base for professionals and students in Orange County. Covered parking included.',
+ '4141 Campus Dr', 'Irvine', 'California', '92612',
+ 2000, 0, 1, 510, 33.6635, -117.8310, '',
+ ARRAY['Pool','Gym','In-Unit Laundry','Dishwasher','Parking','Air Conditioning'],
+ 'Studio 1318 E 58th St #1'),
 
--- San Francisco
-('Chic Studio in SoMa',
- 'Contemporary studio in SF''s SoMa district. Exposed brick, polished concrete floors, and fully equipped kitchen. Walk to Caltrain and BART.',
- '310 Folsom St', 'San Francisco', 'California', '94105',
- 2600, 0, 1, 510, 37.7862, -122.3928,
- 'https://images.unsplash.com/photo-1567684014761-b65e2e59b9eb?w=800&q=80',
- ARRAY['Bike Storage', 'Gym', 'Rooftop', 'Pet Friendly']),
+-- 5 · Sacramento · CA
+('Midtown Sacramento Studio',
+ 'Alcove studio in Sacramento''s walkable Midtown grid, surrounded by art galleries, farm-to-fork restaurants, and the vibrant K Street scene. Freshly updated with quartz countertops and new cabinetry. Walk Score 95.',
+ '1500 21st St', 'Sacramento', 'California', '95811',
+ 1350, 0, 1, 430, 38.5702, -121.4841, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Bike Storage','Hardwood Floors'],
+ 'Ardmore-Ca'),
 
-('1BR in the Mission District',
- 'Charming Victorian one-bedroom on a tree-lined block in the Mission. High ceilings, bay windows, and original hardwood floors. Steps from top restaurants.',
- '2401 Valencia St', 'San Francisco', 'California', '94110',
- 3150, 1, 1, 740, 37.7558, -122.4206,
- 'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=800&q=80',
- ARRAY['Storage', 'Laundry', 'Bike Friendly']),
-
-('Modern 2BR in Hayes Valley',
- 'Sleek two-bedroom in one of SF''s most walkable neighborhoods. Open floor plan, Nest thermostat, private balcony, and secure parking.',
- '480 Fell St', 'San Francisco', 'California', '94102',
- 4700, 2, 2, 1100, 37.7761, -122.4329,
- 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800&q=80',
- ARRAY['Parking', 'Balcony', 'In-Unit Laundry', 'Air Conditioning']),
-
-('Penthouse 3BR in Nob Hill',
- 'Spectacular penthouse with panoramic Bay Bridge and city views. Luxury finishes, chef''s kitchen, and 24-hour doorman. A rare SF gem.',
- '1200 California St', 'San Francisco', 'California', '94109',
- 7500, 3, 3, 2000, 37.7920, -122.4148,
- 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80',
- ARRAY['Doorman', 'Valet Parking', 'Views', 'Gym', 'Pet Friendly']),
-
-('Studio with Bay Views in Embarcadero',
- 'Compact but beautifully finished studio with partial bay views. Floor-to-ceiling windows, built-in storage, and access to rooftop garden.',
- '100 Brannan St', 'San Francisco', 'California', '94107',
- 2900, 0, 1, 490, 37.7823, -122.3917,
- 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
- ARRAY['Rooftop Garden', 'Concierge', 'Gym', 'Bike Storage']),
-
--- San Diego
-('Sunny 1BR in North Park',
- 'Bright one-bedroom in the heart of North Park. Renovated kitchen, quartz countertops, and a private fenced yard. Pet friendly.',
- '3021 University Ave', 'San Diego', 'California', '92104',
- 2150, 1, 1, 700, 32.7485, -117.1301,
- 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
- ARRAY['Yard', 'Parking', 'Pet Friendly', 'Air Conditioning']),
-
-('2BR Beach Bungalow in Ocean Beach',
- 'Adorable two-bedroom bungalow two blocks from the beach. Hardwood floors, updated bath, and a large deck perfect for entertaining.',
- '4825 Narragansett Ave', 'San Diego', 'California', '92107',
- 3200, 2, 1, 950, 32.7494, -117.2470,
- 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
- ARRAY['Deck', 'Parking', 'Pet Friendly', 'Beach Access']),
-
-('3BR Home in La Mesa',
- 'Spacious three-bedroom with large backyard, two-car garage, and updated kitchen. Quiet suburban neighborhood with top-rated schools.',
- '7812 El Cajon Blvd', 'San Diego', 'California', '91942',
- 3800, 3, 2, 1500, 32.7676, -117.0228,
- 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
- ARRAY['Garage', 'Backyard', 'Air Conditioning', 'Washer/Dryer']),
-
--- Sacramento
-('2BR Near Midtown Sacramento',
- 'Updated two-bedroom in Sacramento''s vibrant Midtown neighborhood. Open layout, granite countertops, and walkable to restaurants and bars.',
- '2200 K St', 'Sacramento', 'California', '95816',
- 1750, 2, 1, 900, 38.5720, -121.4824,
- 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=800&q=80',
- ARRAY['Parking', 'Air Conditioning', 'Pet Friendly', 'Laundry']),
-
-('3BR in East Sacramento',
- 'Spacious three-bedroom in East Sacramento''s tree-lined streets. Original hardwood floors, large kitchen, and a charming front porch.',
- '4501 H St', 'Sacramento', 'California', '95819',
- 2450, 3, 2, 1400, 38.5659, -121.4432,
- 'https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=800&q=80',
- ARRAY['Garage', 'Yard', 'Pet Friendly', 'Air Conditioning']),
-
--- Oakland
-('1BR in Temescal, Oakland',
- 'Hip one-bedroom in Oakland''s Temescal neighborhood. Exposed brick, modern appliances, and steps from some of the Bay Area''s best coffee shops.',
- '4220 Telegraph Ave', 'Oakland', 'California', '94609',
- 2100, 1, 1, 680, 37.8294, -122.2659,
- 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80',
- ARRAY['Bike Storage', 'Pet Friendly', 'Laundry']),
-
-('2BR Overlooking Lake Merritt',
- 'Beautiful two-bedroom with lake views. Hardwood floors, bay windows, newly renovated kitchen, and easy BART access.',
- '3001 Grand Ave', 'Oakland', 'California', '94610',
- 2900, 2, 1, 1000, 37.8100, -122.2500,
- 'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80',
- ARRAY['Lake Views', 'Parking', 'Pet Friendly', 'Laundry']),
-
--- Fresno
-('2BR in Central Fresno',
- 'Affordable two-bedroom with spacious rooms, updated kitchen, and community pool. Convenient location near shopping and dining.',
- '1845 N Blackstone Ave', 'Fresno', 'California', '93703',
- 1350, 2, 1, 900, 36.7779, -119.7871,
- 'https://images.unsplash.com/photo-1459767129954-1b1c1f9b9ace?w=800&q=80',
- ARRAY['Pool', 'Parking', 'Air Conditioning', 'Laundry']),
-
-('3BR Craftsman in Tower District',
- 'Charming three-bedroom in Fresno''s eclectic Tower District. Original 1940s details, large backyard, and two-car garage.',
- '890 N Van Ness Ave', 'Fresno', 'California', '93728',
- 1750, 3, 2, 1350, 36.7530, -119.7960,
- 'https://images.unsplash.com/photo-1515263487990-61b07816b324?w=800&q=80',
- ARRAY['Garage', 'Backyard', 'Air Conditioning', 'Pet Friendly']),
-
--- Irvine
-('2BR Resort-Style in Irvine Spectrum',
- 'Contemporary two-bedroom with resort-style amenities. Gourmet kitchen, private balcony, and access to two pools, gym, and clubhouse.',
- '15100 Sand Canyon Ave', 'Irvine', 'California', '92618',
- 3600, 2, 2, 1150, 33.6697, -117.7921,
- 'https://images.unsplash.com/photo-1580587771525-4dddfa7b9a19?w=800&q=80',
- ARRAY['Pool', 'Gym', 'Clubhouse', 'Balcony', 'Parking']),
-
--- Santa Monica
-('1BR Steps from Santa Monica Beach',
- 'Airy one-bedroom just two blocks from the beach. Light-filled rooms, updated kitchen, and a rooftop terrace with ocean views.',
- '400 Ocean Ave', 'Santa Monica', 'California', '90402',
- 3100, 1, 1, 710, 34.0195, -118.4912,
- 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=80',
- ARRAY['Rooftop', 'Beach Access', 'Air Conditioning', 'Parking']),
-
--- Long Beach
-('2BR in Belmont Shore',
- 'Stylish two-bedroom in Long Beach''s Belmont Shore area. Open floor plan, private patio, and one block from the water. Pet friendly.',
- '5601 E Ocean Blvd', 'Long Beach', 'California', '90803',
- 2700, 2, 2, 1020, 33.7607, -118.1290,
- 'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=800&q=80',
- ARRAY['Patio', 'Pet Friendly', 'Parking', 'Air Conditioning']),
-
--- Pasadena
-('2BR Victorian in Old Pasadena',
- 'Beautifully restored two-bedroom Victorian apartment in Old Pasadena. Original woodwork, modern kitchen, and a charming garden.',
- '55 N Mentor Ave', 'Pasadena', 'California', '91106',
- 2950, 2, 1, 1000, 34.1478, -118.1361,
- 'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&q=80',
- ARRAY['Garden', 'Parking', 'Pet Friendly', 'Laundry']),
-
--- Anaheim
-('2BR Near Anaheim Entertainment',
- 'Comfortable two-bedroom close to Anaheim''s attractions. Fully renovated with quartz countertops and resort-style pool and gym.',
- '1800 S Harbor Blvd', 'Anaheim', 'California', '92802',
- 2350, 2, 2, 980, 33.8006, -117.9186,
- 'https://images.unsplash.com/photo-1618221118493-9cfa1a1c00da?w=800&q=80',
- ARRAY['Pool', 'Gym', 'Parking', 'Air Conditioning']),
-
--- Beverly Hills
-('2BR in the Heart of Beverly Hills',
- 'Sophisticated two-bedroom with marble countertops, hardwood floors, and building amenities including pool, spa, and valet.',
- '310 N Crescent Dr', 'Beverly Hills', 'California', '90210',
- 5800, 2, 2, 1300, 34.0746, -118.3956,
- 'https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=800&q=80',
- ARRAY['Pool', 'Spa', 'Valet', 'Concierge', 'Gym', 'Pet Friendly']),
-
--- ─── FLORIDA ───────────────────────────────────────────────────────────────
-
--- Miami
-('1BR with Bay Views in Brickell',
- 'Sleek one-bedroom in Miami''s financial district with stunning Biscayne Bay views. High-rise living with resort-style amenities and walkable neighborhood.',
- '1100 Brickell Ave', 'Miami', 'Florida', '33131',
- 2400, 1, 1, 750, 25.7617, -80.1918,
- 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
- ARRAY['Pool', 'Gym', 'Concierge', 'Valet', 'Bay Views']),
-
-('2BR Loft in Wynwood Arts District',
- 'Artistic two-bedroom loft in Miami''s famous Wynwood neighborhood. Exposed concrete, open kitchen, and surrounded by world-class murals and galleries.',
- '2800 NW 2nd Ave', 'Miami', 'Florida', '33127',
- 3100, 2, 2, 1100, 25.8006, -80.1998,
- 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
- ARRAY['Rooftop', 'Parking', 'Pet Friendly', 'Air Conditioning']),
-
-('3BR Home in Coconut Grove',
- 'Lush three-bedroom home in Coconut Grove with tropical landscaping, private pool, and two-car garage. Close to Biscayne Bay and top-rated schools.',
- '3450 Main Hwy', 'Miami', 'Florida', '33133',
- 5500, 3, 2, 1800, 25.7285, -80.2399,
- 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80',
- ARRAY['Private Pool', 'Garage', 'Yard', 'Air Conditioning', 'Pet Friendly']),
-
-('2BR Condo on Miami Beach',
- 'Gorgeous two-bedroom steps from the sand. Ocean views, designer interior, building pool, and rooftop sundeck.',
- '1500 Ocean Dr', 'Miami', 'Florida', '33139',
- 4200, 2, 2, 1050, 25.7825, -80.1300,
- 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
- ARRAY['Ocean Views', 'Pool', 'Gym', 'Doorman', 'Beach Access']),
-
-('Studio in Edgewater Miami',
- 'Bright studio in Miami''s Edgewater neighborhood. Modern finishes, Biscayne Bay views, and resort amenities. Five-minute drive to Wynwood.',
+-- 6 · Miami · FL
+('Edgewater Studio Retreat',
+ 'Sleek studio in Miami''s Edgewater neighborhood with access to a rooftop amenity deck and Biscayne Bay views. Steps from Wynwood''s world-class art galleries and the Design District''s boutiques. Concierge building with 24-hour security.',
  '3301 NE 1st Ave', 'Miami', 'Florida', '33137',
- 1950, 0, 1, 520, 25.7960, -80.1872,
- 'https://images.unsplash.com/photo-1567684014761-b65e2e59b9eb?w=800&q=80',
- ARRAY['Pool', 'Gym', 'Rooftop', 'Concierge']),
+ 2200, 0, 1, 490, 25.8111, -80.1893, '',
+ ARRAY['Rooftop Deck','Pool','Gym','In-Unit Laundry','Dishwasher','Concierge','Elevator'],
+ 'Studio The Halldale'),
 
--- Orlando
-('1BR Overlooking Lake Eola',
- 'Stylish one-bedroom in downtown Orlando overlooking Lake Eola Park. Modern finishes, community pool, and walking distance to restaurants and nightlife.',
- '100 E Central Blvd', 'Orlando', 'Florida', '32801',
- 1700, 1, 1, 720, 28.5383, -81.3792,
- 'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=800&q=80',
- ARRAY['Pool', 'Gym', 'Lake Views', 'Pet Friendly', 'Parking']),
+-- 7 · Tampa · FL
+('Ybor City Studio Loft',
+ 'Industrial-chic studio in Tampa''s historic Ybor City, steps from the Columbia Restaurant and Cigar City Brewing. Exposed brick walls and original hardwood floors honor the neighborhood''s century-old character. Pet friendly.',
+ '1802 E 7th Ave', 'Tampa', 'Florida', '33605',
+ 1500, 0, 1, 470, 27.9570, -82.4319, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Pet Friendly','Bike Storage'],
+ 'Studio Seven Lions Apartments'),
 
-('2BR Bungalow in Thornton Park',
- 'Beautiful two-bedroom bungalow in historic Thornton Park. Character-filled home with hardwood floors, updated kitchen, and a screened porch.',
- '717 E Washington St', 'Orlando', 'Florida', '32801',
- 2200, 2, 1, 1000, 28.5405, -81.3675,
- 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800&q=80',
- ARRAY['Porch', 'Yard', 'Parking', 'Pet Friendly']),
+-- 8 · Orlando · FL
+('Thornton Park Studio',
+ 'Charming studio in Orlando''s Thornton Park neighborhood, moments from Lake Eola and the city''s emerging dining scene. Freshly renovated interior with updated appliances and plenty of natural light. Steps from Eola Drive''s weekend market.',
+ '700 E Washington St', 'Orlando', 'Florida', '32801',
+ 1350, 0, 1, 450, 28.5443, -81.3647, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Air Conditioning','Pet Friendly'],
+ 'CONDO HOLDINGS'),
 
-('3BR in Dr. Phillips, Orlando',
- 'Spacious three-bedroom home with open floor plan, granite kitchen, community pool, and top-rated schools nearby.',
- '7823 Viera Blvd', 'Orlando', 'Florida', '32836',
- 2950, 3, 2, 1650, 28.4595, -81.4789,
- 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80',
- ARRAY['Pool', 'Garage', 'Air Conditioning', 'Pet Friendly']),
+-- 9 · Jacksonville · FL
+('Riverside Studio Flat',
+ 'Cozy studio in Jacksonville''s storied Riverside neighborhood, walkable to Five Points shops, the St. Johns River park, and acclaimed craft beer bars. Updated kitchen and bath with classic tile detail and good natural light.',
+ '2215 Post St', 'Jacksonville', 'Florida', '32204',
+ 1200, 0, 1, 420, 30.3196, -81.6852, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Pet Friendly','Hardwood Floors'],
+ 'Studio Countyline Apartments'),
 
-('2BR in College Park, Orlando',
- 'Charming two-bedroom in Orlando''s eclectic College Park neighborhood. Large fenced yard, carport, and steps from Edgewater Drive dining.',
- '1200 Formosa Ave', 'Orlando', 'Florida', '32804',
- 2100, 2, 1, 950, 28.5699, -81.3916,
- 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
- ARRAY['Yard', 'Carport', 'Pet Friendly', 'Air Conditioning']),
+-- 10 · Sarasota · FL
+('Burns Court Studio',
+ 'Intimate studio tucked in Sarasota''s celebrated Burns Court arts district, steps from independent galleries, the Burns Court Cinema, and evening farmers markets. Warm wood accents and a private patio create an inviting retreat.',
+ '500 Burns Ct', 'Sarasota', 'Florida', '34236',
+ 1600, 0, 1, 435, 27.3355, -82.5412, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Air Conditioning','Pet Friendly','Bike Storage'],
+ '461 Dean'),
 
--- Tampa
-('1BR Historic Loft in Ybor City',
- 'Historic one-bedroom loft in Tampa''s vibrant Ybor City. Exposed brick, 12-ft ceilings, and walking distance to the best nightlife in Tampa Bay.',
- '1901 N 19th St', 'Tampa', 'Florida', '33605',
- 1800, 1, 1, 760, 27.9611, -82.4313,
- 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
- ARRAY['Parking', 'Pet Friendly', 'Air Conditioning']),
+-- ─── 1-BEDROOMS — CALIFORNIA ────────────────────────────────────────────────
 
-('2BR in Hyde Park, Tampa',
- 'Elegant two-bedroom in Tampa''s upscale Hyde Park neighborhood. Oak-lined streets, updated finishes, private balcony, and walk to Bayshore Boulevard.',
- '2009 W Azeele St', 'Tampa', 'Florida', '33606',
- 2600, 2, 2, 1100, 27.9400, -82.4700,
- 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
- ARRAY['Balcony', 'Parking', 'Gym', 'Pet Friendly']),
+-- 11 · Los Angeles · CA
+('Silver Lake View One-Bedroom',
+ 'Bright one-bedroom apartment above Silver Lake''s reservoir corridor with treetop views and easy access to Sunset Junction''s coffee shops and boutiques. Features in-unit laundry, quartz countertops, and an open-plan living area.',
+ '2901 Hyperion Ave', 'Los Angeles', 'California', '90027',
+ 2800, 1, 1, 720, 34.1109, -118.2796, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Air Conditioning','Pet Friendly','Hardwood Floors'],
+ '1031 Clinton St #5B'),
 
-('3BR with Pool in South Tampa',
- 'Stunning three-bedroom home with open floor plan, gourmet kitchen, and private pool. Blocks from the water and top schools.',
- '4010 W San Pedro St', 'Tampa', 'Florida', '33629',
- 3400, 3, 2, 1700, 27.9213, -82.5048,
- 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
- ARRAY['Private Pool', 'Garage', 'Yard', 'Air Conditioning']),
+-- 12 · Los Angeles · CA
+('Wilshire Corridor One-Bedroom',
+ 'Spacious one-bedroom in Koreatown''s Wilshire corridor with city-facing views and quick Purple Line Metro access downtown. Modern finishes throughout, including stainless appliances and a renovated bath with designer tile.',
+ '3470 Wilshire Blvd', 'Los Angeles', 'California', '90010',
+ 2600, 1, 1, 750, 34.0611, -118.3092, '',
+ ARRAY['Gym','Rooftop Deck','In-Unit Laundry','Dishwasher','Parking','Elevator'],
+ 'Artem'),
 
--- Jacksonville
-('2BR in Historic San Marco',
- 'Lovely two-bedroom in historic San Marco. Original hardwood floors, high ceilings, and a private courtyard garden. Walk to boutiques and dining.',
- '1400 San Marco Blvd', 'Jacksonville', 'Florida', '32207',
- 1750, 2, 1, 1000, 30.3054, -81.6549,
- 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=800&q=80',
- ARRAY['Garden', 'Parking', 'Pet Friendly', 'Air Conditioning']),
+-- 13 · San Francisco · CA
+('Nob Hill Classic One-Bedroom',
+ 'Elegant one-bedroom in a classic Nob Hill building with original hardwood floors and gracious pre-war proportions. An elevator building steps from Grace Cathedral, the Fairmont Hotel, and the Hyde Street cable car line.',
+ '1100 Sacramento St', 'San Francisco', 'California', '94108',
+ 3400, 1, 1, 820, 37.7920, -122.4148, '',
+ ARRAY['Elevator','Hardwood Floors','Dishwasher','Laundry in Building','Doorman'],
+ '111 Lincoln St unit 3rd Fl'),
 
-('3BR Craftsman in Riverside, Jacksonville',
- 'Spacious three-bedroom Craftsman bungalow in Jacksonville''s arts-centric Riverside neighborhood. Large front porch, updated interior, and fenced yard.',
- '2300 Myra St', 'Jacksonville', 'Florida', '32204',
- 2300, 3, 2, 1500, 30.3215, -81.6879,
- 'https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=800&q=80',
- ARRAY['Porch', 'Yard', 'Parking', 'Pet Friendly']),
+-- 14 · San Diego · CA
+('North Park One-Bedroom',
+ 'Stylish one-bedroom in San Diego''s walkable North Park neighborhood, steps from the Ray St Arts District, craft breweries, and diverse dining on University Avenue. In-unit laundry and a private balcony included.',
+ '3812 30th St', 'San Diego', 'California', '92104',
+ 2400, 1, 1, 750, 32.7480, -117.1300, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Balcony','Pet Friendly','Bike Storage'],
+ 'Bay Pointe Apartments'),
 
-('1BR in Avondale, Jacksonville',
- 'Cozy one-bedroom in Jacksonville''s charming Avondale neighborhood. Period details, updated bath, and steps from St. Johns Ave dining.',
- '3545 Herschel St', 'Jacksonville', 'Florida', '32205',
- 1550, 1, 1, 680, 30.3049, -81.7095,
- 'https://images.unsplash.com/photo-1618221118493-9cfa1a1c00da?w=800&q=80',
- ARRAY['Parking', 'Pet Friendly', 'Air Conditioning']),
+-- 15 · San Diego · CA
+('Hillcrest One-Bedroom Flat',
+ 'Renovated one-bedroom in the heart of San Diego''s vibrant Hillcrest neighborhood, surrounded by independent restaurants, the weekly farmers market, and Balboa Park''s cultural institutions. Updated kitchen with quartz counters.',
+ '525 Walnut Ave', 'San Diego', 'California', '92103',
+ 2600, 1, 1, 730, 32.7462, -117.1631, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Air Conditioning','Pet Friendly'],
+ 'Central Apartments'),
 
--- Fort Lauderdale
-('2BR on Las Olas, Fort Lauderdale',
- 'Chic two-bedroom steps from Fort Lauderdale''s famous Las Olas Boulevard. Modern condo with a balcony, city pool, and premium gym.',
- '501 E Las Olas Blvd', 'Fort Lauderdale', 'Florida', '33301',
- 2950, 2, 2, 1050, 26.1224, -80.1373,
- 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80',
- ARRAY['Pool', 'Gym', 'Balcony', 'Parking', 'Concierge']),
+-- 16 · Oakland · CA
+('Temescal One-Bedroom',
+ 'Bright one-bedroom in Oakland''s Temescal neighborhood, walkable to the Saturday farmers market and some of the East Bay''s most celebrated restaurants. Hardwood floors, updated kitchen, and natural light throughout.',
+ '4521 Telegraph Ave', 'Oakland', 'California', '94609',
+ 2300, 1, 1, 710, 37.8348, -122.2632, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Pet Friendly','Bike Storage'],
+ 'Chesapeake Apartments'),
 
-('1BR near Fort Lauderdale Beach',
- 'Bright one-bedroom condo a short walk from the beach. Open layout, tropical landscaping, and community pool. Perfect for beach living.',
- '3200 N Ocean Blvd', 'Fort Lauderdale', 'Florida', '33308',
- 2100, 1, 1, 680, 26.1700, -80.1042,
- 'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80',
- ARRAY['Pool', 'Parking', 'Beach Access', 'Air Conditioning']),
+-- 17 · Fresno · CA
+('Tower District One-Bedroom',
+ 'Cheerful one-bedroom in Fresno''s artsy Tower District, steps from the Tower Theatre, vintage shops, and local craft coffee roasters. Recently refreshed with new flooring and updated kitchen appliances. On-site parking and AC.',
+ '928 N Van Ness Ave', 'Fresno', 'California', '93728',
+ 1100, 1, 1, 680, 36.7583, -119.8019, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Air Conditioning','Pet Friendly','Parking'],
+ 'Country Creek'),
 
--- St. Petersburg
-('2BR Loft in the Edge District',
- 'Trendy two-bedroom loft in St. Pete''s Edge District. Industrial-chic design, rooftop terrace, and walkable to Central Avenue bars and restaurants.',
- '1100 Central Ave', 'St. Petersburg', 'Florida', '33705',
- 2300, 2, 2, 1050, 27.7676, -82.6402,
- 'https://images.unsplash.com/photo-1459767129954-1b1c1f9b9ace?w=800&q=80',
- ARRAY['Rooftop', 'Gym', 'Pet Friendly', 'Parking']),
+-- 18 · Irvine · CA
+('Woodbridge Village One-Bedroom',
+ 'Serene one-bedroom in Irvine''s planned Woodbridge community, with access to two lakes, tennis courts, and resort-style pools. Open-plan living with updated finishes in a meticulously maintained building with covered parking.',
+ '4 Autumn Walk', 'Irvine', 'California', '92604',
+ 2700, 1, 1, 800, 33.6855, -117.7952, '',
+ ARRAY['Pool','Gym','Tennis Court','Parking','Air Conditioning','In-Unit Laundry','Dishwasher'],
+ 'Liberty Station Apartments'),
 
-('1BR with Bay Views near Vinoy Park',
- 'Sunny one-bedroom with views of Tampa Bay and Vinoy Park. Updated kitchen, luxury finishes, and direct access to the waterfront trail.',
- '701 Bayshore Dr NE', 'St. Petersburg', 'Florida', '33701',
- 1900, 1, 1, 720, 27.7750, -82.6284,
- 'https://images.unsplash.com/photo-1515263487990-61b07816b324?w=800&q=80',
- ARRAY['Bay Views', 'Parking', 'Pet Friendly', 'Air Conditioning']),
+-- 19 · Long Beach · CA
+('Belmont Shore One-Bedroom',
+ 'Sun-drenched one-bedroom two blocks from the beach in Long Beach''s Belmont Shore neighborhood. Enjoy walkable access to 2nd Street shops, the Belmont Pier, and a relaxed beachside dining scene.',
+ '230 Termino Ave', 'Long Beach', 'California', '90803',
+ 2200, 1, 1, 740, 33.7647, -118.1382, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Air Conditioning','Bike Storage','Pet Friendly'],
+ 'Executive House Apartments'),
 
--- Boca Raton
-('2BR in Mizner Park, Boca Raton',
- 'Upscale two-bedroom steps from Boca Raton''s Mizner Park. Resort-style amenities, granite kitchen, and private balcony.',
+-- 20 · Pasadena · CA
+('Old Town Pasadena One-Bedroom',
+ 'Charming one-bedroom in a classic Pasadena apartment building, steps from the boutiques and restaurants of Old Town and moments from the Metro Gold Line for downtown LA access. High ceilings and original character throughout.',
+ '33 S Arroyo Pkwy', 'Pasadena', 'California', '91105',
+ 2400, 1, 1, 790, 34.1399, -118.1518, '',
+ ARRAY['Laundry in Building','Dishwasher','Hardwood Floors','Parking','Pet Friendly'],
+ 'Chateaugay Apartments'),
+
+-- 21 · Anaheim · CA
+('Platinum Triangle One-Bedroom',
+ 'Modern one-bedroom in Anaheim''s emerging Platinum Triangle, walking distance from Angel Stadium and the Honda Center. Sleek finishes, a large private balcony, and access to resort-style pool and gym amenities.',
+ '1800 E Katella Ave', 'Anaheim', 'California', '92805',
+ 2100, 1, 1, 780, 33.8030, -117.8706, '',
+ ARRAY['Pool','Gym','Parking','In-Unit Laundry','Dishwasher','Air Conditioning','Balcony'],
+ 'Park Vanowen Apartments'),
+
+-- 22 · Beverly Hills · CA
+('Beverly Hills Flats One-Bedroom',
+ 'Elegant one-bedroom on a quiet tree-lined block in the heart of Beverly Hills. Spacious proportions, crown molding, and a landscaped courtyard define refined Beverly Hills living. Full-service elevator building with valet parking.',
+ '436 N Bedford Dr', 'Beverly Hills', 'California', '90210',
+ 4200, 1, 1, 880, 34.0742, -118.4003, '',
+ ARRAY['Doorman','Parking','Laundry in Building','Dishwasher','Hardwood Floors','Elevator'],
+ 'Telegraph Hill'),
+
+-- 23 · Santa Monica · CA
+('Ocean Park One-Bedroom',
+ 'Breezy one-bedroom in Santa Monica''s Ocean Park neighborhood, two miles from the pier and steps from Abbott Kinney Blvd''s acclaimed restaurants and shops. West-facing windows bring in ocean breezes and golden afternoon light.',
+ '2501 Ocean Park Blvd', 'Santa Monica', 'California', '90405',
+ 3200, 1, 1, 840, 34.0035, -118.4721, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Air Conditioning','Balcony','Pet Friendly','Bike Storage'],
+ '105 Elmont St unit 1'),
+
+-- ─── 1-BEDROOMS — FLORIDA ────────────────────────────────────────────────────
+
+-- 24 · Miami · FL
+('Brickell One-Bedroom',
+ 'Sophisticated one-bedroom in Miami''s financial hub of Brickell, steps from Brickell City Centre, Mary Brickell Village, and the Brickell City Metrorail station. Panoramic skyline and bay views from floor-to-ceiling windows.',
+ '1100 Brickell Ave', 'Miami', 'Florida', '33131',
+ 2900, 1, 1, 790, 25.7586, -80.1922, '',
+ ARRAY['Pool','Gym','Concierge','Rooftop Deck','Doorman','In-Unit Laundry','Dishwasher','Valet Parking','Elevator'],
+ 'Lebanon Vue'),
+
+-- 25 · Orlando · FL
+('Eola Heights One-Bedroom',
+ 'Stylish one-bedroom overlooking Lake Eola in Orlando''s Thornton Park neighborhood. Enjoy weekend farmers markets, swan paddle boats on the lake, and the city''s best independent restaurants within walking distance.',
+ '100 S Eola Dr', 'Orlando', 'Florida', '32801',
+ 1900, 1, 1, 760, 28.5398, -81.3720, '',
+ ARRAY['Pool','Gym','In-Unit Laundry','Dishwasher','Air Conditioning','Parking','Elevator'],
+ 'Greenway Flats Apartments'),
+
+-- 26 · Tampa · FL
+('Hyde Park One-Bedroom',
+ 'Upscale one-bedroom in Tampa''s prestigious Hyde Park neighborhood, steps from SoHo''s restaurant row and Bayshore Boulevard''s waterfront promenade. Spacious layout with 10-foot ceilings and designer fixtures throughout.',
+ '1005 S Howard Ave', 'Tampa', 'Florida', '33606',
+ 2100, 1, 1, 820, 27.9399, -82.4741, '',
+ ARRAY['Pool','Gym','In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Balcony'],
+ 'Green Meadows'),
+
+-- 27 · Jacksonville · FL
+('San Marco One-Bedroom',
+ 'Classic one-bedroom in Jacksonville''s beloved San Marco neighborhood, steps from San Marco Square boutiques and the city''s top-rated dining. Renovated kitchen with quartz countertops and hardwood floors throughout.',
+ '1650 Hendricks Ave', 'Jacksonville', 'Florida', '32207',
+ 1600, 1, 1, 770, 30.3025, -81.6478, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Parking','Pet Friendly'],
+ 'Legacy at 19th'),
+
+-- 28 · Fort Lauderdale · FL
+('Victoria Park One-Bedroom',
+ 'Well-appointed one-bedroom in Fort Lauderdale''s peaceful Victoria Park, a short walk from Las Olas Boulevard''s dining and minutes from the beach. Tropical landscaping and a shaded garden courtyard.',
+ '1515 NE 4th Ave', 'Fort Lauderdale', 'Florida', '33304',
+ 2300, 1, 1, 780, 26.1348, -80.1280, '',
+ ARRAY['Pool','In-Unit Laundry','Dishwasher','Air Conditioning','Parking','Pet Friendly'],
+ 'Lupton Flats'),
+
+-- 29 · Fort Lauderdale · FL
+('Las Olas One-Bedroom',
+ 'Vibrant one-bedroom steps from Fort Lauderdale''s celebrated Las Olas Boulevard. Enjoy world-class dining, art galleries, and a quick bike ride to Fort Lauderdale Beach from this well-positioned apartment with resort amenities.',
+ '620 E Las Olas Blvd', 'Fort Lauderdale', 'Florida', '33301',
+ 2500, 1, 1, 800, 26.1192, -80.1358, '',
+ ARRAY['Pool','Gym','In-Unit Laundry','Dishwasher','Parking','Balcony','Air Conditioning','Concierge'],
+ 'Tennis Villas Apartments'),
+
+-- 30 · St. Petersburg · FL
+('Grand Central One-Bedroom',
+ 'Hip one-bedroom in St. Petersburg''s Grand Central arts corridor, surrounded by independent galleries, vintage furniture stores, and craft cocktail bars on Central Avenue. Open floor plan with polished concrete floors.',
+ '2200 Central Ave', 'St. Petersburg', 'Florida', '33713',
+ 1900, 1, 1, 760, 27.7699, -82.6612, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Pet Friendly','Bike Storage'],
+ 'Riverside'),
+
+-- 31 · Boca Raton · FL
+('Mizner Park One-Bedroom',
+ 'Upscale one-bedroom steps from Mizner Park''s luxury shops, outdoor amphitheater, and fine dining. Resort-style amenities and lush Florida landscaping make this one of Boca Raton''s most coveted addresses.',
  '433 Plaza Real', 'Boca Raton', 'Florida', '33432',
- 2800, 2, 2, 1100, 26.3558, -80.0833,
- 'https://images.unsplash.com/photo-1580587771525-4dddfa7b9a19?w=800&q=80',
- ARRAY['Pool', 'Gym', 'Balcony', 'Parking', 'Concierge']),
+ 2600, 1, 1, 850, 26.3565, -80.0837, '',
+ ARRAY['Pool','Gym','Concierge','In-Unit Laundry','Dishwasher','Parking','Balcony','Air Conditioning'],
+ 'Villas Havana'),
 
-('3BR Luxury Home in Boca Raton',
- 'Stunning three-bedroom in a gated Boca Raton community. Soaring ceilings, gourmet kitchen, private pool, and access to a championship golf course.',
- '7400 Mandarin Dr', 'Boca Raton', 'Florida', '33433',
- 3800, 3, 3, 2100, 26.3468, -80.1425,
- 'https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=800&q=80',
- ARRAY['Private Pool', 'Garage', 'Gated', 'Golf Course', 'Air Conditioning']),
+-- 32 · Clearwater · FL
+('Downtown Clearwater One-Bedroom',
+ 'Well-priced one-bedroom in downtown Clearwater, steps from Coachman Park, the Clearwater Marine Aquarium, and a short drive to Clearwater Beach. Open kitchen concept, updated appliances, and on-site pool.',
+ '600 Cleveland St', 'Clearwater', 'Florida', '33755',
+ 1700, 1, 1, 700, 27.9656, -82.8001, '',
+ ARRAY['Pool','In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Pet Friendly'],
+ 'Oxford III'),
 
--- Clearwater
-('2BR with Lanai in Clearwater',
- 'Comfortable two-bedroom with community pool in Clearwater. Large screened lanai, updated kitchen, and less than 5 miles from Clearwater Beach.',
- '2650 Drew St', 'Clearwater', 'Florida', '33759',
- 2150, 2, 2, 1050, 27.9737, -82.7659,
- 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=80',
- ARRAY['Pool', 'Lanai', 'Parking', 'Air Conditioning', 'Pet Friendly']),
+-- 33 · Gainesville · FL
+('University Area One-Bedroom',
+ 'Affordable one-bedroom near the University of Florida campus and Gainesville''s vibrant midtown restaurant scene. Recently updated kitchen and bathroom in a well-maintained building with on-site parking and landscaped grounds.',
+ '1220 W University Ave', 'Gainesville', 'Florida', '32601',
+ 1100, 1, 1, 680, 29.6497, -82.3476, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Pet Friendly'],
+ 'Westside Terrace Apartments'),
 
--- Gainesville
-('2BR near University of Florida',
- 'Clean two-bedroom apartment close to the University of Florida. Modern interior, community pool, and easy access to I-75.',
- '3800 SW Archer Rd', 'Gainesville', 'Florida', '32608',
- 1450, 2, 2, 950, 29.6281, -82.3748,
- 'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=800&q=80',
- ARRAY['Pool', 'Gym', 'Parking', 'Air Conditioning', 'Pet Friendly']),
-
--- Sarasota
-('2BR in Downtown Sarasota',
- 'Refined two-bedroom in downtown Sarasota. Walk to cultural venues, fine dining, and St. Armands Circle. Building includes pool and rooftop terrace.',
+-- 34 · Sarasota · FL
+('Downtown Sarasota One-Bedroom',
+ 'Sophisticated one-bedroom in the heart of downtown Sarasota, walkable to the Saturday morning farmers market, the Van Wezel Performing Arts Hall, and Marie Selby Botanical Gardens. Fresh finishes and abundant natural light.',
  '1255 N Palm Ave', 'Sarasota', 'Florida', '34236',
- 2550, 2, 2, 1080, 27.3382, -82.5379,
- 'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&q=80',
- ARRAY['Pool', 'Rooftop', 'Parking', 'Air Conditioning', 'Concierge']),
+ 2100, 1, 1, 780, 27.3430, -82.5432, '',
+ ARRAY['Pool','Gym','In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Elevator'],
+ 'The Brooklyner'),
 
--- Tampa (Studio)
-('Studio with Skyline Views in Channelside',
- 'Modern studio in Tampa''s up-and-coming Channelside district. Stylish finishes, rooftop pool with skyline views, and steps from Amalie Arena.',
- '400 Channelside Dr', 'Tampa', 'Florida', '33602',
- 1550, 0, 1, 510, 27.9440, -82.4507,
- 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
- ARRAY['Rooftop Pool', 'Gym', 'Parking', 'Concierge', 'Skyline Views']);
+-- 35 · Sarasota · FL
+('Rosemary District One-Bedroom',
+ 'Artistic one-bedroom in Sarasota''s Rosemary District, an emerging creative neighborhood steps from the Ringling College of Art, the Sarasota Ballet, and the city''s best coffee shops and galleries. Bike storage and pet friendly.',
+ '1415 3rd St', 'Sarasota', 'Florida', '34236',
+ 2000, 1, 1, 750, 27.3388, -82.5467, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Air Conditioning','Pet Friendly','Bike Storage'],
+ 'Talavera'),
+
+-- ─── 2-BEDROOMS — CALIFORNIA ────────────────────────────────────────────────
+
+-- 36 · Los Angeles · CA
+('Hollywood Heights Two-Bedroom',
+ 'Contemporary two-bedroom in the heart of Hollywood, steps from the Pantages Theatre and easy Hollywood/Vine Metro access. Features in-unit laundry, a large private balcony with city views, and building-wide rooftop and pool amenities.',
+ '1600 N Cahuenga Blvd', 'Los Angeles', 'California', '90028',
+ 3500, 2, 2, 1050, 34.1007, -118.3278, '',
+ ARRAY['Rooftop Deck','Gym','Pool','In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Balcony','Elevator'],
+ 'AERIE Apartments'),
+
+-- 37 · Los Angeles · CA
+('Mid-Wilshire Two-Bedroom',
+ 'Spacious two-bedroom in Los Angeles''s Mid-Wilshire corridor, convenient to LACMA, the Miracle Mile, and Purple Line Metro stations. Updated kitchen with stainless appliances and in-unit laundry. Hardwood floors throughout.',
+ '1155 S Ogden Dr', 'Los Angeles', 'California', '90019',
+ 3200, 2, 2, 1020, 34.0556, -118.3463, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Parking','Pet Friendly','Air Conditioning'],
+ 'Canoga Park, CA'),
+
+-- 38 · San Francisco · CA
+('SoMa Two-Bedroom Loft',
+ 'Dramatic two-bedroom loft in San Francisco''s SoMa district with industrial-chic polished concrete floors, 14-foot ceilings, and steel-frame windows. Minutes from Oracle Park, the Embarcadero, and Montgomery Street BART.',
+ '260 King St', 'San Francisco', 'California', '94107',
+ 4600, 2, 2, 1180, 37.7775, -122.3934, '',
+ ARRAY['Rooftop Deck','Gym','Concierge','In-Unit Laundry','Dishwasher','Parking','Elevator','Bike Storage'],
+ 'Azure'),
+
+-- 39 · San Diego · CA
+('Downtown San Diego Two-Bedroom',
+ 'Modern two-bedroom in San Diego''s downtown core, steps from the Gaslamp Quarter, Petco Park, and the San Diego Bay. Floor-to-ceiling windows, designer finishes, and a wraparound balcony with bay views.',
+ '550 Front St', 'San Diego', 'California', '92101',
+ 3400, 2, 2, 1100, 32.7177, -117.1651, '',
+ ARRAY['Rooftop Deck','Pool','Gym','Concierge','In-Unit Laundry','Dishwasher','Parking','Elevator'],
+ '3167 Market'),
+
+-- 40 · Sacramento · CA
+('East Sacramento Two-Bedroom',
+ 'Gracious two-bedroom in Sacramento''s coveted East Sacramento neighborhood, blocks from the American River Parkway bike trail, the Fab 40s historic district, and the vibrant J Street dining corridor.',
+ '3700 J St', 'Sacramento', 'California', '95816',
+ 2400, 2, 2, 1080, 38.5658, -121.4549, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Parking','Pet Friendly','Air Conditioning'],
+ '226 East End Avenue'),
+
+-- 41 · Sacramento · CA
+('Oak Park Two-Bedroom',
+ 'Renovated two-bedroom in Sacramento''s resurgent Oak Park neighborhood, close to the Guild Theatre and an emerging restaurant scene along Broadway. Restored hardwood floors and an updated open kitchen with quartz countertops.',
+ '3412 4th Ave', 'Sacramento', 'California', '95817',
+ 2200, 2, 1, 980, 38.5496, -121.4784, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Parking','Pet Friendly'],
+ '172 Mallory Ave unit 2'),
+
+-- 42 · Oakland · CA
+('Rockridge Two-Bedroom',
+ 'Sought-after two-bedroom in Oakland''s Rockridge neighborhood, one block from College Avenue''s acclaimed restaurants and boutiques, and the MacArthur BART station for direct San Francisco connections.',
+ '5533 College Ave', 'Oakland', 'California', '94618',
+ 3700, 2, 2, 1120, 37.8458, -122.2524, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Hardwood Floors','Pet Friendly','Parking','Bike Storage'],
+ 'Verde Jersey City'),
+
+-- 43 · Fresno · CA
+('Downtown Fresno Two-Bedroom',
+ 'Generous two-bedroom loft in revitalized downtown Fresno, steps from the Fulton Street promenade and a growing arts and culinary scene. High ceilings, large windows, and in-unit laundry in a well-located building.',
+ '1840 Tulare St', 'Fresno', 'California', '93721',
+ 1600, 2, 2, 1050, 36.7368, -119.7885, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Air Conditioning','Parking','Pet Friendly'],
+ 'Gorman Crossings'),
+
+-- 44 · Irvine · CA
+('Portola Springs Two-Bedroom',
+ 'Luxurious two-bedroom in one of Irvine''s newest master-planned communities, featuring resort-style amenities, walking trails, and top-ranked schools. Modern open floor plan with premium finishes throughout and a private balcony.',
+ '200 Portola Pkwy', 'Irvine', 'California', '92618',
+ 3800, 2, 2, 1250, 33.6824, -117.7389, '',
+ ARRAY['Pool','Gym','Trails','Parking','In-Unit Laundry','Dishwasher','Air Conditioning','Balcony','Smart Home'],
+ 'The Grove'),
+
+-- 45 · Long Beach · CA
+('Downtown Long Beach Two-Bedroom',
+ 'Contemporary two-bedroom in Long Beach''s vibrant downtown waterfront district, steps from the Aquarium of the Pacific and the Queen Mary. Panoramic harbor views from a private terrace and full concierge building services.',
+ '240 W Ocean Blvd', 'Long Beach', 'California', '90802',
+ 3200, 2, 2, 1100, 33.7699, -118.1955, '',
+ ARRAY['Rooftop Deck','Pool','Gym','Concierge','In-Unit Laundry','Dishwasher','Parking','Elevator'],
+ 'Blackwolf Run at Hedingham'),
+
+-- 46 · Pasadena · CA
+('East Pasadena Two-Bedroom',
+ 'Spacious two-bedroom on Pasadena''s Colorado Boulevard corridor, walking distance to the Metro Gold Line, Pasadena Playhouse, and an outstanding selection of local restaurants. Hardwood floors and private balcony.',
+ '1499 E Colorado Blvd', 'Pasadena', 'California', '91106',
+ 3300, 2, 2, 1150, 34.1462, -118.1227, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Pet Friendly','Hardwood Floors'],
+ 'Marcom St Apartments'),
+
+-- 47 · Anaheim · CA
+('Downtown Anaheim Two-Bedroom',
+ 'Modern two-bedroom loft in Anaheim''s newly revitalized downtown district, close to the ARTIC transit center, Angel Stadium, and emerging restaurants along Center Street Promenade. Rooftop terrace and bike storage.',
+ '201 S Anaheim Blvd', 'Anaheim', 'California', '92805',
+ 2700, 2, 2, 1080, 33.8355, -117.9139, '',
+ ARRAY['Gym','Rooftop Deck','In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Balcony','Bike Storage'],
+ 'Skylar Lofts JC'),
+
+-- 48 · Beverly Hills · CA
+('Beverly Hills Two-Bedroom',
+ 'Impeccably appointed two-bedroom just south of Wilshire Boulevard with full-service building amenities, valet parking, and 24-hour concierge. Designer-ready interiors with marble baths and a private terrace overlooking the pool.',
+ '9876 Wilshire Blvd', 'Beverly Hills', 'California', '90210',
+ 5800, 2, 2, 1350, 34.0671, -118.4047, '',
+ ARRAY['Pool','Gym','Concierge','Doorman','Valet Parking','In-Unit Laundry','Dishwasher','Elevator','Rooftop Deck'],
+ 'The Constantine'),
+
+-- ─── 2-BEDROOMS — FLORIDA ────────────────────────────────────────────────────
+
+-- 49 · Miami · FL
+('Wynwood Two-Bedroom',
+ 'Creative two-bedroom in Miami''s internationally celebrated Wynwood Arts District, steps from world-class murals, galleries, and the neighborhood''s acclaimed food hall. Industrial-chic loft finishes and building concierge included.',
+ '250 NW 24th St', 'Miami', 'Florida', '33127',
+ 3900, 2, 2, 1100, 25.7967, -80.1998, '',
+ ARRAY['Rooftop Deck','Gym','In-Unit Laundry','Dishwasher','Concierge','Parking','Elevator','Bike Storage'],
+ 'Friendship Court'),
+
+-- 50 · Miami · FL
+('Coral Gables Two-Bedroom',
+ 'Gracious two-bedroom in the tree-lined streets of Coral Gables, steps from Miracle Mile''s boutiques and minutes from the University of Miami campus. Mediterranean-inspired architecture with a courtyard pool and lush tropical landscaping.',
+ '2333 Ponce de Leon Blvd', 'Miami', 'Florida', '33134',
+ 3700, 2, 2, 1150, 25.7491, -80.2580, '',
+ ARRAY['Pool','Gym','In-Unit Laundry','Dishwasher','Parking','Balcony','Air Conditioning','Concierge'],
+ '46 Carlton Ave unit 2'),
+
+-- 51 · Orlando · FL
+('Lake Nona Two-Bedroom',
+ 'Smart and stylish two-bedroom in Orlando''s tech-forward Lake Nona community, home to the USTA National Campus and a walkable town center with curated shops and restaurants. Smart home features and resort-style amenities throughout.',
+ '6900 Lake Nona Blvd', 'Orlando', 'Florida', '32827',
+ 2700, 2, 2, 1180, 28.3771, -81.2468, '',
+ ARRAY['Pool','Gym','Trails','Parking','In-Unit Laundry','Dishwasher','Air Conditioning','Smart Home','Balcony'],
+ '403 West'),
+
+-- 52 · Tampa · FL
+('Water Street Tampa Two-Bedroom',
+ 'Premier two-bedroom in Tampa''s transformative Water Street development, one of the most ambitious urban projects in the American Southeast. Walkable to Amalie Arena, the Tampa Riverwalk, and world-class dining and entertainment.',
+ '1000 Water St', 'Tampa', 'Florida', '33602',
+ 2900, 2, 2, 1200, 27.9440, -82.4530, '',
+ ARRAY['Pool','Gym','Rooftop Deck','Concierge','In-Unit Laundry','Dishwasher','Parking','Elevator','Smart Home'],
+ '5522 Baum Blvd unit 705'),
+
+-- 53 · Jacksonville · FL
+('Jacksonville Riverwalk Two-Bedroom',
+ 'Sophisticated two-bedroom on Jacksonville''s historic waterfront, steps from the city''s expanding culinary scene and a short walk to EverBank Stadium. River views and downtown convenience from every room.',
+ '500 Water St', 'Jacksonville', 'Florida', '32202',
+ 2200, 2, 2, 1080, 30.3229, -81.6588, '',
+ ARRAY['Pool','Gym','In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Elevator','Concierge'],
+ '15 Dorothy St unit 15A'),
+
+-- 54 · Fort Lauderdale · FL
+('Downtown Fort Lauderdale Two-Bedroom',
+ 'Polished two-bedroom in Fort Lauderdale''s downtown core, walking distance to the Broward Center for the Performing Arts, the city''s Riverwalk, and the Las Olas nightlife and dining district. Resort-style pool and rooftop deck.',
+ '200 SW 2nd St', 'Fort Lauderdale', 'Florida', '33312',
+ 3100, 2, 2, 1120, 26.1201, -80.1451, '',
+ ARRAY['Pool','Gym','Rooftop Deck','In-Unit Laundry','Dishwasher','Parking','Elevator','Concierge'],
+ '150 West Side Ave unit 1'),
+
+-- 55 · St. Petersburg · FL
+('Downtown St. Pete Two-Bedroom',
+ 'Stunning two-bedroom steps from St. Petersburg''s waterfront and world-class museums including the Salvador Dalí Museum and the Museum of Fine Arts. Enjoy the city''s thriving dining and nightlife scene from this premier address.',
+ '200 Beach Dr NE', 'St. Petersburg', 'Florida', '33701',
+ 2600, 2, 2, 1130, 27.7741, -82.6318, '',
+ ARRAY['Pool','Gym','Rooftop Deck','Concierge','In-Unit Laundry','Dishwasher','Parking','Elevator','Balcony'],
+ '845 S. Kingsley'),
+
+-- 56 · St. Petersburg · FL
+('Kenwood Two-Bedroom Bungalow',
+ 'Charming two-bedroom in St. Petersburg''s historic Kenwood neighborhood, one of Florida''s most vibrant arts communities. Craftsman-influenced architecture, updated kitchen, hardwood floors, and a private backyard garden.',
+ '1201 22nd St N', 'St. Petersburg', 'Florida', '33713',
+ 2300, 2, 1, 1020, 27.7788, -82.6623, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Air Conditioning','Pet Friendly','Parking','Hardwood Floors'],
+ 'Coronado St. Residences'),
+
+-- 57 · Boca Raton · FL
+('Downtown Boca Raton Two-Bedroom',
+ 'Upscale two-bedroom in walkable downtown Boca Raton, moments from Mizner Park''s outdoor dining, the Boca Raton Museum of Art, and the Brightline station for direct Miami and West Palm Beach connections.',
+ '1 N Federal Hwy', 'Boca Raton', 'Florida', '33432',
+ 3200, 2, 2, 1150, 26.3587, -80.0838, '',
+ ARRAY['Pool','Gym','Concierge','In-Unit Laundry','Dishwasher','Parking','Elevator','Balcony','Air Conditioning'],
+ '736 E 83rd St #2'),
+
+-- 58 · Clearwater · FL
+('Clearwater Beach Two-Bedroom',
+ 'Rare two-bedroom steps from the white sand and crystal waters of Clearwater Beach, consistently ranked among America''s finest beaches. Light-filled interiors with ocean breezes and resort-style pool and fitness amenities.',
+ '415 E Shore Dr', 'Clearwater', 'Florida', '33767',
+ 2700, 2, 2, 1050, 27.9776, -82.8276, '',
+ ARRAY['Pool','Gym','In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Balcony','Bike Storage'],
+ '17 6th St unit 2'),
+
+-- 59 · Gainesville · FL
+('Midtown Gainesville Two-Bedroom',
+ 'Comfortable two-bedroom in Gainesville''s Midtown neighborhood, walkable to the University of Florida''s stadium, Depot Park, and the local food truck scene. Well-maintained building with updated finishes and on-site parking.',
+ '601 NW 13th St', 'Gainesville', 'Florida', '32601',
+ 1600, 2, 1, 960, 29.6564, -82.3381, '',
+ ARRAY['In-Unit Laundry','Dishwasher','Parking','Air Conditioning','Pet Friendly'],
+ '77 Vinton St unit 1'),
+
+-- 60 · Sarasota · FL
+('Sarasota Bayfront Two-Bedroom',
+ 'Exceptional two-bedroom steps from Sarasota Bay, the Van Wezel Performing Arts Hall, and the boutiques of St. Armands Circle. Floor-to-ceiling windows frame sweeping water views from this premier Bayfront address. Concierge building.',
+ '888 Boulevard of the Arts', 'Sarasota', 'Florida', '34236',
+ 2900, 2, 2, 1200, 27.3477, -82.5417, '',
+ ARRAY['Pool','Gym','Concierge','In-Unit Laundry','Dishwasher','Parking','Elevator','Balcony','Air Conditioning'],
+ '218 Grandview Terrace');

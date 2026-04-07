@@ -162,7 +162,7 @@ export default function Home() {
             fetchPriority="high" + the <link rel="preload"> in index.html together
             ensure this is the first resource fetched, minimising LCP. */}
         <img
-          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80"
+          src="/hero-bg.webp"
           alt="Modern apartment building exterior"
           fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover"
