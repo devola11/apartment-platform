@@ -131,7 +131,7 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
 
           {/* Beds / Baths / Sqft */}
           <div className="flex items-center gap-2 text-xs text-[#5F6368] mb-2">
-            <span className="flex items-center gap-1"><BedIcon />{listing.bedrooms ?? "-"} bd</span>
+            <span className="flex items-center gap-1"><BedIcon />{listing.bedrooms === 0 ? "Studio" : `${listing.bedrooms ?? "-"} bd`}</span>
             <span className="text-[#E0E0E0]">|</span>
             <span className="flex items-center gap-1"><BathIcon />{listing.bathrooms ?? "-"} ba</span>
             <span className="text-[#E0E0E0]">|</span>

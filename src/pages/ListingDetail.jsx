@@ -155,7 +155,7 @@ export default function ListingDetail() {
   const phone    = fakePhone(listing.id);
 
   const parts = [
-    listing.bedrooms  != null && `${listing.bedrooms}-bedroom`,
+    listing.bedrooms === 0 ? "studio" : listing.bedrooms != null ? `${listing.bedrooms}-bedroom` : null,
     listing.bathrooms != null && `${listing.bathrooms}-bath`,
     "apartment",
     listing.city  && `in ${listing.city}`,
@@ -302,8 +302,8 @@ export default function ListingDetail() {
               </div>
               <div className="flex flex-col items-center px-4 py-4">
                 <div className="text-[#202124] mb-1"><BedIcon /></div>
-                <p className="font-bold text-[#202124]">{listing.bedrooms ?? "-"}</p>
-                <p className="text-xs text-[#5F6368]">Bedrooms</p>
+                <p className="font-bold text-[#202124]">{listing.bedrooms === 0 ? "Studio" : listing.bedrooms ?? "-"}</p>
+                <p className="text-xs text-[#5F6368]">{listing.bedrooms === 0 ? "\u00A0" : "Bedrooms"}</p>
               </div>
               <div className="flex flex-col items-center px-4 py-4 border-r border-[#E0E0E0]">
                 <div className="text-[#202124] mb-1"><BathIcon /></div>
@@ -325,8 +325,8 @@ export default function ListingDetail() {
               </div>
               <div className="flex flex-col items-center px-5 py-4 flex-1">
                 <div className="text-[#202124] mb-1"><BedIcon /></div>
-                <p className="font-bold text-[#202124]">{listing.bedrooms ?? "-"}</p>
-                <p className="text-xs text-[#5F6368]">Bedrooms</p>
+                <p className="font-bold text-[#202124]">{listing.bedrooms === 0 ? "Studio" : listing.bedrooms ?? "-"}</p>
+                <p className="text-xs text-[#5F6368]">{listing.bedrooms === 0 ? "\u00A0" : "Bedrooms"}</p>
               </div>
               <div className="flex flex-col items-center px-5 py-4 flex-1">
                 <div className="text-[#202124] mb-1"><BathIcon /></div>
