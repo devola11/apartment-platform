@@ -18,6 +18,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
+import { PetBadgesSmall } from "./PetBadges";
 
 function fakePhone(id) {
   const n = parseInt((id || "0").replace(/-/g, "").slice(0, 8), 16);
@@ -153,6 +154,11 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
               ))}
             </div>
           )}
+
+          {/* Pet badges */}
+          <div className="mb-3">
+            <PetBadgesSmall amenities={listing.amenities} />
+          </div>
 
           {/* Send Message - min-h-[44px] for touch target */}
           <button

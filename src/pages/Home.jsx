@@ -9,6 +9,7 @@ import CityAutocomplete from "../components/common/CityAutocomplete";
 import WelcomeBanner from "../components/common/WelcomeBanner";
 import FindApartmentModal from "../components/common/FindApartmentModal";
 import SendMessageModal from "../components/common/SendMessageModal";
+import { RecentlyViewedRow } from "../components/listings/RecentlyViewed";
 
 const CITIES = [
   { name: "Los Angeles",   state: "California", count: 12, img: "https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?auto=format&fit=crop&w=600&q=70" },
@@ -351,6 +352,9 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      {/* ── Recently Viewed ─────────────────────────────────────────────── */}
+      <RecentlyViewedRow />
 
       {/* ── Renting Made Easy ──────────────────────────────────────────── */}
       <section className="bg-white border-y border-gray-100 py-10 md:py-14">

@@ -18,6 +18,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
+import { useCompare } from "../../context/CompareContext";
+import { PetBadgesSmall } from "./PetBadges";
 
 // ── Inline SVG icons (no icon library dependency) ────────────────────────────
 function ShareIcon() {
@@ -49,8 +51,10 @@ function HeartIcon({ filled }) {
 export default function ListingCard({ listing, onSendMessage }) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { user }                        = useAuth();
+  const { isCompared, toggleCompare }   = useCompare();
   const navigate                        = useNavigate();
   const saved                           = isFavorite(listing.id);
+  const comparing                       = isCompared(listing.id);
 
   const imageUrl = listing.image_url || "https://placehold.co/400x260?text=No+Image";
 
@@ -96,6 +100,12 @@ export default function ListingCard({ listing, onSendMessage }) {
     }
   }
 
+  function handleCompare(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleCompare(listing);
+  }
+
   function handleSendMessage(e) {
     e.preventDefault();    // prevent the wrapping <a> from navigating
     e.stopPropagation();   // prevent Link's React onClick from firing
@@ -139,6 +149,23 @@ export default function ListingCard({ listing, onSendMessage }) {
             </p>
 
             <div className="flex items-center gap-1 shrink-0">
+              {/* Compare checkbox */}
+              <button
+                type="button"
+                onClick={handleCompare}
+                aria-label={comparing ? "Remove from comparison" : "Add to comparison"}
+                className={`p-1.5 rounded-full text-xs font-semibold transition-colors
+                  ${comparing
+                    ? "text-[#1A73E8] bg-blue-50"
+                    : "text-[#5F6368] hover:bg-gray-100"
+                  }`}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+                </svg>
+              </button>
+
               {/* Share button */}
               <button
                 type="button"
@@ -186,6 +213,9 @@ export default function ListingCard({ listing, onSendMessage }) {
               {amenitiesLine}
             </p>
           )}
+
+          {/* ── Pet badges ─────────────────────────────────────────── */}
+          <PetBadgesSmall amenities={listing.amenities} />
 
           {/* ── 5. Stats: Beds / Sqft / Price per month ──────────────── */}
           {/* Each on its own line as specified. Price repeated here in a

@@ -17,6 +17,8 @@ import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { FavoritesProvider } from "./context/FavoritesContext";
+import { CompareProvider } from "./context/CompareContext";
+import CompareBar from "./components/listings/CompareBar";
 
 // Layout components — always needed, not lazy-loaded
 import Navbar from "./components/common/Navbar";
@@ -50,6 +52,7 @@ export default function App() {
   return (
     <AuthProvider>
       <FavoritesProvider>
+        <CompareProvider>
         <div className="flex flex-col min-h-screen">
           <ScrollToTop />
           <Navbar />
@@ -80,7 +83,9 @@ export default function App() {
 
           <Footer />
           <BackToTop />
+          <CompareBar />
         </div>
+        </CompareProvider>
       </FavoritesProvider>
     </AuthProvider>
   );

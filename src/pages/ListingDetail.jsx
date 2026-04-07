@@ -29,7 +29,7 @@
 //     Mobile:  Not sticky - flows naturally after the property info.
 //     lg+:     sticky top-20 (original behaviour).
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useListing } from "../hooks/useListing";
 import { useListings } from "../hooks/useListings";
@@ -37,6 +37,10 @@ import { usePropertyImages } from "../hooks/usePropertyImages";
 import { useFavorites } from "../context/FavoritesContext";
 import { useAuth } from "../context/AuthContext";
 import ListingsMap from "../components/maps/ListingsMap";
+import NeighborhoodInfo from "../components/listings/NeighborhoodInfo";
+import { PetPolicySection } from "../components/listings/PetBadges";
+import { RecentlyViewedSidebar } from "../components/listings/RecentlyViewed";
+import { addRecentlyViewed } from "../lib/recentlyViewed";
 import ListingCard from "../components/listings/ListingCard";
 import PhotoGallery from "../components/listings/PhotoGallery";
 import SEO from "../components/common/SEO";
@@ -120,6 +124,11 @@ export default function ListingDetail() {
       setTimeout(() => setLinkCopied(false), 2000);
     }).catch(() => {});
   }, [listingUrl]);
+
+  // Track recently viewed
+  useEffect(() => {
+    if (listing) addRecentlyViewed(listing);
+  }, [listing]);
 
   // Loading skeleton
   if (loading) {
@@ -411,6 +420,12 @@ export default function ListingDetail() {
               </section>
             )}
 
+            {/* Pet Policy */}
+            <PetPolicySection amenities={listing.amenities} />
+
+            {/* Neighborhood */}
+            {listing.city && <NeighborhoodInfo city={listing.city} />}
+
             {/* Similar Listings */}
             {similarListings.length > 0 && (
               <section className="mb-8">
@@ -534,6 +549,8 @@ export default function ListingDetail() {
                 <PhoneIcon />
                 <span>{phone}</span>
               </div>
+
+              <RecentlyViewedSidebar excludeId={listing.id} />
             </div>
           </div>
         </div>
