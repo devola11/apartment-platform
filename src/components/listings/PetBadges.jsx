@@ -51,7 +51,7 @@ export function PetBadgesSmall({ amenities }) {
 
   return (
     <span className="inline-flex items-center gap-1 text-[10px] font-semibold
-                     bg-gray-50 text-gray-400 border border-gray-200
+                     bg-gray-100 text-gray-500 border border-gray-200
                      px-1.5 py-0.5 rounded-full">
       <NoPetIcon /> No Pets
     </span>

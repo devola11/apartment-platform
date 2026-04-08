@@ -268,7 +268,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row
-                        items-center justify-between gap-2 text-xs text-gray-500">
+                        items-center justify-between gap-2 text-xs text-gray-400">
           <p>© {new Date().getFullYear()} AptGuide. All rights reserved.</p>
           <p>
             AptGuide is powered by{" "}

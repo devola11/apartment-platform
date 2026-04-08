@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useListings } from "../hooks/useListings";
 import ListingGrid from "../components/listings/ListingGrid";
-import ListingsMap from "../components/maps/ListingsMap";
+import LazyMap from "../components/common/LazyMap";
 import SEO from "../components/common/SEO";
 import CityAutocomplete from "../components/common/CityAutocomplete";
 import WelcomeBanner from "../components/common/WelcomeBanner";
@@ -12,12 +12,12 @@ import SendMessageModal from "../components/common/SendMessageModal";
 import { RecentlyViewedRow } from "../components/listings/RecentlyViewed";
 
 const CITIES = [
-  { name: "Los Angeles",   state: "California", count: 12, img: "https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?auto=format&fit=crop&w=600&q=70" },
-  { name: "Miami",         state: "Florida",    count: 10, img: "https://images.unsplash.com/photo-1503891450247-ee5f8ec46dc3?auto=format&fit=crop&w=600&q=70" },
-  { name: "San Francisco", state: "California", count: 8,  img: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=600&q=70" },
-  { name: "Tampa",         state: "Florida",    count: 7,  img: "https://images.unsplash.com/photo-1575517111478-7f6afd0973db?auto=format&fit=crop&w=600&q=70" },
-  { name: "San Diego",     state: "California", count: 8,  img: "https://images.unsplash.com/photo-1538964173425-93884d739596?auto=format&fit=crop&w=600&q=70" },
-  { name: "Orlando",       state: "Florida",    count: 6,  img: "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?auto=format&fit=crop&w=600&q=70" },
+  { name: "Los Angeles",   state: "California", count: 12, img: "/cities/los-angeles.webp" },
+  { name: "Miami",         state: "Florida",    count: 10, img: "/cities/miami.webp" },
+  { name: "San Francisco", state: "California", count: 8,  img: "/cities/san-francisco.webp" },
+  { name: "Tampa",         state: "Florida",    count: 7,  img: "/cities/tampa.webp" },
+  { name: "San Diego",     state: "California", count: 8,  img: "/cities/san-diego.webp" },
+  { name: "Orlando",       state: "Florida",    count: 6,  img: "/cities/orlando.webp" },
 ];
 
 const HOW_IT_WORKS = [
@@ -334,7 +334,7 @@ export default function Home() {
           <h2 className="text-xl md:text-2xl font-bold text-[#202124]">Featured Listings</h2>
           <Link
             to="/listings"
-            className="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors"
+            className="text-sm font-semibold text-brand-700 hover:text-brand-600 transition-colors"
           >
             View all →
           </Link>
@@ -382,7 +382,7 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 py-10 md:py-14">
         <h2 className="text-xl md:text-2xl font-bold text-[#202124] mb-6">Explore the Map</h2>
         <div className="rounded-2xl overflow-hidden shadow-md border border-gray-200">
-          <ListingsMap listings={listings} className="h-[260px] md:h-[400px]" />
+          <LazyMap listings={listings} className="h-[260px] md:h-[400px]" />
         </div>
       </section>
 
