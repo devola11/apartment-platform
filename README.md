@@ -1,6 +1,8 @@
-# AptGuide
+# ApmtGuide
 
 A full-stack apartment listing platform for renters and landlords across **California** and **Florida**. Browse 50+ verified listings, filter by city/price/bedrooms, save favorites, and contact property managers directly.
+
+**Live:** [https://apmtguide.com](https://apmtguide.com)
 
 ---
 

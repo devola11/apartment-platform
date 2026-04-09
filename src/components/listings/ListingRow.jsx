@@ -20,11 +20,8 @@ import { useFavorites } from "../../context/FavoritesContext";
 import { useAuth } from "../../context/AuthContext";
 import { PetBadgesSmall } from "./PetBadges";
 
-function fakePhone(id) {
-  const n = parseInt((id || "0").replace(/-/g, "").slice(0, 8), 16);
-  const a = (n % 900) + 100;
-  const b = ((n >> 8) % 9000) + 1000;
-  return `(800) ${a}-${b}`;
+function getPhone() {
+  return "(213) 650-3746";
 }
 
 function BedIcon()  { return <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>; }
@@ -61,7 +58,7 @@ export default function ListingRow({ listing, isActive, onMouseEnter, onMouseLea
 
   const imageUrl  = listing.image_url || "https://placehold.co/320x200?text=No+Image";
   const amenities = listing.amenities?.slice(0, 3) ?? [];
-  const phone     = fakePhone(listing.id);
+  const phone     = getPhone();
 
   return (
       <Link

@@ -22,7 +22,6 @@ export function usePropertyImages(listingId) {
       .then(({ data, error }) => {
         if (cancelled) return;
         if (error) {
-          console.error("property_images fetch error:", error.message);
           setImages([]);
         } else {
           setImages(
