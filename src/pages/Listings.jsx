@@ -375,7 +375,7 @@ export default function Listings({ stateFilter }) {
               {/* Contact details */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-5">
                 <a
-                  href="tel:8336750288"
+                  href="tel:2136503746"
                   className="flex items-center gap-2 text-sm text-[#202124]
                              hover:text-[#1A73E8] transition-colors"
                 >
@@ -386,7 +386,7 @@ export default function Listings({ stateFilter }) {
                              1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57
                              3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/>
                   </svg>
-                  (833) 675-0288
+                  (213) 650-3746
                 </a>
                 <span className="hidden sm:block text-[#E0E0E0]">|</span>
                 {/*
@@ -409,7 +409,7 @@ export default function Listings({ stateFilter }) {
                              0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                     <polyline points="22,6 12,13 2,6"/>
                   </svg>
-                  support@aptguide.com
+                  info@apmtguide.com
                 </button>
               </div>
 

@@ -3,26 +3,26 @@
 
   <!-- Home -->
   <url>
-    <loc>https://aptguide.com/</loc>
+    <loc>https://apmtguide.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- All listings -->
   <url>
-    <loc>https://aptguide.com/listings</loc>
+    <loc>https://apmtguide.com/listings</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- State pages -->
   <url>
-    <loc>https://aptguide.com/listings/california</loc>
+    <loc>https://apmtguide.com/listings/california</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://aptguide.com/listings/florida</loc>
+    <loc>https://apmtguide.com/listings/florida</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>

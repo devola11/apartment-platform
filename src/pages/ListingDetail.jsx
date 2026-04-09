@@ -48,11 +48,8 @@ import SendMessageModal from "../components/common/SendMessageModal";
 
 // Old PhotoLightbox and THUMB_CROPS removed — replaced by PhotoGallery component.
 
-function fakePhone(id) {
-  const n = parseInt((id || "0").replace(/-/g, "").slice(0, 8), 16);
-  const a = (n % 900) + 100;
-  const b = ((n >> 8) % 9000) + 1000;
-  return `(800) ${a}-${b}`;
+function getPhone() {
+  return "(213) 650-3746";
 }
 
 function PinIcon()   { return <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>; }
@@ -161,7 +158,7 @@ export default function ListingDetail() {
 
   const saved    = isFavorite(listing.id);
   const imageUrl = propertyImages[0]?.image_url || listing.image_url || "https://placehold.co/800x450?text=No+Image";
-  const phone    = fakePhone(listing.id);
+  const phone    = getPhone();
 
   const parts = [
     listing.bedrooms === 0 ? "studio" : listing.bedrooms != null ? `${listing.bedrooms}-bedroom` : null,
@@ -185,7 +182,7 @@ export default function ListingDetail() {
     "@type": "RealEstateListing",
     name: listing.title,
     description: listing.description || seoDescription,
-    url: `https://aptguide.com/listings/${listing.id}`,
+    url: `https://apmtguide.com/listings/${listing.id}`,
     image: imageUrl,
     address: {
       "@type": "PostalAddress",
